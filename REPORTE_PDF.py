@@ -1,4 +1,4 @@
-# VERSION: 8.1 - Adaptación a Servicio Médico Legal / Power BI con IA
+# VERSION: 8.2 - SML / Power BI con IA / sección de contacto visible
 # CURSO: Power BI con IA: Fundamentos y Aplicaciones para Profesionales
 # CODIGO: 837-465-COT26 | MODALIDAD: Compra Ágil
 # FECHA: 11-11-2026 America/Santiago
@@ -10,7 +10,7 @@
 # INSTRUCCIONES DE USO Y ADAPTACION A FUTURAS LICITACIONES
 # 1. Instalar: python -m pip install -r requirements.txt
 #    Dependencias: streamlit, reportlab, svglib, pillow, defusedxml.
-# 2. Ejecutar: python -m streamlit run REPORTE_PDF_BEAMER_SIMPLE.py (Python 3.10 o superior).
+# 2. Ejecutar: python -m streamlit run Generador_Propuesta_SML_837-465-COT26_CON_CONTACTO.py (Python 3.10 o superior).
 # 3. La pestaña «Generar PDF» solo tiene logo opcional del comprador y botones.
 #    La pestaña «Detalles y edición» contiene el formulario, con apartados cerrados.
 #    El formulario pregunta por comprador, modalidad, lugar, participantes,
@@ -27,16 +27,15 @@
 #    Las notas de carga y revision pertenecen al formulario, no al informe.
 # 7. Descargar las preguntas y respuestas o el esqueleto Markdown para trabajar
 #    con IA. Revisar los antecedentes antes de incorporar cambios al codigo.
-# 8. Cargar el Anexo N.1 oficial completado y firmado, sin alterar su formato,
-#    y el CV con sus respaldos. El ZIP agrupa PDF y archivos realmente cargados.
-#    No se generan firmas ni se verifican automaticamente esos documentos.
-# 9. La experiencia del relator debe ser la efectiva. En este proceso, el
-#    requisito de cinco anos queda a evaluacion del comprador. No afirmar su
-#    cumplimiento sin respaldo. El PDF no incluye costos internos ni margenes.
+# 8. Adjuntar el CV de Diego Zamorano y sus respaldos; otros anexos solo si se
+#    exigen expresamente. El ZIP incluye únicamente archivos cargados.
+# 9. No se deben atribuir certificaciones no documentadas. El PDF no incluye
+#    costos internos ni márgenes. El contacto institucional aparece siempre en
+#    su propia sección, independiente del anexo administrativo opcional.
 # 10. Formulario completo, sin bloqueos. No hay guardado persistente de progreso;
 #     conservar la sesion abierta y descargar los documentos antes de cerrarla.
 #
-# PRUEBA LOCAL: python REPORTE_PDF_BEAMER_SIMPLE.py --demo-pdf propuesta.pdf
+# PRUEBA LOCAL: python Generador_Propuesta_SML_837-465-COT26_CON_CONTACTO.py --demo-pdf propuesta.pdf
 # El logo institucional es opcional; sin él se usa una portada tipográfica.
 """Formulario reutilizable por preguntas y generador de propuesta PDF A4."""
 from __future__ import annotations
@@ -74,7 +73,7 @@ from reportlab.platypus import (
 
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_NAME = "OTEC_Santa_Monica_Opcion_1.svg"
-PDF_RENDER_VERSION = "v8.1-adaptado-sml-powerbi-20261111"
+PDF_RENDER_VERSION = "v8.2-sml-powerbi-contacto-20261111"
 # Gama inspirada en las presentaciones Beamer clásicas: azul estructural,
 # azul petróleo, fondos casi blancos y reglas finas. Se usa con moderación.
 BEAMER_PALETA = {
@@ -322,7 +321,7 @@ DATOS_LICITACION = {'proceso': '837-465-COT26',
  'rut_oferente': '76.176.857-3',
  'domicilio_empresa': 'Isabel La Católica 4394, oficina 517, piso 5, bloque B, Las Condes, Santiago, '
                       'Región Metropolitana',
- 'contacto_oferta': 'ENRIQUE ARMANDO BRUN URRUTIA',
+ 'contacto_oferta': 'ENRIQUE BRUN URRUTIA',
  'cargo_contacto': 'Director de Administración y Finanzas',
  'telefono': '+56 9 6359 6523',
  'correo': 'ebrun@otecsantamonica.com',
@@ -1167,7 +1166,7 @@ def generar_pdf(b, token=None, solo_portada=False):
 
         # Ficha simple, alineada como un documento académico/profesional.
         ficha = [
-            ("Lugar", f"{d['comuna']}, {d['region']}"),
+            ("Modalidad", "Clases virtuales en vivo"),
             ("Participantes", f"{d['cupos']} personas"),
             ("Duración", f"{total_curso:g} horas de capacitación"),
             ("Valor ofertado", pesos(total_precio) if total_precio is not None else "Por definir"),
@@ -1272,7 +1271,7 @@ def generar_pdf(b, token=None, solo_portada=False):
         ["Organismo comprador", d["comprador"] + "\nRUT " + d["rut_comprador"]],
         ["Modalidad y código", d["modalidad"] + "\n" + d["proceso"]],
         ["Categoría del servicio", d["rubro"]],
-        ["Lugar de ejecución", d["comuna"] + ", " + d["region"]],
+        ["Ejecución", "100 % virtual, sin asistencia presencial"],
         ["Modalidad del curso", d["modalidad_curso"]],
     ], [156, ancho-156]))
     if d["numero_oc"].strip():
@@ -1336,13 +1335,13 @@ def generar_pdf(b, token=None, solo_portada=False):
         story.extend(campo("Servicio de cafetería", d["cafeteria"]))
 
     cap("Relator y antecedentes profesionales", "relator")
-    story.extend(campo("Perfil solicitado", d["perfil_docente"]))
+    story.extend(campo("Perfil del relator propuesto", d["perfil_docente"]))
     for rel in b["docentes"]:
         story.append(P(rel["nombre"], "h2"))
         story.extend(parrafos(f"RUT {rel['rut']}. {rel['titulo']}."))
         story.extend(parrafos(rel["experiencia"]))
         story.extend(parrafos(rel["disponibilidad"]))
-        story.append(tabla(["Requisito", "Estado declarado", "Antecedente"],
+        story.append(tabla(["Competencia o antecedente", "Estado", "Respaldo"],
             [[x["requisito"], EstadoPDF(x["estado"]), x["respaldo"]]
              for x in rel["checklist"]], [157, 102, ancho-259]))
     story.extend(campo("Documentación de respaldo", d["referencia_cv"]))
@@ -1381,20 +1380,16 @@ def generar_pdf(b, token=None, solo_portada=False):
                     else f"{d['tasa']} %" if d["impuesto"] == "Con impuesto"
                     else "Por definir")
     precio = tabla(["Concepto", "Valor"], [
-        ["Valor neto del servicio y despacho", pesos(neto)],
+        ["Valor global del servicio", pesos(neto)],
         ["Tratamiento tributario", impuesto_txt],
         ["Impuesto calculado", pesos(iva) if iva is not None else "Por definir"],
         ["Total ofertado", pesos(total) if total is not None else "Por definir"],
-        ["Presupuesto informado por el comprador", pesos(d["presupuesto"])],
     ], [ancho-157, 157])
     precio.setStyle(TableStyle([
-        ("BACKGROUND", (0, 4), (-1, 4), PALE),
-        ("LINEABOVE", (0, 4), (-1, 4), .8, NAVY),
+        ("BACKGROUND", (0, -1), (-1, -1), PALE),
+        ("LINEABOVE", (0, -1), (-1, -1), .8, NAVY),
     ]))
     story.append(precio)
-    if comparacion:
-        story.append(Spacer(1, 9))
-        story.append(P(comparacion["diferencia"], "note"))
     story.extend(campo("Alcance del valor ofertado", d["incluye_precio"]))
 
     cap("Documentación que acompaña la oferta", "documentos")
@@ -1406,6 +1401,17 @@ def generar_pdf(b, token=None, solo_portada=False):
     for i, nombre in enumerate(dict.fromkeys(nombres), 1):
         story.append(P(f"{i}. {nombre}"))
 
+    # Sección de contacto siempre visible, con independencia de la opción
+    # "incluir_admin". No incluye cuentas bancarias ni información sensible.
+    cap("Contacto de la propuesta")
+    story.append(tabla(["Antecedente", "Información"], [
+        ["Nombre", d["contacto_oferta"]],
+        ["Cargo", d["cargo_contacto"]],
+        ["Teléfono", d["telefono"]],
+        ["Correo electrónico", d["correo"]],
+    ], [135, ancho-135]))
+    story.extend(parrafos("Contacto designado por el oferente para consultas y coordinación relacionadas con esta propuesta."))
+
     if b["incluir_admin"]:
         cap("Identificación del oferente", "identificacion", pagina_nueva=True)
         story.append(P("Datos institucionales", "h2"))
@@ -1413,19 +1419,19 @@ def generar_pdf(b, token=None, solo_portada=False):
             [["Razón social", d["oferente"]],
              ["RUT", d["rut_oferente"]],
              ["Domicilio", d["domicilio_empresa"]]], [132, ancho-132]))
-        story.append(P("Contacto y representación legal", "h2"))
-        story.append(tabla(["Antecedente", "Información", "Antecedente", "Información"],
-            [["Contacto", d["contacto_oferta"], "Cargo", d["cargo_contacto"]],
-             ["Teléfono", d["telefono"], "Correo", d["correo"]],
-             ["Representante", d["representante"] + "\n" + d["cargo_representante"],
-              "RUT", d["rut_representante"]]],
-            [86, 151, 85, ancho-322]))
-        story.append(P("Antecedentes para transferencia", "h2"))
-        story.append(tabla(["Antecedente", "Información", "Antecedente", "Información"],
-            [["Titular", d["oferente"], "RUT", d["rut_oferente"]],
-             ["Banco", d["banco"], "Tipo de cuenta", d["tipo_cuenta"]],
-             ["N.º de cuenta", d["cuenta"], "Correo", d["correo_pagos"]]],
-            [86, 151, 85, ancho-322]))
+        story.append(P("Representación legal", "h2"))
+        story.append(tabla(["Antecedente", "Información"],
+            [["Representante", d["representante"]],
+             ["Cargo", d["cargo_representante"]],
+             ["RUT", d["rut_representante"]]],
+            [132, ancho-132]))
+        if any(d[k].strip() for k in ("banco", "tipo_cuenta", "cuenta", "correo_pagos")):
+            story.append(P("Antecedentes para transferencia", "h2"))
+            story.append(tabla(["Antecedente", "Información"],
+                [["Titular", d["oferente"]], ["RUT", d["rut_oferente"]],
+                 ["Banco", d["banco"]], ["Tipo de cuenta", d["tipo_cuenta"]],
+                 ["N.º de cuenta", d["cuenta"]], ["Correo", d["correo_pagos"]]],
+                [132, ancho-132]))
 
     if b["incluir_revision"]:
         cap("Anexo: revisión documental", pagina_nueva=True)
@@ -1629,7 +1635,7 @@ def main():
                     if abs(sum(tot.values())-b["datos"]["horas_exigidas"])>.01:
                         st.warning("La suma del programa no coincide con las horas exigidas. Puedes generar el borrador y corregirla después.")
                 if seccion==7:
-                    st.caption("Relator identificado según el CV aportado. Se informa la experiencia efectiva; el requisito de cinco años queda expresamente a evaluación del comprador.")
+                    st.caption("Relator identificado según el CV aportado. Su experiencia y competencias se describen conforme a los antecedentes disponibles.")
                     for j,rel in enumerate(b["docentes"]):
                         st.markdown(f"**Relator {j+1}**")
                         for k,label in [("nombre","¿Cuál es su nombre completo?"),("rut","¿Cuál es su RUT?"),("titulo","¿Cuál es su título profesional?"),("experiencia","¿Qué experiencia efectiva declara en la temática?"),("disponibilidad","¿Cuál es su disponibilidad confirmada?")]:
@@ -1651,7 +1657,7 @@ def main():
                     neto,iva,total=montos(b["datos"])
                     a,c,e=st.columns(3); a.metric("Neto + despacho",pesos(neto)); c.metric("Impuesto",pesos(iva) if iva is not None else "Por definir")
                     e.metric("Total",pesos(total) if total is not None else "Por definir")
-                    st.caption("El PDF presenta el valor ofertado, el presupuesto disponible y el alcance del servicio.")
+                    st.caption("El PDF presenta el valor ofertado y el alcance del servicio.")
                     comparacion=comparar_presupuesto(b["datos"])
                     if comparacion: st.metric("Comparación con presupuesto",comparacion["porcentaje"])
                     if total is not None and total>b["datos"]["presupuesto"]>0: st.warning("La oferta supera el presupuesto estimado del comprador.")
