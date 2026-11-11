@@ -1,1 +1,5 @@
-
+streamlit
+reportlab
+svglib
+pillow
+defusedxml
