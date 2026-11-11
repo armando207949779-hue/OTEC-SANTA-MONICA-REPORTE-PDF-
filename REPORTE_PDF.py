@@ -1,58 +1,39 @@
-#!/usr/bin/env python3
+# VERSION: 5.0 - Presentacion y redaccion profesional
+# CURSO: Aplicacion de Inteligencia Artificial y Analisis de Datos para la Gestion de Personas
+# CODIGO: 1057545-246-COT26 | MODALIDAD: Compra Agil
+# FECHA Y HORA DE ACTUALIZACION: 11-11-2026 03:40 UTC
+# ORGANISMO: Servicio de Salud Los Rios | OFERTA: $2.300.000 CLP, exenta de IVA
 # -*- coding: utf-8 -*-
-# ============================================================================
-# REPORTE_PDF.py - PROPUESTA OTEC SANTA MONICA - VERSION 4
 #
-# PROCESO PRECARGADO:
-# Compra Agil 1057545-246-COT26 / Servicio de Salud Los Rios, RUT 61.607.500-4.
-# Curso de Aplicacion de IA y Analisis de Datos para la Gestion de Personas.
-# 20 participantes; 20 horas pedagogicas: 16 presenciales y 4 autonomas.
-# Valdivia; segunda quincena de noviembre de 2026. Dias y recinto se coordinan
-# despues de adjudicar. Oferta acordada: $2.300.000 CLP, EXENTA DE IVA.
-#
-# INSTALACION Y USO:
-# 1. Python 3.10 o superior.
-# 2. Instalar: python -m pip install -r requirements.txt
+# INSTRUCCIONES DE USO Y ADAPTACION A FUTURAS LICITACIONES
+# 1. Instalar: python -m pip install -r requirements.txt
 #    Dependencias: streamlit, reportlab, svglib, pillow, defusedxml.
-# 3. Guardar OTEC_Santa_Monica_Opcion_1.svg junto a este archivo en GitHub.
-#    Se admiten SVG vectoriales y SVG con PNG/JPEG incrustados en base64.
-# 4. Ejecutar: python -m streamlit run REPORTE_PDF.py
-# 5. Revisar las preguntas, los modulos y los checklists; cargar los adjuntos.
-# 6. Pulsar Generar reporte PDF y luego Descargar propuesta PDF.
-#    El ZIP conserva el PDF y los originales cargados bajo el nombre/codigo.
+# 2. Ejecutar: python -m streamlit run REPORTE_PDF.py (Python 3.10 o superior).
+# 3. El formulario pregunta por comprador, modalidad, lugar, participantes,
+#    objetivos, contenidos, horas, docente, materiales, requisitos y precio.
+#    Revisar cada respuesta, cargar los documentos y pulsar Generar reporte PDF.
+# 4. Logo: se busca OTEC_Santa_Monica_Opcion_1.svg en la carpeta del programa
+#    o en assets/, logos/ e images/. Puede reemplazarse en el formulario por
+#    un SVG, PNG o JPG. Se imprime un solo logo institucional en la portada.
+# 5. Para otra licitacion, editar DATOS_LICITACION, MODULOS, RELATOR_INICIAL,
+#    ADJUNTOS_DECLARADOS, REQ_COMPRA, REQ_RELATOR y REQ_CERT. Actualizar este
+#    encabezado. Los totales de horas y precios se calculan desde las respuestas.
+# 6. PREGUNTAS controla los campos; INTRODUCCIONES los textos de apertura;
+#    generar_pdf() controla la estructura. Usar lenguaje de propuesta comercial.
+#    Las notas de carga y revision pertenecen al formulario, no al informe.
+# 7. Descargar las preguntas y respuestas o el esqueleto Markdown para trabajar
+#    con IA. Revisar los antecedentes antes de incorporar cambios al codigo.
+# 8. Cargar el Anexo N.1 oficial completado y firmado, sin alterar su formato,
+#    y el CV con sus respaldos. El ZIP agrupa PDF y archivos realmente cargados.
+#    No se generan firmas ni se verifican automaticamente esos documentos.
+# 9. La experiencia del relator debe ser la efectiva. En este proceso, el
+#    requisito de cinco anos queda a evaluacion del comprador. No afirmar su
+#    cumplimiento sin respaldo. El PDF no incluye costos internos ni margenes.
+# 10. Formulario completo, sin bloqueos. No hay guardado persistente de progreso;
+#     conservar la sesion abierta y descargar los documentos antes de cerrarla.
 #
-# COMO ADAPTAR A OTRA LICITACION CON O SIN AYUDA DE IA:
-# A. Reemplazar DATOS_LICITACION con los antecedentes del nuevo proceso.
-# B. Revisar MODULOS y sus horas; deben coincidir con las nuevas bases.
-# C. Adaptar REQ_COMPRA, REQ_RELATOR, REQ_CERT y sus estados iniciales en nuevo().
-# D. Editar RELATOR_INICIAL y ADJUNTOS_DECLARADOS; no trasladar evidencia de otro
-#    proceso como si acreditara automaticamente requisitos nuevos.
-# E. PREGUNTAS define los campos del formulario. generar_pdf() define la
-#    estructura y el diseno; CATEGORIAS_ADJUNTOS define las cargas permitidas.
-# F. Descargar el esqueleto Markdown vacio o las preguntas y respuestas para
-#    completarlos con IA. Revisar la informacion antes de copiarla al codigo.
-# G. Este proceso omite vigencia, equivalencia de horas en minutos, horarios
-#    exactos y logo del comprador. No reincorporarlos salvo que otra base los
-#    requiera. Las herramientas se describen por funcion, sin marcas.
-# H. Mantener separados los domicilios y telefonos de empresa/representante.
-#    El correo de la representante no se solicita ni se imprime.
-#
-# ALCANCE DEL DOCUMENTO:
-# - Genera la propuesta detallada, no una orden de compra ni una adjudicacion.
-# - La oferta contiene el precio final, no costos internos ni margen comercial.
-# - La experiencia del relator se declara segun el CV, sin afirmar cinco anos.
-# - Computadores de participantes: aportados por ellos o por el comprador.
-# - Los adjuntos declarados se distinguen de los archivos realmente cargados.
-# - El ANEXO N.1 oficial se carga completado y firmado; este programa no altera
-#   ni reproduce su formato original y no genera firmas de terceros.
-# - No consulta Mercado Publico ni evalua automaticamente la admisibilidad.
-# - Formulario completo, sin bloqueos y sin guardado de progreso. Se trabaja
-#   en la sesion abierta; al recargar el navegador se reinician las respuestas.
-#
-# PRUEBA LOCAL SIN INTERFAZ:
-# python REPORTE_PDF.py --demo-pdf propuesta.pdf
-# Se necesita el logo local o cargarlo previamente desde la interfaz.
-# ============================================================================
+# PRUEBA LOCAL: python REPORTE_PDF.py --demo-pdf propuesta.pdf
+# Se requiere el logo local para esta prueba sin interfaz.
 """Formulario reutilizable por preguntas y generador de propuesta PDF A4."""
 from __future__ import annotations
 
@@ -75,7 +56,7 @@ from zoneinfo import ZoneInfo
 import reportlab
 from reportlab.graphics import renderPDF
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_LEFT
+from reportlab.lib.enums import TA_LEFT, TA_JUSTIFY
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.utils import ImageReader
@@ -83,12 +64,12 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, PageBreak, Table, TableStyle,
-    CondPageBreak,
+    CondPageBreak, HRFlowable,
 )
 
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_NAME = "OTEC_Santa_Monica_Opcion_1.svg"
-PDF_RENDER_VERSION = "v4-propuesta-los-rios-2300000-exenta"
+PDF_RENDER_VERSION = "v5-editorial-profesional"
 NAVY, GOLD = colors.HexColor("#153445"), colors.HexColor("#B78D45")
 INK, MUTED = colors.HexColor("#243F4D"), colors.HexColor("#5B707D")
 PALE, LINE = colors.HexColor("#F0F4F5"), colors.HexColor("#DBE3E7")
@@ -112,8 +93,8 @@ ADJUNTOS_DECLARADOS = [
 ]
 RELATOR_INICIAL = {
     "nombre":"Daniel Cristóbal Vargas Herrera", "rut":"20.522.550-1",
-    "titulo":"Ingeniero Civil Industrial (título declarado en el CV)",
-    "experiencia":"Experiencia declarada relacionada con IA y análisis de datos desde junio de 2022: aproximadamente 4 años y 5 meses a noviembre de 2026. Relatoría en IA generativa desde febrero de 2024: aproximadamente 2 años y 9 meses. Se informa la trayectoria efectiva para evaluación del organismo comprador.",
+    "titulo":"Ingeniero Civil Industrial",
+    "experiencia":"Experiencia declarada relacionada con IA y análisis de datos desde junio de 2022: aproximadamente 4 años y 5 meses a noviembre de 2026. Relatoría en IA generativa desde febrero de 2024: aproximadamente 2 años y 9 meses. Antecedentes sujetos a evaluación del organismo comprador.",
     "disponibilidad":"Confirmada para las dos jornadas presenciales en Valdivia, en fechas a coordinar después de la adjudicación.",
 }
 MODALIDADES = ["Compra Ágil", "Licitación pública", "Licitación privada", "Convenio Marco",
@@ -133,7 +114,6 @@ PREGUNTAS = [
  (0,"cierre_1","¿Cuándo cierra el primer llamado? Fecha y hora.","texto",True),
  (0,"cierre_2","¿Cuándo cierra el segundo llamado, si corresponde?","texto",False),
  (0,"plazo_ficha","¿Qué plazo de entrega indica la ficha?","texto",False),
- (0,"alerta_plazo","¿Hay plazos contradictorios o aspectos que aclarar?","area",False),
  (0,"presupuesto","¿Cuál es el presupuesto estimado en CLP?","entero",True),
  (0,"tipo_presupuesto","¿Qué tipo de presupuesto indica la ficha?","texto",False),
  (0,"contacto_comprador","¿Quién coordina por parte del comprador?","texto",False),
@@ -142,19 +122,16 @@ PREGUNTAS = [
  (1,"rut_oferente","¿Cuál es el RUT de la empresa?","texto",True),
  (1,"domicilio_empresa","¿Cuál es el domicilio de la empresa?","area",True),
  (1,"contacto_oferta","¿Quién es el contacto de la licitación por parte del oferente?","texto",False),
+ (1,"cargo_contacto","¿Cuál es el cargo del contacto de la licitación?","texto",False),
  (1,"telefono","¿Cuál es el teléfono del contacto de la licitación?","texto",True),
  (1,"correo","¿Cuál es el correo del contacto de la licitación?","texto",True),
  (1,"representante","¿Quién es la representante legal?","texto",True),
  (1,"rut_representante","¿Cuál es el RUT de la representante?","texto",True),
  (1,"cargo_representante","¿Cuál es su cargo?","texto",False),
- (1,"domicilio_representante","¿Cuál es el domicilio de la representante?","texto",False),
- (1,"telefono_representante","¿Cuál es el teléfono de la representante legal?","texto",False),
- (1,"personeria","¿Qué notaría, fecha y repertorio identifica la personería?","area",False),
  (1,"banco","¿Cuál es el banco de la empresa?","texto",False),
  (1,"tipo_cuenta","¿Cuál es el tipo de cuenta?","texto",False),
  (1,"cuenta","¿Cuál es el número de cuenta?","texto",False),
  (1,"correo_pagos","¿Cuál es el correo para pagos?","texto",False),
- (1,"codigo_sence","¿Qué código SENCE se ha informado?","texto",False),
  (2,"quienes","¿Quiénes somos y cuál es nuestra propuesta de valor?","area",True),
  (2,"vision","¿Cuál es nuestra visión institucional?","area",True),
  (2,"que_ofrecemos","¿Qué servicio integral ofrecemos para este proceso?","area",True),
@@ -232,7 +209,8 @@ def hoy():
 
 DATOS_LICITACION = {'proceso': '1057545-246-COT26',
  'modalidad': 'Compra Ágil',
- 'titulo': 'Curso de Aplicación de Inteligencia Artificial y Análisis de Datos para la Gestión de Personas',
+ 'titulo': 'Curso de Aplicación de Inteligencia Artificial y Análisis de Datos para la Gestión de '
+           'Personas',
  'comprador': 'SERVICIO DE SALUD LOS RÍOS',
  'rut_comprador': '61.607.500-4',
  'rubro': 'Formación, capacitación y entrenamiento de personal',
@@ -241,160 +219,182 @@ DATOS_LICITACION = {'proceso': '1057545-246-COT26',
  'cierre_1': '11-11-2026 09:01:00',
  'cierre_2': '13-11-2026 09:20:01',
  'plazo_ficha': '1 día',
- 'alerta_plazo': 'Aclarar a qué corresponde el plazo de entrega de 1 día de la ficha: las bases técnicas '
-                 'contemplan 2 jornadas presenciales y 4 horas de estudio autónomo.',
  'presupuesto': 2400000,
  'tipo_presupuesto': 'Disponible',
  'contacto_comprador': 'POR CONFIRMAR - Unidad de Capacitación',
  'oferente': 'CENTRO DE CAPACITACION SANTA MONICA LIMITADA',
- 'nombre_comercial': 'OTEC Santa Mónica',
+ 'nombre_comercial': 'CENTRO DE CAPACITACION SANTA MONICA',
  'rut_oferente': '76.176.857-3',
  'domicilio_empresa': 'Isabel La Católica 4394, oficina 517, piso 5, bloque B, Las Condes, Santiago de '
                       'Chile, Región Metropolitana',
- 'contacto_oferta': 'ebrun',
+ 'contacto_oferta': 'ENRIQUE ARMANDO BRUN URRUTIA',
  'telefono': '+56 9 6359 6523',
  'correo': 'ebrun@otecsantamonica.com',
  'representante': 'María Carmen Urrutia Peña',
  'rut_representante': '11.518.133-5',
  'cargo_representante': 'Representante legal',
- 'domicilio_representante': 'La Concepción 793, Quillota, Región de Valparaíso',
- 'telefono_representante': '+56 9 5807 5021',
- 'personeria': 'Antecedente por confirmar con escritura y vigencia: notaria Lidia María Chahuán Issa, La '
-               'Calera; escritura de 10-03-2026, repertorio 625-2026.',
  'banco': 'BancoEstado',
  'tipo_cuenta': 'Chequera electrónica',
  'cuenta': '29170792066',
  'correo_pagos': 'ebrun@otecsantamonica.com',
- 'codigo_sence': 'C8828904 (dato informado; verificar respaldo)',
- 'quienes': 'Centro de Capacitación Santa Mónica Ltda., OTEC Santa Mónica, orienta su actividad al '
-            'desarrollo de competencias laborales y técnicas mediante programas de capacitación adaptados a '
-            'las necesidades de cada organización. Nuestra propuesta combina contenidos pertinentes, '
-            'ejercicios prácticos y evaluación del aprendizaje, buscando que las personas puedan aplicar lo '
-            'aprendido en sus funciones y elaborar productos útiles para su trabajo.',
- 'vision': 'Ser una OTEC reconocida por ofrecer capacitación pertinente y práctica, que contribuya al '
-           'desarrollo de las personas y a la mejora del trabajo en las organizaciones. Aspiramos a acercar '
-           'el conocimiento y las nuevas herramientas a participantes con distintos niveles de experiencia, '
-           'promoviendo el aprendizaje continuo, el pensamiento crítico y la aplicación responsable de lo '
-           'aprendido.',
+ 'quienes': 'CENTRO DE CAPACITACION SANTA MONICA desarrolla programas de capacitación orientados a '
+            'fortalecer las competencias laborales y apoyar el trabajo de las organizaciones. Diseñamos '
+            'actividades que combinan contenidos pertinentes, ejercicios prácticos y evaluación del '
+            'aprendizaje, con énfasis en su aplicación al trabajo cotidiano.\n'
+            '\n'
+            'Para este curso, proponemos un aprendizaje gradual de la inteligencia artificial y el '
+            'análisis de datos, con ejercicios vinculados a las tareas de gestión de personas del '
+            'Servicio de Salud Los Ríos.',
+ 'vision': 'Contribuir al desarrollo de las personas y al mejoramiento del trabajo en las '
+           'organizaciones, mediante una capacitación práctica, cercana y pertinente a sus necesidades. '
+           'Buscamos que cada participante comprenda lo aprendido, pueda aplicarlo en sus funciones y '
+           'cuente con herramientas para seguir desarrollando sus capacidades.',
  'objetivo_general': 'Desarrollar conocimientos y habilidades prácticas para utilizar herramientas de '
                      'Inteligencia Artificial y análisis de datos en apoyo a los procesos de gestión, '
-                     'procesamiento de información y elaboración de productos de trabajo de la Subdirección '
-                     'de Gestión y Desarrollo de las Personas, promoviendo un uso responsable, crítico y '
-                     'seguro.',
- 'objetivos_especificos': 'Comprender conceptos, posibilidades, limitaciones y aplicaciones de IA en gestión '
-                          'de personas.\n'
-                          'Aplicar IA generativa a redacción, síntesis, organización y sistematización de '
-                          'información.\n'
+                     'procesamiento de información y elaboración de productos de trabajo de la '
+                     'Subdirección de Gestión y Desarrollo de las Personas, promoviendo un uso '
+                     'responsable, crítico y seguro.',
+ 'objetivos_especificos': 'Comprender conceptos, posibilidades, limitaciones y aplicaciones de IA en '
+                          'gestión de personas.\n'
+                          'Aplicar IA generativa a redacción, síntesis, organización y sistematización '
+                          'de información.\n'
                           'Formular instrucciones, evaluar resultados y utilizarlos de manera crítica.\n'
                           'Organizar, explorar e interpretar información con herramientas habituales de '
                           'análisis de datos.\n'
-                          'Aplicar análisis y visualización para elaborar indicadores, reportes y productos '
-                          'de gestión.\n'
+                          'Aplicar análisis y visualización para elaborar indicadores, reportes y '
+                          'productos de gestión.\n'
                           'Reconocer precauciones de protección de datos, confidencialidad y validación '
                           'humana.',
- 'participantes': 'Funcionarios y funcionarias de la Subdirección de Gestión y Desarrollo de las Personas: '
-                  'Departamento de Gestión de las Personas; Departamento de Formación, Capacitación y '
-                  'Educación Continua; y Departamento de Desarrollo Organizacional, Calidad de Vida y Salud '
-                  'Ocupacional.',
+ 'participantes': 'Funcionarios y funcionarias de la Subdirección de Gestión y Desarrollo de las '
+                  'Personas: Departamento de Gestión de las Personas; Departamento de Formación, '
+                  'Capacitación y Educación Continua; y Departamento de Desarrollo Organizacional, '
+                  'Calidad de Vida y Salud Ocupacional.',
  'cupos': 20,
- 'prerrequisitos': 'No se requieren conocimientos previos avanzados en IA, programación o análisis de datos. '
-                   'Se contemplan distintos niveles de familiaridad con herramientas digitales.',
+ 'prerrequisitos': 'No se requieren conocimientos previos avanzados en IA, programación o análisis de '
+                   'datos. Se contemplan distintos niveles de familiaridad con herramientas digitales.',
  'modalidad_curso': 'Presencial con estudio autónomo',
  'horas_exigidas': 20.0,
- 'metodologia': 'El curso se desarrollará mediante una progresión de lo general a lo específico, '
-                'considerando los distintos niveles de experiencia de los participantes. Se iniciará con la '
-                'comprensión de los conceptos, posibilidades y limitaciones de la IA, avanzando hacia '
-                'ejercicios guiados y aplicaciones concretas en gestión de personas. Se combinarán '
-                'demostraciones, práctica acompañada, análisis de casos y un ejercicio integrador con '
-                'información simulada. La protección de datos, la confidencialidad, la evaluación crítica y '
-                'la validación humana se trabajarán transversalmente.',
+ 'metodologia': 'El aprendizaje avanzará desde los conceptos fundamentales hasta su aplicación en '
+                'tareas de gestión de personas. Cada contenido se trabajará mediante explicaciones '
+                'breves, demostraciones y ejercicios guiados, considerando los distintos niveles de '
+                'experiencia de los participantes.\n'
+                '\n'
+                'Se utilizarán casos y datos simulados para practicar la redacción y síntesis de '
+                'información, el análisis de planillas y la elaboración de indicadores e informes. La '
+                'revisión de resultados, la confidencialidad y la protección de datos se abordarán '
+                'durante todo el curso. El trabajo concluirá con un ejercicio que integre inteligencia '
+                'artificial y análisis de datos.',
  'region': 'Región de Los Ríos',
  'comuna': 'Valdivia',
- 'lugar': 'OTEC Santa Mónica gestionará el arriendo de un recinto en la ciudad de Valdivia, adecuado para la '
-          'capacitación presencial de 20 participantes. La selección y confirmación del lugar se realizará '
-          'después de la adjudicación, en coordinación con el organismo comprador, asegurando condiciones '
-          'apropiadas de capacidad, comodidad y funcionamiento.',
+ 'lugar': 'Se arrendará un recinto en Valdivia con capacidad y condiciones adecuadas para la '
+          'capacitación de 20 participantes. Su ubicación se confirmará después de la adjudicación, en '
+          'coordinación con el Servicio de Salud Los Ríos.',
  'quien_lugar': 'Proveedor',
  'periodo_ejecucion': 'Segunda quincena de noviembre de 2026; 2 jornadas presenciales.',
  'fecha_ejecucion': 'Las fechas de las dos jornadas se coordinarán con el organismo comprador una vez '
                     'adjudicado el servicio, dentro de la segunda quincena de noviembre de 2026.',
- 'equipamiento': 'La OTEC gestionará un espacio adecuado y su equipamiento de sala para desarrollar las '
-                 'actividades de capacitación. Cada participante deberá disponer de un computador, propio o '
-                 'proporcionado por el organismo comprador. La provisión de computadores para participantes '
-                 'no está incluida en el servicio de la OTEC; esta distribución de responsabilidades se '
-                 'presenta expresamente para evaluación del comprador.',
+ 'equipamiento': 'El servicio contempla el recinto y el equipamiento de sala necesario para las '
+                 'actividades. Cada participante deberá contar con un computador propio o proporcionado '
+                 'por el organismo comprador. La OTEC no suministrará computadores individuales. El '
+                 'acceso a internet y las condiciones de uso de las herramientas se coordinarán antes '
+                 'del inicio del curso.',
  'cafeteria': 'Servicio para 20 participantes durante las dos jornadas presenciales, con dos pausas por '
-              'jornada, coordinadas con la programación de la actividad. Cada servicio incluirá café, té o '
-              'infusiones, agua o jugo, un mini sándwich y una porción de fruta o bocado dulce por '
-              'participante. Comprende utensilios, montaje, atención, reposición de bebidas y retiro. Las '
-              'necesidades alimentarias especiales deberán informarse previamente para coordinar las '
-              'alternativas correspondientes.',
- 'materiales': 'Cada participante recibirá acceso a un kit digital: manual y presentaciones en PDF; guía de '
-               'instrucciones para IA; cuaderno de ejercicios; bases de datos simuladas; planillas de '
-               'análisis; plantillas de gráficos e informes; y ficha de uso responsable de IA. Se entregará '
-               'una guía breve impresa para las actividades presenciales. El estudio autónomo contará con '
-               'guía, archivos de trabajo, caso integrador y criterios de evaluación, alineados con sus '
-               'cuatro horas pedagógicas. Los ejercicios utilizarán información ficticia.',
- 'perfil_docente': 'Titulado en Informática, Control de Gestión o carrera afín; experiencia comprobable de '
-                   'al menos 5 años en IA generativa, análisis y visualización de datos y optimización de '
-                   'procesos administrativos. Dominio de prompts, planillas, indicadores, reportes, '
-                   'protección de datos y uso responsable de IA.',
- 'referencia_cv': 'Se adjunta el currículum de Daniel Cristóbal Vargas Herrera junto con sus antecedentes de '
-                  'competencias y certificaciones en la documentación que acompaña la propuesta. El '
-                  'inventario distingue esta declaración de los archivos efectivamente incorporados a la '
-                  'sesión y al ZIP.',
+              'jornada, coordinadas con la programación de la actividad. Cada servicio incluirá café, '
+              'té o infusiones, agua o jugo, un mini sándwich y una porción de fruta o bocado dulce por '
+              'participante. Comprende utensilios, montaje, atención, reposición de bebidas y retiro. '
+              'Las necesidades alimentarias especiales deberán informarse previamente para coordinar '
+              'las alternativas correspondientes.',
+ 'materiales': 'Cada participante recibirá acceso a un kit digital: manual y presentaciones en PDF; '
+               'guía de instrucciones para IA; cuaderno de ejercicios; bases de datos simuladas; '
+               'planillas de análisis; plantillas de gráficos e informes; y ficha de uso responsable de '
+               'IA. Se entregará una guía breve impresa para las actividades presenciales. El estudio '
+               'autónomo contará con guía, archivos de trabajo, caso integrador y criterios de '
+               'evaluación, alineados con sus cuatro horas pedagógicas. Los ejercicios utilizarán '
+               'información ficticia.',
+ 'perfil_docente': 'Titulado en Informática, Control de Gestión o carrera afín; experiencia comprobable '
+                   'de al menos 5 años en IA generativa, análisis y visualización de datos y '
+                   'optimización de procesos administrativos. Dominio de prompts, planillas, '
+                   'indicadores, reportes, protección de datos y uso responsable de IA.',
+ 'referencia_cv': 'El currículum del relator y los antecedentes de sus competencias y certificaciones '
+                  'acompañan la propuesta en la documentación adjunta.',
  'evaluacion': 'Se aplicará un diagnóstico inicial sin nota, ejercicios guiados con retroalimentación '
                'durante el curso y una evaluación final mediante un caso integrador individual. El '
-               'participante trabajará con una base simulada, elaborará un indicador o gráfico y preparará '
-               'un informe breve apoyado por IA, revisando exactitud y uso responsable de la información. La '
-               'evaluación final se expresará en escala de 1 a 7.',
- 'aprobacion': 'Se propone una nota mínima de aprobación de 4,0 y una asistencia mínima del 75 %. Estos '
-               'criterios son parte de la propuesta de la OTEC y no se presentan como umbrales fijados en '
-               'las bases. El certificado y el informe registrarán la calificación y el resultado de cada '
+               'participante trabajará con una base simulada, elaborará un indicador o gráfico y '
+               'preparará un informe breve apoyado por IA, revisando exactitud y uso responsable de la '
+               'información. La evaluación final se expresará en escala de 1 a 7.',
+ 'aprobacion': 'Se propone una nota mínima de aprobación de 4,0 y una asistencia mínima del 75 %. El '
+               'certificado y el informe final registrarán la calificación y el resultado de cada '
                'participante.',
- 'entrega_certificados': 'Entrega digital de certificados individuales e informe final en PDF, más una '
-                         'planilla de resultados en formato editable, dentro de cinco días hábiles '
-                         'posteriores a la finalización del curso. Los certificados incluirán nombre y RUT, '
-                         'curso, fechas de inicio y término, nota obtenida, cantidad de horas pedagógicas e '
-                         'identificación de la OTEC. Se contemplan como firmantes la representante legal y '
-                         'el relator, mediante las firmas que efectivamente correspondan al emitirlos.',
+ 'entrega_certificados': 'Los certificados individuales y el informe final se entregarán en PDF dentro '
+                         'de cinco días hábiles posteriores al término del curso. Se acompañará una '
+                         'planilla editable con los resultados.\n'
+                         '\n'
+                         'Cada certificado identificará al participante mediante su nombre y RUT e '
+                         'incluirá el nombre del curso, las fechas de inicio y término, la nota '
+                         'obtenida, las horas pedagógicas y la identificación de la OTEC. Se contempla '
+                         'la firma de la representante legal y del relator. El informe final '
+                         'incorporará la identificación de los participantes, calificaciones en escala '
+                         'de 1 a 7, asistencia, resultado de aprobación, fechas y horas del curso.',
  'destino_informe': 'Unidad de Capacitación de la Dirección del Servicio de Salud Los Ríos',
  'cantidad': 1,
  'valor_unitario': 2300000,
  'despacho': 0,
  'impuesto': 'Exento / sin impuesto',
  'tasa': 19,
- 'incluye_precio': 'Precio global de $2.300.000, exento de IVA, para los 20 participantes. Comprende '
-                   'relatoría, preparación y materiales, recinto y equipamiento de sala, cafetería, '
-                   'evaluación, certificación e informe final, conforme a las condiciones descritas. Los '
-                   'computadores de los participantes serán aportados por ellos o por el organismo '
-                   'comprador.',
- 'detalle': 'Curso de IA y análisis de datos para 20 participantes: 20 horas pedagógicas (16 presenciales y '
-            '4 autónomas). Incluye relatoría, materiales, recinto, cafetería, evaluación, certificados e '
-            'informe final. Valor global exento: $2.300.000.',
+ 'incluye_precio': 'El valor incluye relatoría, preparación de la actividad, materiales, recinto y '
+                   'equipamiento de sala, cafetería, evaluación, certificados e informe final. Los '
+                   'computadores serán aportados por los participantes o por el organismo comprador.',
+ 'detalle': 'Curso de IA y análisis de datos para 20 participantes: 20 horas pedagógicas (16 '
+            'presenciales y 4 autónomas). Incluye relatoría, materiales, recinto, cafetería, '
+            'evaluación, certificados e informe final. Valor global exento: $2.300.000.',
  'adjuntos_esperados': 2,
  'adjuntos_solicitados': 'ANEXO Nº 1_ COMPRAS AGILES.docx\n'
                          'BASES TECNICAS CURSO APLICACION IA Y ANALISIS DE DATOS.pdf',
  'fecha_propuesta': '',
- 'que_ofrecemos': 'La coordinación y ejecución integral del Curso de Aplicación de Inteligencia Artificial y '
-                  'Análisis de Datos para la Gestión de Personas, dirigido a 20 funcionarios y funcionarias '
-                  'del Servicio de Salud Los Ríos. El servicio comprende 20 horas pedagógicas: 16 '
-                  'presenciales en dos jornadas en Valdivia y 4 de estudio autónomo. Incluye programa, '
-                  'relatoría, materiales, recinto, equipamiento de sala, cafetería, evaluación, '
-                  'certificación e informe final, conforme al alcance de esta propuesta.',
- 'herramientas': 'Se utilizarán herramientas de IA generativa, planillas de cálculo y recursos de '
-                 'visualización pertinentes a los objetivos y contenidos solicitados, seleccionados según su '
-                 'accesibilidad, disponibilidad y compatibilidad con las condiciones institucionales. Su '
-                 'aplicación avanzará desde instrucciones, redacción y síntesis hasta organización de datos, '
-                 'filtros, fórmulas básicas, tablas dinámicas, indicadores, gráficos y elaboración de '
-                 'informes. La propuesta no compromete marcas específicas.',
- 'documentacion_adjunta': 'Se adjunta el Anexo Nº 1: Identificación del Oferente, junto con el currículum y '
-                          'los antecedentes de competencias y certificaciones del relator. La propuesta '
-                          'incorpora un checklist de los requisitos de las bases, con el compromiso de '
-                          'ejecución, los antecedentes disponibles y las observaciones correspondientes. El '
-                          'Anexo Nº 1 debe conservar su texto y formato oficial y presentarse completado y '
-                          'firmado.'}
+ 'que_ofrecemos': 'Ofrecemos la ejecución del curso para 20 participantes, con 20 horas pedagógicas: 16 '
+                  'presenciales, distribuidas en dos jornadas en Valdivia, y 4 de estudio autónomo. El '
+                  'servicio comprende relatoría, materiales, recinto y equipamiento de sala, cafetería, '
+                  'evaluación, certificación e informe final.',
+ 'herramientas': 'Se trabajará con herramientas de inteligencia artificial generativa, planillas de '
+                 'cálculo y recursos de visualización de datos. Su selección considerará el acceso de '
+                 'los participantes y las condiciones de uso de la institución. Los ejercicios '
+                 'comprenderán la formulación de instrucciones, la revisión de textos, la organización '
+                 'de datos, el uso de fórmulas y tablas dinámicas, y la preparación de gráficos e '
+                 'informes.',
+ 'documentacion_adjunta': 'La oferta se acompaña del Anexo Nº 1, Identificación del Oferente, y del '
+                          'currículum del relator con sus antecedentes de competencias y '
+                          'certificaciones.',
+ 'cargo_contacto': 'Director de Administración y Finanzas'}
 
+
+# Textos de apertura editables. Las llaves se completan desde DATOS_LICITACION.
+INTRODUCCIONES = {'proceso': 'La presente propuesta responde al proceso {proceso}, convocado por {comprador}, para la '
+            'contratación del servicio que se detalla a continuación.',
+ 'objetivos': 'La capacitación está orientada a desarrollar capacidades de aplicación directa en las '
+              'funciones de los participantes. Sus objetivos y actividades se organizan conforme a los '
+              'contenidos solicitados por el organismo comprador.',
+ 'programa': 'El programa contempla {horas_exigidas:g} horas pedagógicas. Los contenidos se organizan por '
+             'jornada y modalidad, con una secuencia que combina fundamentos, práctica y aplicación al '
+             'trabajo.',
+ 'metodologia': 'Las actividades vinculan los contenidos del curso con situaciones de trabajo de los '
+                'participantes. Los recursos de apoyo permitirán practicar durante las jornadas y reforzar '
+                'lo aprendido de manera autónoma.',
+ 'logistica': 'La capacitación se realizará en {comuna}, {region}, en modalidad {modalidad_curso}. La '
+              'coordinación del recinto y de las fechas se efectuará con el organismo comprador.',
+ 'relator': 'La ejecución estará a cargo del profesional identificado en esta sección. Se presentan su '
+            'formación, experiencia y disponibilidad, junto con los antecedentes relacionados con el perfil '
+            'solicitado.',
+ 'requisitos': 'El servicio considera los componentes solicitados en las bases técnicas. Se detalla su '
+               'incorporación en la oferta y el antecedente o compromiso que corresponde a cada requisito.',
+ 'certificacion': 'El aprendizaje se evaluará mediante actividades prácticas y una instancia final de '
+                  'aplicación. Los resultados se registrarán en los certificados individuales y en el '
+                  'informe de cierre.',
+ 'economica': 'Se presenta el valor global del servicio para {cupos} participantes, de acuerdo con el '
+              'programa y las condiciones de ejecución descritas en esta propuesta.',
+ 'documentos': 'Los antecedentes administrativos y profesionales se presentan como documentación adjunta '
+               'para la evaluación de la oferta.',
+ 'identificacion': 'La contratación y las comunicaciones relacionadas con la propuesta se gestionarán con '
+                   'los siguientes antecedentes del oferente.'}
 
 def datos_licitacion():
     d=copy.deepcopy(DATOS_LICITACION)
@@ -424,9 +424,9 @@ def nuevo(ejemplo_activo=True):
         if "5 años" in req:
             row.update(estado="A evaluación del comprador",respaldo=rel["experiencia"])
         elif "Título" in req:
-            row.update(estado="Declarado",respaldo="Ingeniero Civil Industrial, según CV. Afinidad del perfil a evaluar por el comprador.")
+            row.update(estado="Declarado",respaldo="Ingeniero Civil Industrial, según el currículum adjunto.")
         elif "Análisis" in req:
-            row.update(estado="Declarado",respaldo="CV, diplomado en Data Science e IA y antecedentes en herramientas de productividad; el comprador evalúa su suficiencia.")
+            row.update(estado="Declarado",respaldo="Currículum, diplomado en Data Science e IA y antecedentes de manejo de herramientas de productividad.")
         else:
             row.update(estado="Respaldado",respaldo="Antecedentes de relatoría, competencias y certificaciones incluidos en el compilado del CV.")
     compra=items_check(REQ_COMPRA)
@@ -436,13 +436,13 @@ def nuevo(ejemplo_activo=True):
         elif "Lugar" in row["requisito"]:
             row.update(estado="Comprometido",respaldo="Recinto arrendado por la OTEC tras adjudicar; computadores aportados por participantes o comprador, según condiciones de esta propuesta.")
         elif "Currículum" in row["requisito"]:
-            row.update(estado="Declarado",respaldo="CV y competencias/certificaciones declarados como documentación adjunta.")
+            row.update(estado="Declarado",respaldo="Currículum y antecedentes de competencias y certificaciones en la documentación adjunta.")
         else:
             row.update(estado="Comprometido",respaldo="Prestación descrita en el programa y alcance de la presente propuesta.")
     certificacion=items_check(REQ_CERT)
     for row in certificacion:
         row.update(estado="Comprometido",respaldo="Certificados e informe final dentro de cinco días hábiles posteriores al término del curso.")
-    return {"version":4,"datos":d,"modulos":modulos,"docentes":[rel],"compra":compra,
+    return {"version":5,"datos":d,"modulos":modulos,"docentes":[rel],"compra":compra,
             "certificacion":certificacion,"logos":{"oferente":{"nombre":"","base64":""}},
             "archivos":[],"declarados":copy.deepcopy(ADJUNTOS_DECLARADOS),
             "marcar_borrador":False,"incluir_revision":False,"incluir_admin":True}
@@ -628,7 +628,7 @@ def dibujar_logo(c, logo, x, y, w, h, etiqueta):
 
 def validar(b):
     b=copy.deepcopy(b)
-    if b.get("version")!=4: raise ValueError("Versión de formulario no compatible.")
+    if b.get("version")!=5: raise ValueError("Versión de formulario no compatible.")
     plantilla=nuevo()
     if not isinstance(b.get("datos"),dict):
         raise ValueError("El respaldo no contiene respuestas.")
@@ -767,7 +767,7 @@ def esqueleto_markdown(b,solo_estructura=False):
     d=b["datos"]
     out=["# PROPUESTA TÉCNICA Y ECONÓMICA", "",
          "Instrucción para IA: conserva esta estructura; completa lo pendiente solo con antecedentes aportados. Distingue requisitos de las bases y compromisos propuestos. No inventes experiencia, personas, acreditaciones ni archivos adjuntos.", ""]
-    for i,nombre in enumerate(PASOS[:-1]):
+    for i,nombre in enumerate(PASOS):
         out += [f"## {i+1}. {nombre}",""]
         for p,k,pregunta,t,req in PREGUNTAS:
             if p==i:
@@ -790,12 +790,14 @@ def esqueleto_markdown(b,solo_estructura=False):
 
 def estilos_pdf():
     return {
-        "body":ParagraphStyle("body",fontName="OTEC",fontSize=10,leading=14,textColor=INK,spaceAfter=8),
+        "body":ParagraphStyle("body",fontName="OTEC",fontSize=9.7,leading=14,textColor=INK,spaceAfter=9,alignment=TA_JUSTIFY),
         "small":ParagraphStyle("small",fontName="OTEC",fontSize=8,leading=10.5,textColor=INK,spaceAfter=2),
-        "h1":ParagraphStyle("h1",fontName="OTEC-Bold",fontSize=20,leading=25,textColor=NAVY,spaceAfter=16,keepWithNext=True),
+        "h1":ParagraphStyle("h1",fontName="OTEC-Bold",fontSize=21,leading=26,textColor=NAVY,spaceAfter=12,keepWithNext=True),
         "h2":ParagraphStyle("h2",fontName="OTEC-Bold",fontSize=11,leading=15,textColor=NAVY,spaceBefore=10,spaceAfter=6,keepWithNext=True),
         "th":ParagraphStyle("th",fontName="OTEC-Bold",fontSize=8,leading=11,textColor=colors.white),
-        "note":ParagraphStyle("note",fontName="OTEC",fontSize=9,leading=13,textColor=MUTED,spaceAfter=9),
+        "note":ParagraphStyle("note",fontName="OTEC",fontSize=9,leading=13,textColor=MUTED,spaceAfter=9,alignment=TA_JUSTIFY),
+        "banner_label":ParagraphStyle("banner_label",fontName="OTEC-Bold",fontSize=8,leading=12,textColor=colors.white),
+        "banner_value":ParagraphStyle("banner_value",fontName="OTEC-Bold",fontSize=23,leading=32,textColor=colors.white),
     }
 
 
@@ -811,7 +813,9 @@ def generar_pdf(b,token=None,solo_portada=False):
             ("RIGHTPADDING",(0,0),(-1,-1),9),("TOPPADDING",(0,0),(-1,-1),5),("BOTTOMPADDING",(0,0),(-1,-1),5),
             ("LINEBELOW",(0,0),(-1,0),1,GOLD),("LINEBELOW",(0,1),(-1,-1),.3,LINE)]))
         return t
-    def campo(label,text): return [P(label,"h2"),P(text)]
+    def parrafos(text):
+        return [P(x) for x in (text or "Por completar").split("\n\n") if x.strip()]
+    def campo(label,text): return [P(label,"h2"),*parrafos(text)]
     logos={}; problemas_logo=[]
     for rol in ["oferente"]:
         try:
@@ -849,7 +853,7 @@ def generar_pdf(b,token=None,solo_portada=False):
             caja(c,label,x,313,151,15,7.5,True,color=MUTED); caja(c,value,x,277,151,31,15,True,color=NAVY)
         caja(c,d["periodo_ejecucion"],48,229,499,35,11)
         caja(c,d["nombre_comercial"],48,183,499,32,18,True,color=NAVY)
-        caja(c,d["oferente"]+" | RUT "+d["rut_oferente"],48,150,499,28,9)
+        caja(c,"RUT "+d["rut_oferente"],48,150,499,28,9)
         caja(c,"Contacto licitación: "+d["correo"]+" | "+d["telefono"],48,125,499,20,9)
         caja(c,"Emisión: "+d["fecha_propuesta"],48,91,499,20,9,color=MUTED)
         c.setStrokeColor(GOLD); c.line(48,72,547,72)
@@ -858,7 +862,7 @@ def generar_pdf(b,token=None,solo_portada=False):
 
     def paginas(c,doc):
         c.saveState(); w,h=A4
-        c.setFont("OTEC-Bold",8); c.setFillColor(NAVY); c.drawString(48,h-36,"OTEC Santa Mónica")
+        c.setFont("OTEC-Bold",8); c.setFillColor(NAVY); c.drawString(48,h-36,"CENTRO DE CAPACITACION SANTA MONICA")
         c.setFont("OTEC",7.5); c.setFillColor(MUTED); c.drawRightString(w-48,h-36,d["proceso"][:60])
         c.setStrokeColor(GOLD); c.line(48,h-45,w-48,h-45)
         c.setStrokeColor(LINE); c.line(48,43,w-48,43)
@@ -871,93 +875,121 @@ def generar_pdf(b,token=None,solo_portada=False):
     if solo_portada:
         doc.build(story,onFirstPage=portada,onLaterPages=paginas); return out.getvalue()
     story.append(PageBreak())
-    def cap(t): story.extend([CondPageBreak(100),P(t,"h1")])
-    cap("01 / Presentación institucional")
-    story.extend(campo("Quiénes somos",d["quienes"])); story.extend(campo("Nuestra visión",d["vision"]))
-    story.extend(campo("Qué ofrecemos",d["que_ofrecemos"]))
-    story.append(PageBreak()); cap("02 / Antecedentes del proceso")
+    def cap(t,clave=None):
+        story.extend([CondPageBreak(125),P(t,"h1"),HRFlowable(width="100%",thickness=1.2,color=GOLD,spaceAfter=14)])
+        if clave:
+            texto=INTRODUCCIONES.get(clave,"").format(**d)
+            if texto: story.extend(parrafos(texto))
+
+    cap("Presentación institucional")
+    story.extend(parrafos(d["quienes"]))
+    story.extend(campo("Nuestra visión",d["vision"]))
+    story.extend(campo("Servicio propuesto",d["que_ofrecemos"]))
+
+    story.append(PageBreak()); cap("Antecedentes de la contratación","proceso")
+    story.extend(campo("Servicio requerido",d["titulo"]))
     story.append(tabla(["Antecedente","Información"],[
-        ["Comprador",d["comprador"]+" / "+d["rut_comprador"]],["Modalidad y código",d["modalidad"]+" / "+d["proceso"]],
-        ["Rubro e ítem",d["rubro"]+" / "+d["id_item"]],["Presupuesto",pesos(d["presupuesto"])+" / "+d["tipo_presupuesto"]],
-        ["Publicación",d["publicacion"]],["Cierre primer llamado",d["cierre_1"]],["Cierre segundo llamado",d["cierre_2"]],
-        ["Publicación a primer cierre",intervalo(d["publicacion"],d["cierre_1"])],
-        ["Publicación a segundo cierre",intervalo(d["publicacion"],d["cierre_2"])],
-    ],[163,ancho-163]))
-    if d["alerta_plazo"]: story.extend(campo("Aspecto por aclarar",d["alerta_plazo"]))
-    story.append(PageBreak()); cap("03 / Objetivos y participantes")
+        ["Organismo comprador",d["comprador"]+"\nRUT "+d["rut_comprador"]],
+        ["Modalidad y código",d["modalidad"]+"\n"+d["proceso"]],
+        ["Categoría del servicio",d["rubro"]],
+        ["Ítem",d["id_item"]],
+        ["Lugar de ejecución",d["comuna"]+", "+d["region"]],
+        ["Modalidad del curso",d["modalidad_curso"]],
+    ],[165,ancho-165]))
+    story.append(P("Fechas del proceso","h2"))
+    fechas=[[label,d[k]] for label,k in [("Publicación","publicacion"),("Cierre del primer llamado","cierre_1"),("Cierre del segundo llamado","cierre_2")] if d[k].strip()]
+    if fechas: story.append(tabla(["Hito","Fecha y hora"],fechas,[245,ancho-245]))
+
+    story.append(PageBreak()); cap("Objetivos y participantes","objetivos")
     story.extend(campo("Objetivo general",d["objetivo_general"]))
     story.append(P("Objetivos específicos","h2"))
-    for i,linea in enumerate(d["objetivos_especificos"].splitlines(),1):
-        if linea.strip(): story.append(P(f"{i}. {linea.strip()}"))
-    story.extend(campo("Universo de participantes",d["participantes"]))
-    story.append(tabla(["Cupos","Modalidad"],[[str(d["cupos"]),d["modalidad_curso"]]],[80,ancho-80]))
+    for i,linea in enumerate(filter(str.strip,d["objetivos_especificos"].splitlines()),1):
+        story.append(P(f"{i}. {linea.strip()}"))
+    story.extend(campo("Participantes",f"La actividad contempla {d['cupos']} participantes. "+d["participantes"]))
     story.extend(campo("Conocimientos previos",d["prerrequisitos"]))
-    story.append(PageBreak()); cap("04 / Programa y distribución horaria")
+
+    story.append(PageBreak()); cap("Programa de capacitación","programa")
     tot=horas(b)
-    story.append(P(f"Duración exigida: {d['horas_exigidas']:g} horas pedagógicas. Programa propuesto: {sum(tot.values()):g} horas. "+" / ".join(f"{k}: {v:g} h" for k,v in tot.items())))
     for jornada in dict.fromkeys(m["jornada"] for m in b["modulos"]):
-        story.append(P(jornada,"h2")); filas=[m for m in b["modulos"] if m["jornada"]==jornada]
-        story.append(tabla(["Módulo / modalidad","Contenidos","Horas"],[[m["nombre"]+"\n"+m["tipo"],m["contenido"],f"{m['horas']:g}"] for m in filas],[148,ancho-196,48]))
-    story.append(PageBreak()); cap("04 / Metodología y herramientas")
-    story.extend(campo("Metodología de trabajo",d["metodologia"]))
-    story.extend(campo("Aplicación de herramientas",d["herramientas"]))
-    story.append(PageBreak()); cap("05 / Lugar, fechas y logística")
-    story.append(tabla(["Aspecto","Propuesta / requisito"],[["Región y comuna",d["region"]+" / "+d["comuna"]],
-        ["Lugar",d["lugar"]],["Responsable de disponer el lugar",d["quien_lugar"]],
-        ["Período requerido",d["periodo_ejecucion"]],["Coordinación de fechas",d["fecha_ejecucion"]],
-        ["Plazo indicado en ficha",d["plazo_ficha"]]],[158,ancho-158]))
-    for label,k in [("Equipamiento y conectividad","equipamiento"),("Materiales de trabajo","materiales"),("Cafetería","cafeteria")]: story.extend(campo(label,d[k]))
-    story.append(PageBreak()); cap("06 / Equipo relator y documentación")
-    story.extend(campo("Perfil requerido",d["perfil_docente"]))
-    for i,rel in enumerate(b["docentes"],1):
-        story.append(P(f"Relator {i}: {rel['nombre']}","h2"))
-        story.append(tabla(["Antecedente","Información"],[["RUT",rel["rut"]],["Título",rel["titulo"]],["Experiencia declarada",rel["experiencia"]],["Disponibilidad",rel["disponibilidad"]]],[100,ancho-100]))
-        story.append(Spacer(1,8))
-        story.append(tabla(["Requisito","Estado","Respaldo / observación"],[[x["requisito"],x["estado"],x["respaldo"] or "Por adjuntar / verificar"] for x in rel["checklist"]],[190,108,ancho-298]))
-    story.extend(campo("Referencia al CV y respaldos",d["referencia_cv"]))
-    archivos=disponibles(b,token) if token else b["archivos"]
-    story.append(PageBreak()); cap("07 / Checklist de requisitos de compra")
-    story.append(P("Matriz editable de cumplimiento. Cada estado debe sustentarse en los antecedentes de la propuesta; cargar un archivo no verifica automáticamente su contenido.","note"))
-    story.append(tabla(["Requisito","Estado","Evidencia / compromiso"],[[x["requisito"],x["estado"],x["respaldo"] or "Por completar"] for x in b["compra"]],[190,108,ancho-298]))
-    story.append(PageBreak()); cap("08 / Evaluación y certificación")
-    for label,k in [("Evaluación del aprendizaje","evaluacion"),("Condiciones de aprobación","aprobacion"),("Entrega de certificados e informe","entrega_certificados"),("Destinatario del informe final","destino_informe")]: story.extend(campo(label,d[k]))
-    story.append(P("Checklist de certificación","h2"))
-    story.append(tabla(["Requisito","Estado","Evidencia / compromiso"],[[x["requisito"],x["estado"],x["respaldo"] or "Por completar"] for x in b["certificacion"]],[190,108,ancho-298]))
-    story.append(PageBreak()); cap("09 / Propuesta económica")
+        story.append(P(jornada,"h2"))
+        filas=[m for m in b["modulos"] if m["jornada"]==jornada]
+        tabla_modulos=tabla(["Módulo y modalidad","Contenidos","Horas"],
+            [[m["nombre"]+"\n"+m["tipo"],m["contenido"],f"{m['horas']:g}"] for m in filas]
+            +[["Total "+jornada.lower(),"Horas pedagógicas",f"{sum(m['horas'] for m in filas):g}"]],
+            [148,ancho-196,48])
+        tabla_modulos.setStyle(TableStyle([("BACKGROUND",(0,-1),(-1,-1),colors.HexColor("#E4ECEF")),("LINEABOVE",(0,-1),(-1,-1),.7,GOLD)]))
+        story.append(tabla_modulos)
+    story.append(Spacer(1,10))
+    story.append(P(f"Total del curso: {sum(tot.values()):g} horas pedagógicas.","h2"))
+
+    story.append(PageBreak()); cap("Metodología y recursos de aprendizaje","metodologia")
+    story.extend(campo("Desarrollo de las actividades",d["metodologia"]))
+    story.extend(campo("Herramientas de trabajo",d["herramientas"]))
+    story.extend(campo("Materiales para los participantes",d["materiales"]))
+
+    story.append(PageBreak()); cap("Lugar y condiciones de ejecución","logistica")
+    story.extend(campo("Recinto y ubicación",d["lugar"]))
+    responsable={"Proveedor":"El recinto será dispuesto por el oferente.","Comprador":"El recinto será dispuesto por el organismo comprador.","Compartido":"La habilitación del recinto se coordinará entre el oferente y el organismo comprador.","Por definir":"El responsable del recinto se confirmará antes de la ejecución."}.get(d["quien_lugar"],d["quien_lugar"])
+    story.extend(parrafos(responsable))
+    story.extend(campo("Fechas de ejecución",d["periodo_ejecucion"]))
+    story.extend(parrafos(d["fecha_ejecucion"]))
+    story.extend(campo("Equipamiento y conectividad",d["equipamiento"]))
+    if d["cafeteria"].strip(): story.extend(campo("Servicio de cafetería",d["cafeteria"]))
+
+    story.append(PageBreak()); cap("Relator y antecedentes profesionales","relator")
+    story.extend(campo("Perfil solicitado",d["perfil_docente"]))
+    for rel in b["docentes"]:
+        story.append(P(rel["nombre"],"h2"))
+        story.extend(parrafos(f"RUT {rel['rut']}. {rel['titulo']}."))
+        story.extend(parrafos(rel["experiencia"]))
+        story.extend(parrafos(rel["disponibilidad"]))
+        story.append(tabla(["Requisito","Estado","Antecedente"],[[x["requisito"],x["estado"],x["respaldo"]] for x in rel["checklist"]],[178,91,ancho-269]))
+    story.extend(campo("Documentación de respaldo",d["referencia_cv"]))
+
+    story.append(PageBreak()); cap("Requisitos del servicio","requisitos")
+    story.append(tabla(["Requisito de las bases","Propuesta"],[[x["requisito"],x["estado"]+". "+x["respaldo"]] for x in b["compra"]],[200,ancho-200]))
+
+    story.append(PageBreak()); cap("Evaluación, certificación e informe final","certificacion")
+    for label,k in [("Evaluación del aprendizaje","evaluacion"),("Aprobación","aprobacion"),("Entrega de certificados y resultados","entrega_certificados")]:
+        story.extend(campo(label,d[k]))
+    story.extend(parrafos("El informe final será entregado a la "+d["destino_informe"]+"."))
+    story.append(P("Contenido de los entregables","h2"))
+    story.append(tabla(["Requisito","Estado"],[[x["requisito"],x["estado"]] for x in b["certificacion"]],[ancho-110,110]))
+
+    story.append(PageBreak()); cap("Propuesta económica","economica")
     neto,iva,total=montos(d)
-    story.append(tabla(["Concepto","Valor"],[["Cantidad global",str(d["cantidad"])],["Valor unitario neto",pesos(d["valor_unitario"])],
-        ["Despacho neto",pesos(d["despacho"])],["Neto + despacho",pesos(neto)],["Tratamiento de impuesto",d["impuesto"]],
-        ["Impuesto",pesos(iva) if iva is not None else "Por definir"],["TOTAL OFERTADO",pesos(total) if total is not None else "Por definir"],
-        ["Presupuesto estimado del comprador",pesos(d["presupuesto"])]],[245,ancho-245]))
-    story.extend(campo("Alcance del precio",d["incluye_precio"])); story.extend(campo("Detalle breve de cotización",d["detalle"]))
-    story.append(PageBreak()); cap("10 / Documentación adjunta")
-    story.extend(campo("Documentos que acompañan la oferta",d["documentacion_adjunta"]))
-    story.extend(campo("Documentos de referencia del proceso",d["adjuntos_solicitados"]))
-    filas=[]; categorias_cargadas={x["categoria"] for x in archivos}
-    for item in b["declarados"]:
-        if item["categoria"] not in categorias_cargadas:
-            filas.append([item["nombre"],item["categoria"],"Declarado; presentación por separado"])
-    filas += [[a["nombre"],a["categoria"],"Cargado en esta sesión / ZIP"] for a in archivos]
-    story.append(tabla(["Documento","Categoría","Estado"],filas or [["Sin documentos declarados","Por completar","Pendiente"]],[225,118,ancho-343]))
-    story.append(P("El ZIP descargable contiene el PDF de la propuesta y solo los originales efectivamente cargados. La declaración de un adjunto no incorpora sus bytes al ZIP.","note"))
+    banner=Table([[P("VALOR TOTAL OFERTADO","banner_label"),P("PRESUPUESTO DEL COMPRADOR","banner_label")],
+        [P(pesos(total) if total is not None else "Por definir","banner_value"),P(pesos(d["presupuesto"]),"banner_value")]],colWidths=[ancho/2]*2)
+    banner.setStyle(TableStyle([("BACKGROUND",(0,0),(-1,-1),NAVY),("LEFTPADDING",(0,0),(-1,-1),17),
+        ("RIGHTPADDING",(0,0),(-1,-1),10),("TOPPADDING",(0,0),(-1,0),15),("BOTTOMPADDING",(0,1),(-1,1),15),
+        ("VALIGN",(0,0),(-1,-1),"TOP"),("LINEBEFORE",(1,0),(1,-1),.5,GOLD)]))
+    story.extend([banner,Spacer(1,10)])
+    tratamiento="Oferta exenta de IVA." if d["impuesto"]=="Exento / sin impuesto" else (f"Valor con impuesto del {d['tasa']} %." if d["impuesto"]=="Con impuesto" else "Tratamiento tributario por definir.")
+    story.append(P(tratamiento))
+    story.extend(campo("Alcance del valor ofertado",d["incluye_precio"]))
+    story.append(Spacer(1,10)); cap("Documentación de la oferta","documentos")
+    story.extend(parrafos(d["documentacion_adjunta"]))
+    nombres=[x["nombre"] for x in b["declarados"]]
+    nombres += [x["nombre"] for x in b["archivos"] if x["categoria"]!="Bases técnicas"]
+    for i,nombre in enumerate(dict.fromkeys(nombres),1): story.append(P(f"{i}. {nombre}"))
+
     if b["incluir_admin"]:
-        story.append(PageBreak()); cap("11 / Identificación administrativa")
-        story.append(P("Datos informativos para identificar al oferente. Esta sección no sustituye el Anexo Nº 1 oficial, que debe conservarse en su formato original, completado y firmado.","note"))
-        story.append(tabla(["Empresa","Información"],[["Razón social",d["oferente"]],["RUT",d["rut_oferente"]],["Domicilio",d["domicilio_empresa"]],
-            ["Contacto de la licitación",d["contacto_oferta"]+" / "+d["telefono"]+" / "+d["correo"]],["Código SENCE informado",d["codigo_sence"]]],[135,ancho-135]))
-        story.append(P("Representante legal","h2"))
-        story.append(tabla(["Antecedente","Información"],[["Nombre",d["representante"]],["RUT",d["rut_representante"]],["Cargo",d["cargo_representante"]],
-            ["Domicilio",d["domicilio_representante"]],["Teléfono",d["telefono_representante"]],["Personería",d["personeria"]]],[135,ancho-135]))
-        story.append(P("Datos bancarios","h2"))
-        story.append(tabla(["Antecedente","Información"],[["Titular",d["oferente"]],["RUT titular",d["rut_oferente"]],["Banco",d["banco"]],
-            ["Tipo de cuenta",d["tipo_cuenta"]],["Número de cuenta",d["cuenta"]],["Correo pagos",d["correo_pagos"]]],[135,ancho-135]))
+        story.append(PageBreak()); cap("Identificación del oferente","identificacion")
+        story.extend(campo("Razón social",d["oferente"]))
+        story.extend(parrafos("RUT "+d["rut_oferente"]+".\n"+d["domicilio_empresa"]))
+        story.extend(campo("Contacto de la propuesta",d["contacto_oferta"]+"\n"+d["cargo_contacto"]))
+        story.extend(parrafos("Teléfono: "+d["telefono"]+"\nCorreo: "+d["correo"]))
+        story.extend(campo("Representante legal",d["representante"]+"\nRUT "+d["rut_representante"]+"\n"+d["cargo_representante"]))
+        story.append(P("Datos para transferencia","h2"))
+        story.append(tabla(["Antecedente","Información"],[["Titular",d["oferente"]],["RUT",d["rut_oferente"]],
+            ["Banco",d["banco"]],["Tipo de cuenta",d["tipo_cuenta"]],["Número",d["cuenta"]],["Correo",d["correo_pagos"]]],[135,ancho-135]))
+
     if b["incluir_revision"]:
-        story.append(PageBreak()); cap("Control de revisión solicitado")
-        story.append(P("Hoja de apoyo opcional. Los estados del checklist distinguen compromisos, declaraciones y antecedentes sujetos a evaluación del comprador.","note"))
+        story.append(PageBreak()); cap("Revisión documental")
+        story.append(P("Relación de antecedentes que requieren revisión antes de presentar la oferta."))
         for i,lista in pendientes(b,token):
             story.append(P(PASOS[i],"h2"))
             for item in lista: story.append(P("- "+item,"small"))
-        for item in problemas_logo: story.append(P(item,"small"))
     doc.build(story,onFirstPage=portada,onLaterPages=paginas)
     return out.getvalue()
 
@@ -968,13 +1000,13 @@ def main():
     st.title("Constructor de propuestas · OTEC Santa Mónica")
     st.caption("Formulario completo por preguntas. Edita las respuestas, revisa los requisitos y genera una propuesta PDF profesional.")
     st.info("Propuesta precargada: Compra Ágil 1057545-246-COT26, 20 participantes y 20 horas pedagógicas. Oferta global: $2.300.000, exenta de IVA. Revisa y adapta todas las respuestas para el proceso que vayas a ofertar.")
-    if "modelo_propuesta_v4" not in st.session_state:
+    if "modelo_propuesta_v5" not in st.session_state:
         # Una versión anterior puede haber dejado widgets con valores de ejemplo.
         for clave in list(st.session_state):
             if clave.startswith("q_") or clave in {"propuesta_pdf","propuesta_firma"}:
                 del st.session_state[clave]
-        st.session_state.modelo_propuesta_v4=nuevo()
-    b=st.session_state.modelo_propuesta_v4
+        st.session_state.modelo_propuesta_v5=nuevo()
+    b=st.session_state.modelo_propuesta_v5
     def leer(path):
         obj=b
         for k in path: obj=obj[k]
@@ -1052,7 +1084,7 @@ def main():
                 st.caption("Publicación a primer cierre: "+intervalo(d["publicacion"],d["cierre_1"]))
                 st.caption("Publicación a segundo cierre: "+intervalo(d["publicacion"],d["cierre_2"]))
             if seccion==1:
-                st.caption("Empresa: Las Condes. Representante legal: Quillota, teléfono +56 9 5807 5021. Contacto de licitación: ebrun, +56 9 6359 6523, ebrun@otecsantamonica.com. No se incluye correo de la representante legal.")
+                st.caption("Contacto: Enrique Armando Brun Urrutia, Director de Administración y Finanzas. +56 9 6359 6523 · ebrun@otecsantamonica.com")
             if seccion==5:
                 st.markdown("**¿Qué módulos, contenidos y horas tendrá el programa?**")
                 for j,m in enumerate(b["modulos"]):
@@ -1073,6 +1105,9 @@ def main():
                     b["modulos"].append(dict(id=uuid4().hex[:12],jornada="Nueva jornada",nombre="Nuevo módulo",contenido="",horas=0.0,tipo="Presencial"))
                     st.rerun()
                 tot=horas(b); st.metric("Horas pedagógicas del programa",f"{sum(tot.values()):g}")
+                for jornada in dict.fromkeys(m["jornada"] for m in b["modulos"]):
+                    h=sum(m["horas"] for m in b["modulos"] if m["jornada"]==jornada)
+                    st.caption(f"Total {jornada.lower()}: {h:g} horas pedagógicas")
                 st.caption(" / ".join(f"{k}: {v:g} horas" for k,v in tot.items()))
                 if abs(sum(tot.values())-b["datos"]["horas_exigidas"])>.01:
                     st.warning("La suma del programa no coincide con las horas exigidas. Puedes generar el borrador y corregirla después.")
@@ -1097,15 +1132,15 @@ def main():
                 neto,iva,total=montos(b["datos"])
                 a,c,e=st.columns(3); a.metric("Neto + despacho",pesos(neto)); c.metric("Impuesto",pesos(iva) if iva is not None else "Por definir")
                 e.metric("Total",pesos(total) if total is not None else "Por definir")
-                st.caption("Oferta acordada: $2.300.000 exenta de IVA. Este apartado muestra únicamente el precio ofertado; no contiene costos internos ni margen comercial.")
+                st.caption("El PDF presenta el valor ofertado, el presupuesto disponible y el alcance del servicio.")
                 if total is not None and total>b["datos"]["presupuesto"]>0: st.warning("La oferta supera el presupuesto estimado del comprador.")
             if seccion==11:
-                st.markdown("**Logo institucional de la OTEC**")
+                st.markdown("**Logo institucional para la portada**")
                 contenedor_logo=st.container()
                 for rol,col in [("oferente",contenedor_logo)]:
                     with col:
                         key="upload_logo_"+rol
-                        st.file_uploader("Logo del "+rol,type=["svg","png","jpg","jpeg"],key=key,on_change=cargar_logo,args=(rol,key))
+                        st.file_uploader("Adjuntar logo institucional (SVG, PNG o JPG)",type=["svg","png","jpg","jpeg"],key=key,on_change=cargar_logo,args=(rol,key))
                         if st.session_state.get("aviso_logo_"+rol): st.error(st.session_state["aviso_logo_"+rol])
                         try:
                             raw,n=bytes_logo(b,rol)
@@ -1139,7 +1174,7 @@ def main():
                                 if k.startswith("q_archivos_"): del st.session_state[k]
                             st.rerun()
             if seccion==12:
-                widget(["incluir_admin"],"Incluir anexo administrativo: representante legal y datos bancarios","bool")
+                widget(["incluir_admin"],"Incluir identificación legal y datos bancarios","bool")
                 widget(["marcar_borrador"],"Marcar el PDF como borrador","bool")
                 widget(["incluir_revision"],"Incluir hoja adicional de revisión al final del PDF","bool")
                 lista=pendientes(b)
