@@ -10,6 +10,8 @@ Logo GitHub: colocar OTEC_Santa_Monica_Opcion_1.svg junto a este archivo o en
 assets/, logos/ o images/. El comprador tiene su propia carga de logo.
 El código no descarga archivos del repositorio: Streamlit lee el logo que
 forma parte del checkout de GitHub. Ambos logos también se pueden cargar.
+Se admiten SVG vectoriales y SVG con imágenes PNG/JPEG incrustadas en base64,
+como el archivo real OTEC_Santa_Monica_Opcion_1.svg de este repositorio.
 
 Edición: cambiar PREGUNTAS, PASOS, ejemplo(), MODULOS y las listas REQ_* para
 adaptar el esqueleto. Todo lo que se usa para generar el PDF es editable.
@@ -60,6 +62,7 @@ from reportlab.platypus import (
 
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_NAME = "OTEC_Santa_Monica_Opcion_1.svg"
+PDF_RENDER_VERSION = "2026-11-svg-png-incrustado-v1"
 NAVY, GOLD = colors.HexColor("#153445"), colors.HexColor("#B78D45")
 INK, MUTED = colors.HexColor("#243F4D"), colors.HexColor("#5B707D")
 PALE, LINE = colors.HexColor("#F0F4F5"), colors.HexColor("#DBE3E7")
@@ -328,6 +331,39 @@ def logo_local(rol="oferente"):
     return None
 
 
+def preparar_raster(raw):
+    """Lee PNG/JPEG y usa sus límites visibles sin alterar el archivo original."""
+    from PIL import Image
+    if not raw or len(raw)>MAX_LOGO:
+        raise ValueError("La imagen del logo supera los 5 MB o está vacía.")
+    with Image.open(BytesIO(raw)) as im:
+        if im.format not in {"PNG", "JPEG"}:
+            raise ValueError("La imagen incrustada debe ser PNG o JPEG.")
+        if im.width*im.height>20000000:
+            raise ValueError("El logo supera los 20 megapíxeles.")
+        im.load()
+        imagen=im.convert("RGBA")
+    alfa=imagen.getchannel("A")
+    # Para encuadrar el logo ignorar ruido prácticamente invisible (alfa 1-2).
+    # Se conserva la imagen original; solo se calcula el área para dibujarla.
+    limites=alfa.point(lambda v:255 if v>2 else 0).getbbox() or alfa.getbbox()
+    if limites is None:
+        raise ValueError("La imagen del logo es completamente transparente.")
+    x0,y0,x1,y1=limites
+    return ("raster", {"reader":ImageReader(imagen), "ancho":imagen.width,
+            "alto":imagen.height, "limites":limites}, x1-x0, y1-y0)
+
+
+def imagen_data_uri(ref):
+    """Admite PNG/JPEG incrustados; nunca abre URL ni archivos externos."""
+    m=re.fullmatch(r"data:image/(?:png|jpeg|jpg);base64,([A-Za-z0-9+/=\s]+)",ref,re.I)
+    if not m:
+        raise ValueError("Solo se admiten imágenes PNG/JPEG incrustadas en base64.")
+    contenido=base64.b64decode(re.sub(r"\s+","",m.group(1)),validate=True)
+    preparar_raster(contenido)
+    return contenido
+
+
 def preparar_logo(raw, nombre):
     if not raw or len(raw)>MAX_LOGO:
         raise ValueError("El logo debe pesar entre 1 byte y 5 MB.")
@@ -337,31 +373,45 @@ def preparar_logo(raw, nombre):
         root = ElementTree.fromstring(raw)
         if root.tag.split("}")[-1].lower()!="svg":
             raise ValueError("No es un SVG válido.")
+        imagenes_incrustadas={}
         for node in root.iter():
             if node.tag.split("}")[-1].lower() in {"script", "foreignobject"}:
                 raise ValueError("El SVG debe contener solo elementos gráficos.")
             for k,v in node.attrib.items():
                 if k.split("}")[-1].lower() in {"href","src"} and v and not v.startswith("#"):
-                    raise ValueError("Exporta el SVG sin recursos externos; también puedes usar PNG.")
+                    if node.tag.split("}")[-1].lower()=="image" and v.lower().startswith("data:image/"):
+                        imagenes_incrustadas[id(node)]=imagen_data_uri(v)
+                    else:
+                        raise ValueError("El SVG referencia una URL o archivo externo. Usa una imagen incrustada o un PNG.")
             contenido = " ".join(node.attrib.values())+" "+(node.text or "")
             if re.search(r"@import", contenido, re.I):
                 raise ValueError("No se permiten estilos externos en el SVG.")
             for ref in re.findall(r"url\s*\((.*?)\)",contenido,re.I|re.S):
                 if not ref.strip(" \t\r\n\"'").startswith("#"):
                     raise ValueError("El SVG referencia un recurso externo.")
+        # El logo real de OTEC es un SVG que envuelve un PNG transparente.
+        # Dibujarlo directamente evita que algunos renderizadores SVG pierdan
+        # su transparencia y permite aprovechar el espacio visible del logo.
+        hijos=list(root)
+        if len(hijos)==1 and id(hijos[0]) in imagenes_incrustadas:
+            nodo=hijos[0]
+            try:
+                vb=[float(x) for x in root.get("viewBox", "").replace(","," ").split()]
+                plano=(not root.get("transform") and not nodo.get("transform") and
+                       float(nodo.get("x",0))==0 and float(nodo.get("y",0))==0 and
+                       len(vb)==4 and vb[:2]==[0,0] and
+                       float(nodo.get("width",0))==vb[2] and float(nodo.get("height",0))==vb[3])
+                if plano:
+                    return preparar_raster(imagenes_incrustadas[id(nodo)])
+            except (ValueError,TypeError):
+                pass
         obj = svg2rlg(BytesIO(raw))
         if obj is None or obj.width<=0 or obj.height<=0:
             raise ValueError("No se pudo interpretar el SVG. Prueba con PNG.")
         return "svg", obj, obj.width, obj.height
     if Path(nombre).suffix.lower() not in {".png",".jpg",".jpeg"}:
         raise ValueError("Usa SVG, PNG o JPG.")
-    from PIL import Image
-    with Image.open(BytesIO(raw)) as im:
-        if im.width*im.height>20000000:
-            raise ValueError("El logo supera los 20 megapíxeles.")
-        im.load()
-        imagen=im.convert("RGBA")
-    return "raster",ImageReader(imagen),imagen.width,imagen.height
+    return preparar_raster(raw)
 
 
 def bytes_logo(b, rol):
@@ -385,7 +435,13 @@ def dibujar_logo(c, logo, x, y, w, h, etiqueta):
             c.saveState(); c.translate(xx,yy); c.scale(escala,escala)
             renderPDF.draw(obj,c,0,0); c.restoreState()
         else:
-            c.drawImage(obj,xx,yy,width=lw*escala,height=lh*escala,mask="auto")
+            x0,y0,x1,y1=obj["limites"]
+            c.saveState()
+            recorte=c.beginPath(); recorte.rect(xx,yy,lw*escala,lh*escala)
+            c.clipPath(recorte,stroke=0,fill=0)
+            c.drawImage(obj["reader"],xx-x0*escala,yy-(obj["alto"]-y1)*escala,
+                        width=obj["ancho"]*escala,height=obj["alto"]*escala,mask="auto")
+            c.restoreState()
     else:
         c.setStrokeColor(LINE); c.roundRect(x,y,w,h,5,stroke=1,fill=0)
         c.setFont("OTEC",8); c.setFillColor(MUTED)
@@ -575,7 +631,12 @@ def generar_pdf(b,token=None,solo_portada=False):
     for rol in ["oferente","comprador"]:
         try:
             raw,nombre=bytes_logo(b,rol); logos[rol]=preparar_logo(raw,nombre) if raw else None
-        except Exception as e: logos[rol]=None; problemas_logo.append(f"Logo {rol}: {e}")
+        except Exception as e:
+            if rol=="oferente":
+                raise ValueError(f"No se pudo leer el logo del oferente {LOGO_NAME}: {e}") from e
+            logos[rol]=None; problemas_logo.append(f"Logo {rol}: {e}")
+    if logos["oferente"] is None:
+        raise ValueError(f"No se encontró {LOGO_NAME}. Debe estar junto a REPORTE_PDF.py en el repositorio; también puedes cargarlo en la sección Logos.")
     trabajo=not b["ejemplos_revisados"] or bool(pendientes(b,token))
 
     def caja(c,t,x,y,w,h,fs=12,bold=False,color=INK):
@@ -914,7 +975,7 @@ def main():
                     try:
                         raw,_=bytes_logo(b,rol); fuentes.append(hashlib.sha256(raw or b"").hexdigest())
                     except Exception: fuentes.append("logo_no_valido")
-                firma=hashlib.sha256((json.dumps(b,sort_keys=True,ensure_ascii=False)+"".join(fuentes)).encode()).hexdigest()
+                firma=hashlib.sha256((PDF_RENDER_VERSION+json.dumps(b,sort_keys=True,ensure_ascii=False)+"".join(fuentes)).encode()).hexdigest()
                 st.divider()
                 if st.button("Generar reporte PDF",type="primary"):
                     try:
