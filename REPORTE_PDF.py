@@ -1,4 +1,4 @@
-# VERSION: 6.0 - Estados visuales, observaciones y oferta actualizada
+# VERSION: 7.0 - Reporte editorial estilo LaTeX / paleta Beamer
 # CURSO: Aplicacion de Inteligencia Artificial y Analisis de Datos para la Gestion de Personas
 # CODIGO: 1057545-246-COT26 | MODALIDAD: Compra Agil
 # FECHA Y HORA DE ACTUALIZACION: 11-11-2026 00:57 America/Santiago
@@ -8,13 +8,13 @@
 # INSTRUCCIONES DE USO Y ADAPTACION A FUTURAS LICITACIONES
 # 1. Instalar: python -m pip install -r requirements.txt
 #    Dependencias: streamlit, reportlab, svglib, pillow, defusedxml.
-# 2. Ejecutar: python -m streamlit run REPORTE_PDF.py (Python 3.10 o superior).
+# 2. Ejecutar: python -m streamlit run REPORTE_PDF_BEAMER_LATEX.py (Python 3.10 o superior).
 # 3. El formulario pregunta por comprador, modalidad, lugar, participantes,
 #    objetivos, contenidos, horas, docente, materiales, requisitos y precio.
 #    Revisar cada respuesta, cargar los documentos y pulsar Generar reporte PDF.
 # 4. Logo: se busca OTEC_Santa_Monica_Opcion_1.svg en la carpeta del programa
 #    o en assets/, logos/ e images/. Puede reemplazarse en el formulario por
-#    un SVG, PNG o JPG. Se imprime un solo logo institucional en la portada.
+#    SVG, PNG o JPG. Si no existe, se utiliza cabecera institucional en texto.
 # 5. Para otra licitacion, editar DATOS_LICITACION, MODULOS, RELATOR_INICIAL,
 #    ADJUNTOS_DECLARADOS, REQ_COMPRA, REQ_RELATOR y REQ_CERT. Actualizar este
 #    encabezado. Los totales de horas y precios se calculan desde las respuestas.
@@ -32,8 +32,8 @@
 # 10. Formulario completo, sin bloqueos. No hay guardado persistente de progreso;
 #     conservar la sesion abierta y descargar los documentos antes de cerrarla.
 #
-# PRUEBA LOCAL: python REPORTE_PDF.py --demo-pdf propuesta.pdf
-# Se requiere el logo local para esta prueba sin interfaz.
+# PRUEBA LOCAL: python REPORTE_PDF_BEAMER_LATEX.py --demo-pdf propuesta.pdf
+# El logo institucional es opcional; sin él se usa una portada tipográfica.
 """Formulario reutilizable por preguntas y generador de propuesta PDF A4."""
 from __future__ import annotations
 
@@ -69,10 +69,23 @@ from reportlab.platypus import (
 
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_NAME = "OTEC_Santa_Monica_Opcion_1.svg"
-PDF_RENDER_VERSION = "v6-estados-visuales-oferta-2000000"
-NAVY, GOLD = colors.HexColor("#153445"), colors.HexColor("#B78D45")
-INK, MUTED = colors.HexColor("#243F4D"), colors.HexColor("#5B707D")
-PALE, LINE = colors.HexColor("#F0F4F5"), colors.HexColor("#DBE3E7")
+PDF_RENDER_VERSION = "v7-estilo-latex-beamer-tradicional"
+# Gama inspirada en las presentaciones Beamer clásicas: azul estructural,
+# azul petróleo, fondos casi blancos y reglas finas. Se usa con moderación.
+BEAMER_PALETA = {
+    "principal": "#193C65",       # azul de secciones y cabeceras
+    "acento": "#277586",          # azul petróleo para detalles
+    "texto": "#242A32",           # negro tinta, adecuado para impresión
+    "secundario": "#5D6570",      # gris azulado
+    "fondo_tabla": "#F1F5F8",     # fondo claro de encabezados
+    "linea": "#C5D0D9",          # reglas y separadores
+}
+NAVY = colors.HexColor(BEAMER_PALETA["principal"])
+GOLD = colors.HexColor(BEAMER_PALETA["acento"])  # alias conservado
+INK = colors.HexColor(BEAMER_PALETA["texto"])
+MUTED = colors.HexColor(BEAMER_PALETA["secundario"])
+PALE = colors.HexColor(BEAMER_PALETA["fondo_tabla"])
+LINE = colors.HexColor(BEAMER_PALETA["linea"])
 MAX_LOGO = 5 * 1024 * 1024
 MAX_FILE = 20 * 1024 * 1024
 MAX_ZIP = 200 * 1024 * 1024
@@ -80,6 +93,35 @@ FONT_DIR = Path(reportlab.__file__).resolve().parent / "fonts"
 pdfmetrics.registerFont(TTFont("OTEC", str(FONT_DIR / "Vera.ttf")))
 pdfmetrics.registerFont(TTFont("OTEC-Bold", str(FONT_DIR / "VeraBd.ttf")))
 pdfmetrics.registerFontFamily("OTEC", normal="OTEC", bold="OTEC-Bold")
+
+# Tipografía de informe clásico: serif para el cuerpo y sans para tablas.
+# Si la máquina no dispone de DejaVu Serif o Liberation Serif, ReportLab usa
+# Times-Roman/Times-Bold, sin depender de paquetes LaTeX externos.
+def configurar_fuentes_editoriales():
+    posibilidades = [
+        (Path("/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf"),
+         Path("/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf")),
+        (Path("/usr/share/fonts/truetype/liberation2/LiberationSerif-Regular.ttf"),
+         Path("/usr/share/fonts/truetype/liberation2/LiberationSerif-Bold.ttf")),
+        (Path("/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf"),
+         Path("/usr/share/fonts/truetype/liberation/LiberationSerif-Bold.ttf")),
+        (Path("C:/Windows/Fonts/georgia.ttf"),
+         Path("C:/Windows/Fonts/georgiab.ttf")),
+    ]
+    for normal, negrita in posibilidades:
+        if normal.is_file() and negrita.is_file():
+            try:
+                pdfmetrics.registerFont(TTFont("InformeSerif", str(normal)))
+                pdfmetrics.registerFont(TTFont("InformeSerif-Bold", str(negrita)))
+                pdfmetrics.registerFontFamily("InformeSerif", normal="InformeSerif",
+                                              bold="InformeSerif-Bold")
+                return "InformeSerif", "InformeSerif-Bold"
+            except (OSError, ValueError):
+                pass
+    return "Times-Roman", "Times-Bold"
+
+FUENTE_SERIF, FUENTE_SERIF_BOLD = configurar_fuentes_editoriales()
+FUENTE_SANS, FUENTE_SANS_BOLD = "OTEC", "OTEC-Bold"
 
 PASOS = ["Proceso y comprador", "Identificación del oferente", "Quiénes somos y visión",
          "Objetivos", "Participantes", "Contenidos y horas", "Lugar y ejecución",
@@ -762,8 +804,7 @@ def faltantes(b,paso,token=None):
         for rol in ["oferente"]:
             try:
                 raw,nombre=bytes_logo(b,rol)
-                if not raw: r.append(f"Cargar logo del {rol}.")
-                else: preparar_logo(raw,nombre)
+                if raw: preparar_logo(raw,nombre)
             except Exception as e: r.append(f"Revisar logo {rol}: {e}")
         count=len(disponibles(b,token)) if token else len(b["archivos"])
         if "Anexo Nº 1" not in {a["categoria"] for a in b["archivos"]}:
@@ -831,34 +872,32 @@ def etiqueta_estado(estado):
 
 
 class EstadoPDF(Flowable):
-    """Iconos vectoriales: evitan depender de fuentes emoji en el PDF."""
+    """Estado documental sobrio, sin iconos ni afirmaciones añadidas.
+
+    Conserva literalmente el estado informado por el usuario. El color de
+    advertencia no sustituye la revisión documental del organismo comprador.
+    """
     def __init__(self, estado):
-        Flowable.__init__(self)
-        self.tipo,self.texto=ESTADOS_VISUALES.get(estado,("pendiente","Por revisar"))
-        self.parrafo=Paragraph(escape(self.texto),ParagraphStyle("estado",fontName="OTEC",fontSize=7.5,leading=10))
+        super().__init__()
+        self.estado = estado
+        self.color = {
+            "A evaluación del comprador": colors.HexColor("#906B35"),
+            "No cumple": colors.HexColor("#984B4B"),
+            "Por verificar": MUTED,
+        }.get(estado, NAVY)
+        self.parrafo = Paragraph(
+            escape(estado),
+            ParagraphStyle("estado_editorial", fontName=FUENTE_SANS,
+                           fontSize=7.25, leading=10, textColor=self.color),
+        )
 
     def wrap(self, availWidth, availHeight):
-        self.width=availWidth
-        _, alto=self.parrafo.wrap(max(10,availWidth-14),availHeight)
-        self.height=max(12,alto)
-        return self.width,self.height
+        self.width = availWidth
+        _, self.height = self.parrafo.wrap(max(10, availWidth-1), availHeight)
+        return self.width, self.height
 
     def draw(self):
-        c=self.canv; c.saveState()
-        tono={"tick":"#18734A","alerta":"#A76508","cruz":"#B33939"}.get(self.tipo,"#5B707D")
-        c.setStrokeColor(colors.HexColor(tono));c.setLineWidth(1.4)
-        y=self.height-6
-        if self.tipo=="tick":
-            camino=c.beginPath();camino.moveTo(1,y);camino.lineTo(4,y-3);camino.lineTo(10,y+4);c.drawPath(camino)
-        elif self.tipo=="alerta":
-            camino=c.beginPath();camino.moveTo(0,y-4);camino.lineTo(10,y-4);camino.lineTo(5,y+5);camino.close();c.drawPath(camino)
-            c.line(5,y-1,5,y+2);c.circle(5,y-2.5,.35,stroke=1,fill=0)
-        elif self.tipo=="cruz":
-            c.line(1,y-3,9,y+4);c.line(1,y+4,9,y-3)
-        elif self.tipo=="pendiente": c.circle(5,y,3.5,stroke=1,fill=0)
-        else: c.line(1,y,9,y)
-        self.parrafo.drawOn(c,14,self.height-self.parrafo.height)
-        c.restoreState()
+        self.parrafo.drawOn(self.canv, 0, 0)
 
 
 def comparar_presupuesto(d):
@@ -891,227 +930,431 @@ def descripcion_documento(archivo):
 
 
 def estilos_pdf():
+    """Jerarquía tipográfica inspirada en LaTeX article/report.
+
+    Márgenes A4, cuerpo serif, color estructural Beamer y tablas discretas.
+    Evita paneles, tarjetas, pictogramas y encabezados sobredimensionados.
+    """
     return {
-        "body":ParagraphStyle("body",fontName="OTEC",fontSize=9.7,leading=14,textColor=INK,spaceAfter=9,alignment=TA_JUSTIFY),
-        "small":ParagraphStyle("small",fontName="OTEC",fontSize=8,leading=10.5,textColor=INK,spaceAfter=2),
-        "h1":ParagraphStyle("h1",fontName="OTEC-Bold",fontSize=21,leading=26,textColor=NAVY,spaceAfter=12,keepWithNext=True),
-        "h2":ParagraphStyle("h2",fontName="OTEC-Bold",fontSize=11,leading=15,textColor=NAVY,spaceBefore=10,spaceAfter=6,keepWithNext=True),
-        "th":ParagraphStyle("th",fontName="OTEC-Bold",fontSize=8,leading=11,textColor=colors.white),
-        "note":ParagraphStyle("note",fontName="OTEC",fontSize=9,leading=13,textColor=MUTED,spaceAfter=9,alignment=TA_JUSTIFY),
-        "banner_label":ParagraphStyle("banner_label",fontName="OTEC-Bold",fontSize=8,leading=12,textColor=colors.white),
-        "banner_value":ParagraphStyle("banner_value",fontName="OTEC-Bold",fontSize=23,leading=32,textColor=colors.white),
+        "body": ParagraphStyle(
+            "cuerpo_informe", fontName=FUENTE_SERIF, fontSize=10,
+            leading=15.2, textColor=INK, spaceAfter=8.5,
+            alignment=TA_JUSTIFY, allowWidows=0, allowOrphans=0),
+        "small": ParagraphStyle(
+            "tabla_informe", fontName=FUENTE_SERIF, fontSize=8.45,
+            leading=12.0, textColor=INK, spaceAfter=0,
+            allowWidows=0, allowOrphans=0),
+        "h1": ParagraphStyle(
+            "seccion_informe", fontName=FUENTE_SERIF_BOLD,
+            fontSize=15.2, leading=19.5, textColor=NAVY,
+            spaceBefore=15, spaceAfter=9, keepWithNext=True),
+        "h2": ParagraphStyle(
+            "subseccion_informe", fontName=FUENTE_SERIF_BOLD,
+            fontSize=10.7, leading=14.2, textColor=NAVY,
+            spaceBefore=13, spaceAfter=5.5, keepWithNext=True),
+        "th": ParagraphStyle(
+            "cabecera_tabla", fontName=FUENTE_SANS_BOLD,
+            fontSize=7.8, leading=10.5, textColor=NAVY, spaceAfter=0),
+        "note": ParagraphStyle(
+            "nota_informe", fontName=FUENTE_SERIF, fontSize=9.1,
+            leading=13.3, textColor=MUTED, spaceAfter=8),
+        "label": ParagraphStyle(
+            "etiqueta_informe", fontName=FUENTE_SANS_BOLD,
+            fontSize=8.3, leading=11, textColor=MUTED, spaceAfter=0),
+        "money": ParagraphStyle(
+            "monto_informe", fontName=FUENTE_SERIF_BOLD,
+            fontSize=10.3, leading=14, textColor=NAVY),
     }
 
 
-def generar_pdf(b,token=None,solo_portada=False):
-    b=validar(b); d=b["datos"]; sty=estilos_pdf(); ancho=A4[0]-96
-    def P(t,style="body"):
-        return Paragraph(escape(limpiar(t or "Por completar")).replace("\n","<br/>"),sty[style])
-    def tabla(headers,rows,widths=None):
-        data=[[P(x,"th") for x in headers]]+[[x if isinstance(x,Flowable) else P(x,"small") for x in row] for row in rows]
-        t=Table(data,colWidths=widths or [ancho/len(headers)]*len(headers),repeatRows=1,splitByRow=1,splitInRow=1,hAlign="LEFT")
-        t.setStyle(TableStyle([("BACKGROUND",(0,0),(-1,0),NAVY),("VALIGN",(0,0),(-1,-1),"TOP"),
-            ("ROWBACKGROUNDS",(0,1),(-1,-1),[colors.white,PALE]),("LEFTPADDING",(0,0),(-1,-1),9),
-            ("RIGHTPADDING",(0,0),(-1,-1),9),("TOPPADDING",(0,0),(-1,-1),5),("BOTTOMPADDING",(0,0),(-1,-1),5),
-            ("LINEBELOW",(0,0),(-1,0),1,GOLD),("LINEBELOW",(0,1),(-1,-1),.3,LINE)]))
+class DocumentoEditorial(SimpleDocTemplate):
+    """Crea marcadores PDF navegables para cada sección del informe."""
+    def afterFlowable(self, flowable):
+        clave = getattr(flowable, "_marca_seccion", None)
+        if clave:
+            self.canv.bookmarkPage(clave)
+            self.canv.addOutlineEntry(flowable._titulo_seccion, clave, level=0)
+
+
+def generar_pdf(b, token=None, solo_portada=False):
+    b = validar(b)
+    d = b["datos"]
+    sty = estilos_pdf()
+    margen_izq, margen_der = 61, 57
+    ancho = A4[0] - margen_izq - margen_der
+    total_curso = sum(horas(b).values())
+    total_precio = montos(d)[2]
+
+    def P(texto, estilo="body"):
+        valor = limpiar(str(texto)) if texto is not None and str(texto).strip() else "Por completar"
+        return Paragraph(escape(valor).replace("\n", "<br/>"), sty[estilo])
+
+    def parrafos(texto):
+        partes = (texto or "Por completar").split("\n\n")
+        return [P(parte.strip()) for parte in partes if parte.strip()]
+
+    def campo(nombre, texto):
+        return [P(nombre, "h2"), *parrafos(texto)]
+
+    def tabla(encabezados, filas, anchos=None):
+        contenido = [[P(e, "th") for e in encabezados]]
+        contenido += [[celda if isinstance(celda, Flowable) else P(celda, "small")
+                       for celda in fila] for fila in filas]
+        n = len(encabezados)
+        if anchos is None:
+            anchos = [ancho/n]*n
+        t = Table(contenido, colWidths=anchos, repeatRows=1,
+                  splitByRow=1, splitInRow=1, hAlign="LEFT")
+        t.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), PALE),
+            ("LINEABOVE", (0, 0), (-1, 0), 1, NAVY),
+            ("LINEBELOW", (0, 0), (-1, 0), .55, GOLD),
+            ("LINEBELOW", (0, 1), (-1, -1), .25, LINE),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("LEFTPADDING", (0, 0), (-1, -1), 8),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+            ("TOPPADDING", (0, 0), (-1, -1), 6),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ]))
         return t
-    def parrafos(text):
-        return [P(x) for x in (text or "Por completar").split("\n\n") if x.strip()]
-    def campo(label,text): return [P(label,"h2"),*parrafos(text)]
-    logos={}; problemas_logo=[]
-    for rol in ["oferente"]:
-        try:
-            raw,nombre=bytes_logo(b,rol); logos[rol]=preparar_logo(raw,nombre) if raw else None
-        except Exception as e:
-            if rol=="oferente":
-                raise ValueError(f"No se pudo leer el logo del oferente {LOGO_NAME}: {e}") from e
-            logos[rol]=None; problemas_logo.append(f"Logo {rol}: {e}")
-    if logos["oferente"] is None:
-        raise ValueError(f"No se encontró {LOGO_NAME}. Debe estar junto a REPORTE_PDF.py en el repositorio; también puedes cargarlo en la sección Logos.")
-    trabajo=b["marcar_borrador"]
 
-    def caja(c,t,x,y,w,h,fs=12,bold=False,color=INK):
-        for size in [fs-.5*i for i in range(int((fs-7)*2)+1)]:
-            st=ParagraphStyle("cover",fontName="OTEC-Bold" if bold else "OTEC",fontSize=size,leading=size*1.2,textColor=color)
-            par=Paragraph(escape(limpiar(t or "Por completar")),st); _,hh=par.wrap(w,h)
-            if hh<=h: par.drawOn(c,x,y+h-hh); return
-        raise ValueError("Texto demasiado largo en la portada; reduce el título o el campo.")
+    # Conserva el logo proporcionado, pero permite generar un informe digno
+    # incluso si el archivo SVG/PNG todavía no está disponible.
+    try:
+        raw_logo, nombre_logo = bytes_logo(b, "oferente")
+        logo = preparar_logo(raw_logo, nombre_logo) if raw_logo else None
+    except Exception as exc:
+        raise ValueError(f"No se pudo interpretar el logo institucional: {exc}") from exc
 
-    def portada(c,doc):
-        w,h=A4; c.saveState()
-        c.setFillColor(NAVY); c.rect(0,0,14,h,fill=1,stroke=0)
-        c.setFillColor(GOLD); c.rect(48,h-48,w-96,3,fill=1,stroke=0)
-        dibujar_logo(c,logos["oferente"],148,682,300,102,"LOGO OTEC")
-        caja(c,"PROPUESTA TÉCNICA Y ECONÓMICA",48,644,499,17,10,True,color=GOLD)
-        caja(c,d["titulo"],48,512,499,119,27,True,color=NAVY)
-        caja(c,f"{d['modalidad']} | {d['proceso'] or 'Código por completar'}",48,478,499,28,12,True,color=GOLD)
-        c.setFillColor(PALE); c.roundRect(48,347,499,111,8,fill=1,stroke=0)
-        caja(c,"ORGANISMO COMPRADOR",62,427,470,15,8,True,color=MUTED)
-        caja(c,d["comprador"],62,389,470,33,15,True,color=NAVY)
-        caja(c,f"RUT {d['rut_comprador']} | {d['comuna']}, {d['region']}",62,357,470,28,9)
-        for x,label,value in [(48,"PARTICIPANTES",str(d["cupos"]) if d["cupos"] else "Por definir"),
-                (222,"HORAS PEDAGÓGICAS",f"{sum(horas(b).values()):g}"),
-                (396,"OFERTA GLOBAL",pesos(montos(d)[2]) if montos(d)[2] is not None else "Por definir")]:
-            caja(c,label,x,313,151,15,7.5,True,color=MUTED); caja(c,value,x,277,151,31,15,True,color=NAVY)
-        caja(c,d["periodo_ejecucion"],48,229,499,35,11)
-        caja(c,d["nombre_comercial"],48,183,499,32,18,True,color=NAVY)
-        caja(c,"RUT "+d["rut_oferente"],48,150,499,28,9)
-        caja(c,"Contacto licitación: "+d["correo"]+" | "+d["telefono"],48,125,499,20,9)
-        caja(c,"Emisión: "+d["fecha_propuesta"],48,91,499,20,9,color=MUTED)
-        c.setStrokeColor(GOLD); c.line(48,72,547,72)
-        caja(c,"BORRADOR DE TRABAJO" if trabajo else "PROPUESTA TÉCNICA Y ECONÓMICA",48,44,499,20,7.5,True,color=MUTED)
+    def texto_ajustado(c, texto, x, borde_superior, anchura, altura,
+                       tamano=12, negrita=False, color=INK, centrado=False):
+        fuente = FUENTE_SERIF_BOLD if negrita else FUENTE_SERIF
+        for tam in [tamano - .5*i for i in range(max(1, int((tamano-8)*2)+1))]:
+            estilo = ParagraphStyle(
+                "cubierta", fontName=fuente, fontSize=tam,
+                leading=tam*1.32, textColor=color,
+                alignment=1 if centrado else TA_LEFT)
+            par = Paragraph(escape(limpiar(texto or "Por completar")), estilo)
+            _, alto_real = par.wrap(anchura, altura)
+            if alto_real <= altura:
+                par.drawOn(c, x, borde_superior - alto_real)
+                return alto_real
+        raise ValueError("El título de la portada es demasiado largo para el área disponible.")
+
+    def portada(c, doc):
+        w, h = A4
+        c.saveState()
+        c.setTitle(f"Propuesta técnica y económica - {d['proceso']}")
+        c.setAuthor(d["oferente"])
+        c.setSubject(d["titulo"])
+        c.setKeywords("propuesta técnica, propuesta económica, capacitación")
+        # Cabecera de institución y regla delgada, sin recuadros promocionales.
+        c.setFillColor(NAVY)
+        c.setFont(FUENTE_SANS_BOLD, 8.5)
+        entidad = " ".join(d["nombre_comercial"].strip().split())
+        if len(entidad) > 50:
+            entidad = entidad[:47] + "..."
+        c.drawString(margen_izq, h-75, entidad.upper())
+        if logo:
+            dibujar_logo(c, logo, w-200, h-115, 140, 55, "")
+        c.setStrokeColor(NAVY)
+        c.setLineWidth(.9)
+        c.line(margen_izq, h-127, w-margen_der, h-127)
+
+        c.setFont(FUENTE_SANS_BOLD, 10.5)
+        c.setFillColor(GOLD)
+        c.drawCentredString(w/2, 651, "PROPUESTA TÉCNICA Y ECONÓMICA")
+        texto_ajustado(c, d["titulo"], margen_izq+5, 630, ancho-10, 99,
+                       tamano=22, negrita=True, color=NAVY, centrado=True)
+        c.setFont(FUENTE_SANS, 9.2)
+        c.setFillColor(MUTED)
+        c.drawCentredString(w/2, 505,
+                            f"{d['modalidad']}  ·  {d['proceso'] or 'Código por completar'}")
+
+        c.setStrokeColor(LINE)
+        c.line(110, 477, w-110, 477)
+        c.setFillColor(MUTED)
+        c.setFont(FUENTE_SANS_BOLD, 8.1)
+        c.drawCentredString(w/2, 455, "DOCUMENTO PRESENTADO A")
+        texto_ajustado(c, d["comprador"], 80, 440, w-160, 42,
+                       tamano=13.5, negrita=True, color=NAVY, centrado=True)
+
+        # Ficha simple, alineada como un documento académico/profesional.
+        ficha = [
+            ("Lugar", f"{d['comuna']}, {d['region']}"),
+            ("Participantes", f"{d['cupos']} personas"),
+            ("Duración", f"{total_curso:g} horas pedagógicas"),
+            ("Valor ofertado", pesos(total_precio) if total_precio is not None else "Por definir"),
+        ]
+        y = 345
+        for etiqueta, valor in ficha:
+            c.setFillColor(MUTED)
+            c.setFont(FUENTE_SANS, 8.8)
+            c.drawString(109, y, etiqueta)
+            texto_ajustado(c, valor, 245, y+10, 245, 24, tamano=10,
+                           negrita=etiqueta == "Valor ofertado", color=NAVY if etiqueta == "Valor ofertado" else INK)
+            c.setStrokeColor(LINE)
+            c.setLineWidth(.35)
+            c.line(108, y-11, w-108, y-11)
+            y -= 36
+
+        c.setFillColor(MUTED)
+        c.setFont(FUENTE_SANS_BOLD, 8.1)
+        c.drawString(margen_izq, 163, "OFERENTE")
+        texto_ajustado(c, d["oferente"], margen_izq, 153, ancho, 36,
+                       tamano=11.5, negrita=True, color=NAVY)
+        c.setFont(FUENTE_SERIF, 9)
+        c.setFillColor(INK)
+        c.drawString(margen_izq, 107, "RUT " + d["rut_oferente"])
+        correo = d["correo"]
+        if len(correo) < 90:
+            c.drawString(margen_izq, 92, correo)
+        c.setStrokeColor(NAVY)
+        c.setLineWidth(.65)
+        c.line(margen_izq, 72, w-margen_der, 72)
+        c.setFont(FUENTE_SANS, 8)
+        c.setFillColor(MUTED)
+        c.drawString(margen_izq, 56, "Fecha de emisión: " + d["fecha_propuesta"])
+        c.drawRightString(w-margen_der, 56,
+                          "BORRADOR" if b["marcar_borrador"] else "PROPUESTA FORMAL")
         c.restoreState()
 
-    def paginas(c,doc):
-        c.saveState(); w,h=A4
-        c.setFont("OTEC-Bold",8); c.setFillColor(NAVY); c.drawString(48,h-36,"CENTRO DE CAPACITACION SANTA MONICA")
-        c.setFont("OTEC",7.5); c.setFillColor(MUTED); c.drawRightString(w-48,h-36,d["proceso"][:60])
-        c.setStrokeColor(GOLD); c.line(48,h-45,w-48,h-45)
-        c.setStrokeColor(LINE); c.line(48,43,w-48,43)
-        c.setFont("OTEC",7); c.drawString(48,29,"Borrador de propuesta" if trabajo else "Propuesta técnica y económica")
-        c.drawRightString(w-48,29,f"Página {doc.page}"); c.restoreState()
+    def paginas(c, doc):
+        w, h = A4
+        c.saveState()
+        c.setFont(FUENTE_SANS_BOLD, 7.3)
+        c.setFillColor(NAVY)
+        nombre = d["nombre_comercial"].upper()
+        if len(nombre) > 44:
+            nombre = nombre[:41] + "..."
+        c.drawString(margen_izq, h-35, nombre)
+        c.setFont(FUENTE_SANS, 7.2)
+        c.setFillColor(MUTED)
+        c.drawRightString(w-margen_der, h-35, d["proceso"][:45])
+        c.setLineWidth(.72)
+        c.setStrokeColor(NAVY)
+        c.line(margen_izq, h-46, w-margen_der, h-46)
+        c.setStrokeColor(LINE)
+        c.setLineWidth(.45)
+        c.line(margen_izq, 45, w-margen_der, 45)
+        c.setFillColor(MUTED)
+        c.setFont(FUENTE_SANS, 7.3)
+        c.drawString(margen_izq, 31,
+                     "Borrador · revisión pendiente" if b["marcar_borrador"]
+                     else "Propuesta técnica y económica")
+        c.drawRightString(w-margen_der, 31, f"Página {doc.page}")
+        c.restoreState()
 
-    out=BytesIO(); doc=SimpleDocTemplate(out,pagesize=A4,rightMargin=48,leftMargin=48,
-        topMargin=66,bottomMargin=56,title=f"Propuesta {d['proceso']}",author=d["oferente"],allowSplitting=1)
-    story=[Spacer(1,1)]
+    buffer = BytesIO()
+    doc = DocumentoEditorial(
+        buffer, pagesize=A4, rightMargin=margen_der, leftMargin=margen_izq,
+        topMargin=68, bottomMargin=62, title=f"Propuesta técnica y económica - {d['proceso']}",
+        author=d["oferente"], subject=d["titulo"],
+        keywords="propuesta técnica, propuesta económica, capacitación", allowSplitting=1)
+    story = [Spacer(1, 1)]
     if solo_portada:
-        doc.build(story,onFirstPage=portada,onLaterPages=paginas); return out.getvalue()
+        doc.build(story, onFirstPage=portada, onLaterPages=paginas)
+        return buffer.getvalue()
     story.append(PageBreak())
-    def cap(t,clave=None):
-        story.extend([CondPageBreak(125),P(t,"h1"),HRFlowable(width="100%",thickness=1.2,color=GOLD,spaceAfter=14)])
+    numero_seccion = 0
+
+    def cap(titulo, clave=None, pagina_nueva=False):
+        nonlocal numero_seccion
+        numero_seccion += 1
+        if pagina_nueva:
+            story.append(PageBreak())
+        else:
+            story.append(CondPageBreak(155))
+        p = P(f"{numero_seccion}.  {titulo}", "h1")
+        p._marca_seccion = f"seccion_{numero_seccion}"
+        p._titulo_seccion = f"{numero_seccion}. {titulo}"
+        story.extend([p, HRFlowable(width="100%", thickness=.65, color=GOLD,
+                                    spaceBefore=0, spaceAfter=11)])
         if clave:
-            texto=INTRODUCCIONES.get(clave,"").format(**d)
-            if texto: story.extend(parrafos(texto))
+            intro = INTRODUCCIONES.get(clave, "").format(**d)
+            if intro:
+                story.extend(parrafos(intro))
 
     cap("Presentación institucional")
     story.extend(parrafos(d["quienes"]))
-    story.extend(campo("Nuestra visión",d["vision"]))
-    story.extend(campo("Servicio propuesto",d["que_ofrecemos"]))
+    story.extend(campo("Visión institucional", d["vision"]))
+    story.extend(campo("Servicio propuesto", d["que_ofrecemos"]))
 
-    story.append(PageBreak()); cap("Antecedentes de la contratación","proceso")
-    story.extend(campo("Servicio requerido",d["titulo"]))
-    story.append(tabla(["Antecedente","Información"],[
-        ["Organismo comprador",d["comprador"]+"\nRUT "+d["rut_comprador"]],
-        ["Modalidad y código",d["modalidad"]+"\n"+d["proceso"]],
-        ["Categoría del servicio",d["rubro"]],
-        ["ID del ítem",d["id_item"]],
-        ["Lugar de ejecución",d["comuna"]+", "+d["region"]],
-        ["Modalidad del curso",d["modalidad_curso"]],
-    ],[165,ancho-165]))
-    if d["numero_oc"].strip(): story.extend(campo("Orden de compra",d["numero_oc"]))
-    story.append(P("Fechas del proceso","h2"))
-    fechas=[[label,d[k]] for label,k in [("Publicación","publicacion"),("Cierre del primer llamado","cierre_1"),("Cierre del segundo llamado","cierre_2")] if d[k].strip()]
-    if fechas: story.append(tabla(["Hito","Fecha y hora"],fechas,[245,ancho-245]))
+    cap("Antecedentes de la contratación", "proceso")
+    story.extend(campo("Servicio requerido", d["titulo"]))
+    story.append(tabla(["Antecedente", "Información"], [
+        ["Organismo comprador", d["comprador"] + "\nRUT " + d["rut_comprador"]],
+        ["Modalidad y código", d["modalidad"] + "\n" + d["proceso"]],
+        ["Categoría del servicio", d["rubro"]],
+        ["ID del ítem", d["id_item"]],
+        ["Lugar de ejecución", d["comuna"] + ", " + d["region"]],
+        ["Modalidad del curso", d["modalidad_curso"]],
+    ], [156, ancho-156]))
+    if d["numero_oc"].strip():
+        story.extend(campo("Orden de compra", d["numero_oc"]))
+    fechas = [[etiqueta, d[k]] for etiqueta, k in [
+        ("Publicación", "publicacion"),
+        ("Cierre del primer llamado", "cierre_1"),
+        ("Cierre del segundo llamado", "cierre_2")]
+        if d[k].strip()]
+    if fechas:
+        story.append(P("Fechas del proceso", "h2"))
+        story.append(tabla(["Hito", "Fecha y hora"], fechas, [212, ancho-212]))
 
-    story.append(PageBreak()); cap("Objetivos y participantes","objetivos")
-    story.extend(campo("Objetivo general",d["objetivo_general"]))
-    story.append(P("Objetivos específicos","h2"))
-    for i,linea in enumerate(filter(str.strip,d["objetivos_especificos"].splitlines()),1):
+    cap("Objetivos y participantes", "objetivos")
+    story.extend(campo("Objetivo general", d["objetivo_general"]))
+    story.append(P("Objetivos específicos", "h2"))
+    for i, linea in enumerate(filter(str.strip, d["objetivos_especificos"].splitlines()), 1):
         story.append(P(f"{i}. {linea.strip()}"))
-    story.extend(campo("Participantes",f"La actividad contempla {d['cupos']} participantes. "+d["participantes"]))
-    story.extend(campo("Conocimientos previos",d["prerrequisitos"]))
+    story.extend(campo("Participantes", f"La actividad contempla {d['cupos']} participantes. "
+                       + d["participantes"]))
+    story.extend(campo("Conocimientos previos", d["prerrequisitos"]))
 
-    story.append(PageBreak()); cap("Programa de capacitación","programa")
-    tot=horas(b)
+    cap("Programa de capacitación", "programa")
+    totales = horas(b)
     for jornada in dict.fromkeys(m["jornada"] for m in b["modulos"]):
-        story.append(P(jornada,"h2"))
-        filas=[m for m in b["modulos"] if m["jornada"]==jornada]
-        tabla_modulos=tabla(["Módulo y modalidad","Contenidos","Horas"],
-            [[m["nombre"]+"\n"+m["tipo"],m["contenido"],f"{m['horas']:g}"] for m in filas]
-            +[["Total "+jornada.lower(),"Horas pedagógicas",f"{sum(m['horas'] for m in filas):g}"]],
-            [148,ancho-196,48])
-        tabla_modulos.setStyle(TableStyle([("BACKGROUND",(0,-1),(-1,-1),colors.HexColor("#E4ECEF")),("LINEABOVE",(0,-1),(-1,-1),.7,GOLD)]))
-        story.append(tabla_modulos)
-    story.append(Spacer(1,10))
-    story.append(P(f"Total del curso: {sum(tot.values()):g} horas pedagógicas.","h2"))
+        story.append(P(jornada, "h2"))
+        filas = [m for m in b["modulos"] if m["jornada"] == jornada]
+        modulos = tabla(["Módulo / modalidad", "Contenidos", "Horas"],
+            [[m["nombre"] + "\n" + m["tipo"], m["contenido"], f"{m['horas']:g}"]
+             for m in filas]
+            + [["Total " + jornada.lower(), "Horas pedagógicas",
+                f"{sum(m['horas'] for m in filas):g}"]],
+            [141, ancho-189, 48])
+        modulos.setStyle(TableStyle([
+            ("BACKGROUND", (0, -1), (-1, -1), PALE),
+            ("LINEABOVE", (0, -1), (-1, -1), .65, NAVY),
+        ]))
+        story.append(modulos)
+    story.append(Spacer(1, 6))
+    story.append(P(f"Duración total del programa: {sum(totales.values()):g} horas pedagógicas.", "h2"))
 
-    story.append(PageBreak()); cap("Metodología y recursos de aprendizaje","metodologia")
-    story.extend(campo("Desarrollo de las actividades",d["metodologia"]))
-    story.extend(campo("Herramientas de trabajo",d["herramientas"]))
-    story.extend(campo("Materiales para los participantes",d["materiales"]))
+    cap("Metodología y recursos de aprendizaje", "metodologia")
+    story.extend(campo("Desarrollo de las actividades", d["metodologia"]))
+    story.extend(campo("Herramientas de trabajo", d["herramientas"]))
+    story.extend(campo("Materiales para los participantes", d["materiales"]))
 
-    story.append(PageBreak()); cap("Lugar y condiciones de ejecución","logistica")
-    story.extend(campo("Recinto y ubicación",d["lugar"]))
-    responsable={"Proveedor":"El recinto será dispuesto por el oferente.","Comprador":"El recinto será dispuesto por el organismo comprador.","Compartido":"La habilitación del recinto se coordinará entre el oferente y el organismo comprador.","Por definir":"El responsable del recinto se confirmará antes de la ejecución."}.get(d["quien_lugar"],d["quien_lugar"])
+    cap("Lugar y condiciones de ejecución", "logistica")
+    story.extend(campo("Recinto y ubicación", d["lugar"]))
+    responsable = {
+        "Proveedor": "El recinto será dispuesto por el oferente.",
+        "Comprador": "El recinto será dispuesto por el organismo comprador.",
+        "Compartido": "La habilitación del recinto se coordinará entre el oferente y el organismo comprador.",
+        "Por definir": "El responsable del recinto se confirmará antes de la ejecución.",
+    }.get(d["quien_lugar"], d["quien_lugar"])
     story.extend(parrafos(responsable))
-    story.extend(campo("Fechas de ejecución",d["periodo_ejecucion"]))
-    story.extend(parrafos(d["fecha_ejecucion"]))
-    story.extend(campo("Equipamiento y conectividad",d["equipamiento"]))
-    if d["cafeteria"].strip(): story.extend(campo("Servicio de cafetería",d["cafeteria"]))
+    story.extend(campo("Fechas de ejecución", d["periodo_ejecucion"]))
+    if d["fecha_ejecucion"].strip():
+        story.extend(parrafos(d["fecha_ejecucion"]))
+    story.extend(campo("Equipamiento y conectividad", d["equipamiento"]))
+    if d["cafeteria"].strip():
+        story.extend(campo("Servicio de cafetería", d["cafeteria"]))
 
-    story.append(PageBreak()); cap("Relator y antecedentes profesionales","relator")
-    story.extend(campo("Perfil solicitado",d["perfil_docente"]))
+    cap("Relator y antecedentes profesionales", "relator")
+    story.extend(campo("Perfil solicitado", d["perfil_docente"]))
     for rel in b["docentes"]:
-        story.append(P(rel["nombre"],"h2"))
+        story.append(P(rel["nombre"], "h2"))
         story.extend(parrafos(f"RUT {rel['rut']}. {rel['titulo']}."))
         story.extend(parrafos(rel["experiencia"]))
         story.extend(parrafos(rel["disponibilidad"]))
-        story.append(tabla(["Requisito","Estado","Antecedente"],[[x["requisito"],EstadoPDF(x["estado"]),x["respaldo"]] for x in rel["checklist"]],[178,91,ancho-269]))
-    story.extend(campo("Documentación de respaldo",d["referencia_cv"]))
+        story.append(tabla(["Requisito", "Estado declarado", "Antecedente"],
+            [[x["requisito"], EstadoPDF(x["estado"]), x["respaldo"]]
+             for x in rel["checklist"]], [157, 102, ancho-259]))
+    story.extend(campo("Documentación de respaldo", d["referencia_cv"]))
 
-    story.append(PageBreak()); cap("Requisitos de contratación y observaciones","requisitos")
-    story.append(tabla(["Requisito","Estado","Respuesta de la oferta"],[[x["requisito"],EstadoPDF(x["estado"]),x["respaldo"]] for x in b["compra"]],[175,90,ancho-265]))
-    if d["requisitos_oc"].strip(): story.extend(campo("Condiciones de la orden de compra",d["requisitos_oc"]))
-    if d["observaciones"].strip(): story.extend(campo("Observaciones",d["observaciones"]))
+    cap("Requisitos de contratación y observaciones", "requisitos")
+    story.append(tabla(["Requisito", "Estado declarado", "Respuesta de la oferta"],
+        [[x["requisito"], EstadoPDF(x["estado"]), x["respaldo"]]
+         for x in b["compra"]], [157, 102, ancho-259]))
+    if d["requisitos_oc"].strip():
+        story.extend(campo("Condiciones de la orden de compra", d["requisitos_oc"]))
+    if d["observaciones"].strip():
+        story.extend(campo("Observaciones", d["observaciones"]))
 
-    story.append(PageBreak()); cap("Evaluación, certificación e informe final","certificacion")
-    for label,k in [("Evaluación del aprendizaje","evaluacion"),("Aprobación","aprobacion"),("Entrega de certificados y resultados","entrega_certificados")]:
-        story.extend(campo(label,d[k]))
-    story.extend(parrafos("El informe final será entregado a la "+d["destino_informe"]+"."))
-    story.append(P("Contenido de los entregables","h2"))
-    story.append(tabla(["Requisito","Estado"],[[x["requisito"],EstadoPDF(x["estado"])] for x in b["certificacion"]],[ancho-110,110]))
+    cap("Evaluación, certificación e informe final", "certificacion")
+    for etiqueta, clave in [
+        ("Evaluación del aprendizaje", "evaluacion"),
+        ("Condiciones de aprobación", "aprobacion"),
+        ("Entrega de certificados y resultados", "entrega_certificados")]:
+        story.extend(campo(etiqueta, d[clave]))
+    story.extend(parrafos("El informe final será entregado a la " + d["destino_informe"] + "."))
+    story.append(P("Contenido de los entregables", "h2"))
+    story.append(tabla(["Requisito", "Estado declarado"],
+        [[x["requisito"], EstadoPDF(x["estado"])] for x in b["certificacion"]],
+        [ancho-132, 132]))
 
-    story.append(PageBreak()); cap("Propuesta económica","economica")
-    neto,iva,total=montos(d)
-    comparacion=comparar_presupuesto(d)
-    banner=Table([[P("VALOR TOTAL OFERTADO","banner_label"),P("PRESUPUESTO DEL COMPRADOR","banner_label")],
-        [P(pesos(total) if total is not None else "Por definir","banner_value"),P(pesos(d["presupuesto"]),"banner_value")],
-        [P("VALORES EN PESOS CHILENOS","banner_label"),P(comparacion["porcentaje"] if comparacion else "SIN COMPARACIÓN DISPONIBLE","banner_label")]],colWidths=[ancho/2]*2)
-    banner.setStyle(TableStyle([("BACKGROUND",(0,0),(-1,-1),NAVY),("LEFTPADDING",(0,0),(-1,-1),17),
-        ("RIGHTPADDING",(0,0),(-1,-1),10),("TOPPADDING",(0,0),(-1,0),15),("BOTTOMPADDING",(0,2),(-1,2),15),
-        ("VALIGN",(0,0),(-1,-1),"TOP"),("LINEBEFORE",(1,0),(1,-1),.5,GOLD)]))
-    story.extend([banner,Spacer(1,10)])
-    if comparacion: story.append(P(comparacion["diferencia"],"note"))
-    tratamiento="Oferta exenta de IVA." if d["impuesto"]=="Exento / sin impuesto" else (f"Valor con impuesto del {d['tasa']} %." if d["impuesto"]=="Con impuesto" else "Tratamiento tributario por definir.")
-    story.append(P(tratamiento))
-    story.extend(campo("Alcance del valor ofertado",d["incluye_precio"]))
-    story.append(Spacer(1,10)); cap("Documentación de la oferta","documentos")
+    cap("Propuesta económica", "economica")
+    neto, iva, total = montos(d)
+    comparacion = comparar_presupuesto(d)
+    impuesto_txt = ("Exento / sin impuesto" if d["impuesto"] == "Exento / sin impuesto"
+                    else f"{d['tasa']} %" if d["impuesto"] == "Con impuesto"
+                    else "Por definir")
+    precio = tabla(["Concepto", "Valor"], [
+        ["Valor neto del servicio y despacho", pesos(neto)],
+        ["Tratamiento tributario", impuesto_txt],
+        ["Impuesto calculado", pesos(iva) if iva is not None else "Por definir"],
+        ["Total ofertado", pesos(total) if total is not None else "Por definir"],
+        ["Presupuesto informado por el comprador", pesos(d["presupuesto"])],
+    ], [ancho-157, 157])
+    precio.setStyle(TableStyle([
+        ("BACKGROUND", (0, 4), (-1, 4), PALE),
+        ("LINEABOVE", (0, 4), (-1, 4), .8, NAVY),
+    ]))
+    story.append(precio)
+    if comparacion:
+        story.append(Spacer(1, 9))
+        story.append(P(comparacion["diferencia"], "note"))
+    story.extend(campo("Alcance del valor ofertado", d["incluye_precio"]))
+
+    cap("Documentación que acompaña la oferta", "documentos")
     story.extend(parrafos(d["documentacion_adjunta"]))
-    cargadas={x["categoria"] for x in b["archivos"]}
-    nombres=[x["nombre"] for x in b["declarados"] if x["categoria"] not in cargadas]
-    nombres += [descripcion_documento(x) for x in b["archivos"] if x["categoria"]!="Bases técnicas"]
-    for i,nombre in enumerate(dict.fromkeys(nombres),1): story.append(P(f"{i}. {nombre}"))
+    cargadas = {x["categoria"] for x in b["archivos"]}
+    nombres = [x["nombre"] for x in b["declarados"] if x["categoria"] not in cargadas]
+    nombres += [descripcion_documento(x) for x in b["archivos"]
+                if x["categoria"] != "Bases técnicas"]
+    for i, nombre in enumerate(dict.fromkeys(nombres), 1):
+        story.append(P(f"{i}. {nombre}"))
 
     if b["incluir_admin"]:
-        story.append(PageBreak()); cap("Identificación del oferente","identificacion")
-        story.append(P("Empresa","h2"))
-        story.append(tabla(["Antecedente","Información"],[["Razón social",d["oferente"]],["RUT",d["rut_oferente"]],
-            ["Domicilio",d["domicilio_empresa"]]],[135,ancho-135]))
-        story.append(P("Contacto de la propuesta","h2"))
-        story.append(tabla(["Antecedente","Información"],[["Nombre",d["contacto_oferta"]],["Cargo",d["cargo_contacto"]],
-            ["Teléfono",d["telefono"]],["Correo",d["correo"]]],[135,ancho-135]))
-        story.append(P("Representante legal","h2"))
-        story.append(tabla(["Antecedente","Información"],[["Nombre",d["representante"]],["RUT",d["rut_representante"]],
-            ["Cargo",d["cargo_representante"]]],[135,ancho-135]))
-        story.append(P("Datos para transferencia","h2"))
-        story.append(tabla(["Antecedente","Información"],[["Titular",d["oferente"]],["RUT",d["rut_oferente"]],
-            ["Banco",d["banco"]],["Tipo de cuenta",d["tipo_cuenta"]],["Número",d["cuenta"]],["Correo",d["correo_pagos"]]],[135,ancho-135]))
+        cap("Identificación del oferente", "identificacion")
+        story.append(P("Datos institucionales", "h2"))
+        story.append(tabla(["Antecedente", "Información"],
+            [["Razón social", d["oferente"]],
+             ["RUT", d["rut_oferente"]],
+             ["Domicilio", d["domicilio_empresa"]]], [132, ancho-132]))
+        story.append(P("Contacto y representación legal", "h2"))
+        story.append(tabla(["Antecedente", "Información", "Antecedente", "Información"],
+            [["Contacto", d["contacto_oferta"], "Cargo", d["cargo_contacto"]],
+             ["Teléfono", d["telefono"], "Correo", d["correo"]],
+             ["Representante", d["representante"] + "\n" + d["cargo_representante"],
+              "RUT", d["rut_representante"]]],
+            [86, 151, 85, ancho-322]))
+        story.append(P("Antecedentes para transferencia", "h2"))
+        story.append(tabla(["Antecedente", "Información", "Antecedente", "Información"],
+            [["Titular", d["oferente"], "RUT", d["rut_oferente"]],
+             ["Banco", d["banco"], "Tipo de cuenta", d["tipo_cuenta"]],
+             ["N.º de cuenta", d["cuenta"], "Correo", d["correo_pagos"]]],
+            [86, 151, 85, ancho-322]))
 
     if b["incluir_revision"]:
-        story.append(PageBreak()); cap("Revisión documental")
-        story.append(P("Relación de antecedentes que requieren revisión antes de presentar la oferta."))
-        for i,lista in pendientes(b,token):
-            story.append(P(PASOS[i],"h2"))
-            for item in lista: story.append(P("- "+item,"small"))
-    doc.build(story,onFirstPage=portada,onLaterPages=paginas)
-    return out.getvalue()
+        cap("Anexo: revisión documental", pagina_nueva=True)
+        story.extend(parrafos(
+            "Relación de antecedentes que requieren revisión antes de presentar la oferta. "
+            "Esta sección es un instrumento interno de control documental."))
+        for i, lista in pendientes(b, token):
+            story.append(P(PASOS[i], "h2"))
+            for elemento in lista:
+                story.append(P("- " + elemento, "small"))
+
+    doc.build(story, onFirstPage=portada, onLaterPages=paginas)
+    return buffer.getvalue()
 
 
 def main():
     import streamlit as st
     st.set_page_config(page_title="OTEC Santa Mónica | Propuestas",page_icon="📄",layout="wide")
-    st.title("Constructor de propuestas · OTEC Santa Mónica")
-    st.caption("Formulario completo por preguntas. Edita las respuestas, revisa los requisitos y genera una propuesta PDF profesional.")
+    st.title("Propuestas técnicas y económicas | OTEC Santa Mónica")
+    st.caption("Formulario de preparación de ofertas. Genera informes A4 con composición editorial clásica y paleta Beamer.")
     st.info("Propuesta precargada: Compra Ágil 1057545-246-COT26, 20 participantes y 20 horas pedagógicas. Oferta global: $2.000.000, exenta de IVA. Revisa y adapta todas las respuestas para el proceso que vayas a ofertar.")
     if "modelo_propuesta_v6" not in st.session_state:
         # Una versión anterior puede haber dejado widgets con valores de ejemplo.
@@ -1267,9 +1510,9 @@ def main():
                                 preparar_logo(raw,n)
                                 st.image(raw.decode("utf-8") if n.lower().endswith(".svg") else raw,width=210)
                                 st.caption(("Logo por defecto de GitHub: " if rol=="oferente" and not b["logos"][rol]["base64"] else "Logo listo: ")+n)
-                            else: st.info("Carga el logo de la OTEC o guarda OTEC_Santa_Monica_Opcion_1.svg junto al archivo .py para generar el PDF.")
+                            else: st.info("Logo opcional. Si no se incorpora, la portada se genera con cabecera institucional de texto.")
                         except Exception as exc: st.warning(str(exc))
-                st.caption(f"Logo OTEC automático: {LOGO_NAME}, en la carpeta del script o en assets/, logos/ o images/ del repositorio GitHub. La portada utiliza únicamente el logo de la OTEC.")
+                st.caption(f"Logo opcional: {LOGO_NAME}, en la carpeta del script o en assets/, logos/ o images/. Sin logo, se utiliza cabecera institucional tipográfica.")
                 st.markdown("**Documentación adjunta: bases, anexos, CV y respaldos**")
                 st.caption("Ajusta la cantidad esperada para incluir todos los documentos. Máximo 20 MB por archivo y 100 MB en total. Los originales van en el ZIP; el PDF muestra su inventario.")
                 categoria=st.selectbox("Categoría del lote que incorporarás",CATEGORIAS_ADJUNTOS,key="categoria_lote")
@@ -1334,7 +1577,7 @@ def main():
 
 if __name__=="__main__":
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--demo-pdf",type=Path,help="Generar la propuesta precargada sin iniciar Streamlit")
+    parser.add_argument("--demo-pdf",type=Path,help="Generar la propuesta precargada sin iniciar Streamlit (logo opcional)")
     args,_=parser.parse_known_args()
     if args.demo_pdf:
         args.demo_pdf.write_bytes(generar_pdf(nuevo()))
