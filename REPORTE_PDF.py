@@ -1,8 +1,10 @@
-# VERSION: 8.1 - Portada sin rótulos encima de los logos
-# CURSO: Aplicacion de Inteligencia Artificial y Analisis de Datos para la Gestion de Personas
-# CODIGO: 1057545-246-COT26 | MODALIDAD: Compra Agil
-# FECHA Y HORA DE ACTUALIZACION: 11-11-2026 00:57 America/Santiago
-# ORGANISMO: Servicio de Salud Los Rios | OFERTA: $2.000.000 CLP, exenta de IVA
+# VERSION: 8.1 - Adaptación a Servicio Médico Legal / Power BI con IA
+# CURSO: Power BI con IA: Fundamentos y Aplicaciones para Profesionales
+# CODIGO: 837-465-COT26 | MODALIDAD: Compra Ágil
+# FECHA: 11-11-2026 America/Santiago
+# ORGANISMO: Servicio Médico Legal | OFERTA: $2.690.000 CLP, exenta de IVA (a validar al emitir)
+# Código base adaptado desde formulario editorial de OTEC Santa Mónica.
+# Los datos de acceso, calendario y facturación deben revisarse en la ficha oficial.
 # -*- coding: utf-8 -*-
 #
 # INSTRUCCIONES DE USO Y ADAPTACION A FUTURAS LICITACIONES
@@ -72,7 +74,7 @@ from reportlab.platypus import (
 
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_NAME = "OTEC_Santa_Monica_Opcion_1.svg"
-PDF_RENDER_VERSION = "v8.1-editorial-dos-pestanas-logos-sin-rotulos"
+PDF_RENDER_VERSION = "v8.1-adaptado-sml-powerbi-20261111"
 # Gama inspirada en las presentaciones Beamer clásicas: azul estructural,
 # azul petróleo, fondos casi blancos y reglas finas. Se usa con moderación.
 BEAMER_PALETA = {
@@ -131,17 +133,20 @@ PASOS = ["Proceso y comprador", "Identificación del oferente", "Quiénes somos 
          "Relator y respaldos", "Requisitos de compra", "Certificación",
          "Oferta económica", "Logo y documentación adjunta", "Revisión y PDF"]
 ESTADOS = ["Por verificar", "Comprometido", "Declarado", "Respaldado", "A evaluación del comprador", "Cumple", "No cumple", "No aplica"]
-CATEGORIAS_ADJUNTOS = ["Anexo Nº 1", "Bases técnicas", "CV y respaldos relator", "CV relator", "Respaldo relator", "Propuesta / otro", "Orden de compra"]
-ADJUNTOS_DECLARADOS = [
-    {"nombre":"ANEXO Nº 1 - IDENTIFICACION DEL OFERENTE", "categoria":"Anexo Nº 1"},
-    {"nombre":"Currículum del relator y antecedentes de competencias y certificaciones", "categoria":"CV y respaldos relator"},
-]
-RELATOR_INICIAL = {
-    "nombre":"Daniel Cristóbal Vargas Herrera", "rut":"20.522.550-1",
-    "titulo":"Ingeniero Civil Industrial",
-    "experiencia":"Experiencia declarada relacionada con IA y análisis de datos desde junio de 2022: aproximadamente 4 años y 5 meses a noviembre de 2026. Relatoría en IA generativa desde febrero de 2024: aproximadamente 2 años y 9 meses. Antecedentes sujetos a evaluación del organismo comprador.",
-    "disponibilidad":"Confirmada para las dos jornadas presenciales en Valdivia, en fechas a coordinar después de la adjudicación.",
-}
+CATEGORIAS_ADJUNTOS = ["Bases técnicas", "CV y respaldos relator", "CV relator", "Respaldo relator", "Propuesta / otro", "Orden de compra"]
+ADJUNTOS_DECLARADOS = [{'nombre': 'CV - Diego Zamorano y Antecedentes.pdf', 'categoria': 'CV y respaldos relator'}]
+RELATOR_INICIAL = {'nombre': 'Diego Antonio Zamorano Pérez',
+ 'rut': '20.185.347-8',
+ 'titulo': 'Ingeniero Civil Industrial, Pontificia Universidad Católica de Valparaíso (título acreditado)',
+ 'experiencia': 'Experiencia laboral directamente vinculada a Power BI: desarrollo de reportes '
+                'financieros y operativos automatizados para la alta dirección en Siel Consultores '
+                '(2025). Experiencia en diseño de módulos de control BI en Hubconsulting SpA (desde '
+                '2025). En su currículum declara manejo avanzado de Power BI, SQL, Excel avanzado, Python '
+                'para análisis de datos y herramientas de IA generativa. Cuenta con antecedentes '
+                'documentados como relator de IA para funcionarios del sector público, incluida la '
+                'Subsecretaría de Educación Parvularia y SLEP Llanquihue.',
+ 'disponibilidad': 'Relator propuesto para ejecutar el programa virtual durante noviembre/diciembre de '
+                   '2026, según coordinación de calendario con el Servicio Médico Legal.'}
 MODALIDADES = ["Compra Ágil", "Licitación pública", "Licitación privada", "Convenio Marco",
                "Trato directo", "Compra por cotización", "Subasta Inversa Electrónica",
                "Contratos para la Innovación", "Diálogo Competitivo de Innovación", "Otra"]
@@ -188,7 +193,7 @@ PREGUNTAS = [
  (4,"cupos","¿Cuántos cupos o participantes contempla?","entero",True),
  (4,"prerrequisitos","¿Qué conocimientos previos necesitan?","area",False),
  (4,"modalidad_curso","¿Cómo se desarrollará la actividad?","modalidad_curso",True),
- (5,"horas_exigidas","¿Cuántas horas pedagógicas exigen las bases?","decimal",True),
+ (5,"horas_exigidas","¿Cuántas horas de capacitación exigen los términos de referencia?","decimal",True),
  (5,"metodologia","¿Cómo enseñaremos y acompañaremos el aprendizaje?","area",True),
  (5,"herramientas","¿Qué funciones deben cumplir las herramientas, sin comprometer marcas?","area",True),
  (6,"region","¿En qué región se ejecuta?","texto",True),
@@ -198,9 +203,9 @@ PREGUNTAS = [
  (6,"periodo_ejecucion","¿Qué período de ejecución señalan las bases?","texto",True),
  (6,"fecha_ejecucion","¿Cómo se coordinarán las fechas de ejecución?","area",False),
  (6,"equipamiento","¿Qué equipamiento y conectividad se requiere y quién lo aporta?","area",True),
- (6,"cafeteria","¿Qué servicio de cafetería se contempla?","area",False),
+ (6,"cafeteria","¿Hay servicios adicionales de apoyo?","area",False),
  (6,"materiales","¿Qué materiales se entregarán?","area",True),
- (7,"perfil_docente","¿Qué perfil y experiencia exige la licitación al docente?","area",True),
+ (7,"perfil_docente","¿Qué perfil resulta apropiado para desarrollar los contenidos?","area",True),
  (7,"referencia_cv","¿Dónde se presenta el CV y sus respaldos?","area",True),
  (8,"observaciones","¿Qué observaciones o condiciones debe evaluar el comprador?","area",False),
  (9,"evaluacion","¿Cómo se evaluará el aprendizaje y cuál será la escala?","area",True),
@@ -219,33 +224,74 @@ PREGUNTAS = [
  (11,"documentacion_adjunta","¿Cómo se describen los documentos que acompañan la oferta?","area",True),
  (12,"fecha_propuesta","¿Cuál es la fecha de emisión de la propuesta?","texto",True),
 ]
-REQ_COMPRA = ["Programa del curso con módulos o temario", "Currículum del o los docentes",
-              "Material para ejecutar el curso", "Experiencia docente de al menos 5 años en la temática",
-              "Lugar y equipamiento necesario", "Servicio de cafetería para participantes",
-              "Certificación de los participantes"]
-REQ_RELATOR = ["Título en Informática, Control de Gestión o carrera afín",
-               "Experiencia comprobable de al menos 5 años en la temática",
-               "Aplicación práctica de IA generativa y formulación de prompts",
-               "Análisis y visualización de datos; planillas, indicadores y reportes",
-               "Optimización de procesos administrativos",
-               "Protección de datos y uso responsable de IA"]
-REQ_CERT = ["Certificado individual para cada participante", "Fecha de inicio y término en el certificado",
-            "Nota obtenida en el certificado", "Cantidad de horas en el certificado",
-            "Informe final a la Unidad de Capacitación", "Nombre completo y RUT en el informe",
-            "Nota final en escala de 1 a 7", "Fechas y horas pedagógicas en el informe"]
-MODULOS = [
- ("Día 1", "Introducción a la IA", "Conceptos, IA generativa, posibilidades, limitaciones y aplicaciones laborales.", 1.5, "Presencial"),
- ("Día 1", "Uso práctico de IA generativa", "Prompts, redacción y revisión, síntesis, organización de información y elaboración de informes.", 3, "Presencial"),
- ("Día 1", "IA en gestión de personas", "Casos de uso en las distintas áreas de la subdirección.", 2, "Presencial"),
- ("Día 1", "Uso responsable y seguro", "Protección de datos, confidencialidad, anonimización, sesgos, errores y validación humana.", 1.5, "Presencial"),
- ("Día 2", "Fundamentos de análisis de datos", "Calidad de bases, filtros, ordenamiento, fórmulas, tablas dinámicas e indicadores.", 3, "Presencial"),
- ("Día 2", "Visualización y comunicación", "Gráficos, indicadores, patrones, tendencias y reportes básicos.", 2, "Presencial"),
- ("Día 2", "Integración de IA y datos", "Interpretación de información, conclusiones e informes con casos prácticos de gestión de personas.", 3, "Presencial"),
- ("Estudio autónomo", "Revisión de IA generativa", "Conceptos, aplicaciones, instrucciones y uso responsable de IA.", 1, "Autónomo"),
- ("Estudio autónomo", "Aplicación a gestión de personas", "Ejercicios de IA para tareas habituales de gestión de personas.", 1, "Autónomo"),
- ("Estudio autónomo", "Revisión de análisis de datos", "Material práctico de organización, análisis y visualización mediante planillas de cálculo.", 1, "Autónomo"),
- ("Estudio autónomo", "Ejercicio integrador", "Caso simulado de gestión de personas que vincula IA y análisis de datos.", 1, "Autónomo"),
-]
+REQ_COMPRA = ['Capacitación online teórico-práctica para 12 a 16 participantes',
+ 'Duración total de 24 horas y período noviembre/diciembre 2026',
+ 'Módulos 1 a 8 del programa Power BI con IA',
+ 'Metodología práctica con demostraciones y ejercicios guiados',
+ 'Evaluación final de aprendizaje',
+ 'Certificados individuales de participación',
+ 'Coordinación técnica con la contraparte del SML',
+ 'Confidencialidad y seguridad de la información']
+REQ_RELATOR = ['Título profesional de Ingeniería Civil Industrial',
+ 'Experiencia laboral aplicando Microsoft Power BI',
+ 'Experiencia en reportes automatizados e indicadores de gestión',
+ 'Competencias en Power Query, modelado y DAX',
+ 'Experiencia aplicando herramientas de inteligencia artificial',
+ 'Experiencia de relatoría y formación para el sector público',
+ 'Capacidad para desarrollar el proyecto integrador y evaluar aprendizajes']
+REQ_CERT = ['Evaluación final de aprendizaje del curso',
+ 'Diplomas individuales de participación',
+ 'Identificación de curso, participante, duración y fecha en diplomas',
+ 'Certificados digitales con mecanismo de verificación',
+ 'Entrega de resultados finales a la contraparte técnica']
+MODULOS = [('Bloque I - Fundamentos y preparación',
+  'Módulo 1. Introducción al análisis de datos con Power BI e IA',
+  'Fundamentos de inteligencia de negocios; componentes de Power BI Desktop; oportunidades y límites de '
+  'la IA como apoyo al análisis de datos.',
+  2,
+  'Virtual'),
+ ('Bloque I - Fundamentos y preparación',
+  'Módulo 2. Conexión y carga de datos',
+  'Importación desde Excel y archivos estructurados; conexión a fuentes; validación de campos, tipos de '
+  'datos y estructuras.',
+  2,
+  'Virtual'),
+ ('Bloque I - Fundamentos y preparación',
+  'Módulo 3. Transformación y limpieza con Power Query',
+  'Limpieza, tipado, tratamiento de nulos, eliminación de duplicados, combinación de consultas y '
+  'transformaciones reproducibles; práctica guiada.',
+  4,
+  'Virtual'),
+ ('Bloque I - Fundamentos y preparación',
+  'Módulo 4. Modelado de datos',
+  'Relaciones, cardinalidad, modelo de hechos y dimensiones, organización y calidad del modelo para la '
+  'elaboración de reportes.',
+  3,
+  'Virtual'),
+ ('Bloque II - Análisis, visualización e IA',
+  'Módulo 5. Cálculos con DAX',
+  'Medidas, columnas calculadas, funciones básicas de agregación, contexto de filtro e indicadores KPI; '
+  'apoyo de IA para proponer y revisar expresiones.',
+  4,
+  'Virtual'),
+ ('Bloque II - Análisis, visualización e IA',
+  'Módulo 6. Visualización y diseño de tableros',
+  'Construcción de dashboards, gráficos, segmentadores, filtros, navegación e indicadores; diseño '
+  'centrado en la lectura y la toma de decisiones.',
+  3,
+  'Virtual'),
+ ('Bloque II - Análisis, visualización e IA',
+  'Módulo 7. Publicación y uso del servicio en la nube',
+  'Publicación y navegación en Power BI Service; espacios de trabajo, permisos, actualización y '
+  'colaboración; uso sujeto a licencias disponibles.',
+  2,
+  'Virtual'),
+ ('Bloque II - Análisis, visualización e IA',
+  'Módulo 8. Proyecto integrador con IA',
+  'Proyecto práctico con datos simulados: cargar, transformar, modelar, calcular, visualizar y preparar '
+  'un tablero; IA como apoyo y revisión de resultados.',
+  4,
+  'Virtual')]
 
 
 def hoy():
@@ -255,206 +301,178 @@ def hoy():
         return datetime.now().strftime("%d-%m-%Y")
 
 
-DATOS_LICITACION = {'proceso': '1057545-246-COT26',
+DATOS_LICITACION = {'proceso': '837-465-COT26',
  'modalidad': 'Compra Ágil',
- 'titulo': 'Curso de Aplicación de Inteligencia Artificial y Análisis de Datos para la Gestión de '
-           'Personas',
- 'comprador': 'SERVICIO DE SALUD LOS RÍOS',
- 'rut_comprador': '61.607.500-4',
- 'rubro': 'Formación, capacitación y entrenamiento de personal',
- 'id_item': '42161387',
- 'publicacion': '09-11-2026 08:41:58',
- 'cierre_1': '11-11-2026 09:01:00',
- 'cierre_2': '13-11-2026 09:20:01',
- 'plazo_ficha': '1 día',
- 'presupuesto': 2400000,
- 'tipo_presupuesto': 'Disponible',
- 'contacto_comprador': 'POR CONFIRMAR - Unidad de Capacitación',
+ 'titulo': 'Curso en Power BI con IA: Fundamentos y Aplicaciones para Profesionales',
+ 'comprador': 'SERVICIO MÉDICO LEGAL',
+ 'rut_comprador': '61.003.000-9',
+ 'rubro': 'Capacitación y formación de profesionales en análisis de datos e inteligencia artificial',
+ 'id_item': '',
+ 'numero_oc': '',
+ 'requisitos_oc': '',
+ 'publicacion': '',
+ 'cierre_1': '16-11-2026 10:00:00',
+ 'cierre_2': '',
+ 'plazo_ficha': 'No indicado en antecedentes adjuntos',
+ 'presupuesto': 6900000,
+ 'tipo_presupuesto': 'Disponibilidad presupuestaria certificada, CDP N.º 775/2026',
+ 'contacto_comprador': 'Contraparte técnica a designar por el Servicio Médico Legal',
  'oferente': 'CENTRO DE CAPACITACION SANTA MONICA LIMITADA',
  'nombre_comercial': 'CENTRO DE CAPACITACION SANTA MONICA',
  'rut_oferente': '76.176.857-3',
- 'domicilio_empresa': 'Isabel La Católica 4394, oficina 517, piso 5, bloque B, Las Condes, Santiago de '
-                      'Chile, Región Metropolitana',
+ 'domicilio_empresa': 'Isabel La Católica 4394, oficina 517, piso 5, bloque B, Las Condes, Santiago, '
+                      'Región Metropolitana',
  'contacto_oferta': 'ENRIQUE ARMANDO BRUN URRUTIA',
+ 'cargo_contacto': 'Director de Administración y Finanzas',
  'telefono': '+56 9 6359 6523',
  'correo': 'ebrun@otecsantamonica.com',
  'representante': 'María Carmen Urrutia Peña',
  'rut_representante': '11.518.133-5',
  'cargo_representante': 'Representante legal',
- 'banco': 'BancoEstado',
- 'tipo_cuenta': 'Chequera electrónica',
- 'cuenta': '29170792066',
- 'correo_pagos': 'ebrun@otecsantamonica.com',
- 'quienes': 'CENTRO DE CAPACITACION SANTA MONICA desarrolla programas de capacitación orientados a '
-            'fortalecer las competencias laborales y apoyar el trabajo de las organizaciones. Diseñamos '
-            'actividades que combinan contenidos pertinentes, ejercicios prácticos y evaluación del '
-            'aprendizaje, con énfasis en su aplicación al trabajo cotidiano.\n'
+ 'banco': '',
+ 'tipo_cuenta': '',
+ 'cuenta': '',
+ 'correo_pagos': '',
+ 'quienes': 'CENTRO DE CAPACITACION SANTA MONICA LIMITADA desarrolla actividades de capacitación '
+            'orientadas al fortalecimiento de competencias laborales y tecnológicas para organizaciones '
+            'públicas y privadas. El enfoque formativo combina aplicación práctica, acompañamiento '
+            'durante las sesiones y evaluación del aprendizaje.\n'
             '\n'
-            'Para este curso, proponemos un aprendizaje gradual de la inteligencia artificial y el '
-            'análisis de datos, con ejercicios vinculados a las tareas de gestión de personas del '
-            'Servicio de Salud Los Ríos.',
- 'vision': 'Contribuir al desarrollo de las personas y al mejoramiento del trabajo en las '
-           'organizaciones, mediante una capacitación práctica, cercana y pertinente a sus necesidades. '
-           'Buscamos que cada participante comprenda lo aprendido, pueda aplicarlo en sus funciones y '
-           'cuente con herramientas para seguir desarrollando sus capacidades.',
- 'objetivo_general': 'Desarrollar conocimientos y habilidades prácticas para utilizar herramientas de '
-                     'Inteligencia Artificial y análisis de datos en apoyo a los procesos de gestión, '
-                     'procesamiento de información y elaboración de productos de trabajo de la '
-                     'Subdirección de Gestión y Desarrollo de las Personas, promoviendo un uso '
-                     'responsable, crítico y seguro.',
- 'objetivos_especificos': 'Comprender conceptos, posibilidades, limitaciones y aplicaciones de IA en '
-                          'gestión de personas.\n'
-                          'Aplicar IA generativa a redacción, síntesis, organización y sistematización '
-                          'de información.\n'
-                          'Formular instrucciones, evaluar resultados y utilizarlos de manera crítica.\n'
-                          'Organizar, explorar e interpretar información con herramientas habituales de '
+            'Para el Servicio Médico Legal se presenta una capacitación específica en Microsoft Power BI '
+            'e inteligencia artificial, enfocada en generar información analítica confiable para apoyar '
+            'decisiones institucionales.',
+ 'vision': 'Fortalecer las capacidades de los equipos mediante formación pertinente, aplicable y '
+           'orientada a resultados; favorecer la comprensión de los datos, su transformación en '
+           'conocimiento útil y el uso responsable de herramientas digitales.',
+ 'que_ofrecemos': 'Ejecución integral de un curso virtual teórico-práctico de 24 horas para 12 a 16 '
+                  'profesionales, compuesto por ocho módulos oficiales. Incluye relatoría especializada, '
+                  'materiales y bases de práctica, ejercicios guiados, proyecto integrador con IA, '
+                  'evaluación final y diplomas individuales.',
+ 'objetivo_general': 'Implementar soluciones de análisis de datos utilizando Microsoft Power BI y '
+                     'herramientas de Inteligencia Artificial, integrando procesos de conexión, '
+                     'transformación, modelado, cálculo, visualización y publicación de información, con '
+                     'el fin de generar reportes y tableros confiables que apoyen la toma de decisiones '
+                     'en contextos organizacionales.',
+ 'objetivos_especificos': 'Identificar los componentes de Power BI y los usos pertinentes de IA en el '
                           'análisis de datos.\n'
-                          'Aplicar análisis y visualización para elaborar indicadores, reportes y '
-                          'productos de gestión.\n'
-                          'Reconocer precauciones de protección de datos, confidencialidad y validación '
-                          'humana.',
- 'participantes': 'Funcionarios y funcionarias de la Subdirección de Gestión y Desarrollo de las '
-                  'Personas: Departamento de Gestión de las Personas; Departamento de Formación, '
-                  'Capacitación y Educación Continua; y Departamento de Desarrollo Organizacional, '
-                  'Calidad de Vida y Salud Ocupacional.',
- 'cupos': 20,
- 'prerrequisitos': 'No se requieren conocimientos previos avanzados en IA, programación o análisis de '
-                   'datos. Se contemplan distintos niveles de familiaridad con herramientas digitales.',
- 'modalidad_curso': 'Presencial con estudio autónomo',
- 'horas_exigidas': 20.0,
- 'metodologia': 'El aprendizaje avanzará desde los conceptos fundamentales hasta su aplicación en '
-                'tareas de gestión de personas. Cada contenido se trabajará mediante explicaciones '
-                'breves, demostraciones y ejercicios guiados, considerando los distintos niveles de '
-                'experiencia de los participantes.\n'
+                          'Conectar e importar información desde diferentes fuentes de datos.\n'
+                          'Transformar y depurar datos con Power Query para disponer de bases '
+                          'confiables.\n'
+                          'Construir modelos de datos y relaciones adecuadas al análisis.\n'
+                          'Elaborar métricas e indicadores empleando cálculos DAX.\n'
+                          'Diseñar tableros y visualizaciones útiles para la toma de decisiones.\n'
+                          'Publicar reportes y comprender su uso en el servicio Power BI en la nube.\n'
+                          'Aplicar lo aprendido en un proyecto analítico integrador con apoyo de IA.',
+ 'participantes': 'Profesionales que requieran incorporar herramientas modernas de análisis de datos y '
+                  'mejorar su productividad mediante Microsoft Power BI e inteligencia artificial. El '
+                  'servicio considera entre 12 y 16 asistentes.',
+ 'cupos': 16,
+ 'prerrequisitos': 'No se establece un requisito previo obligatorio en los términos de referencia. Se '
+                   'recomienda manejo básico de computador y planillas de cálculo para aprovechar los '
+                   'ejercicios.',
+ 'modalidad_curso': 'Virtual',
+ 'horas_exigidas': 24.0,
+ 'metodologia': 'Clases virtuales en vivo de carácter teórico-práctico. Cada módulo combinará explicación '
+                'breve, demostración en Microsoft Power BI, práctica guiada con bases de datos simuladas, '
+                'análisis de casos y retroalimentación. Las actividades avanzarán desde conexión y '
+                'preparación de datos hasta la construcción de reportes y un proyecto integrador.\n'
                 '\n'
-                'Se utilizarán casos y datos simulados para practicar la redacción y síntesis de '
-                'información, el análisis de planillas y la elaboración de indicadores e informes. La '
-                'revisión de resultados, la confidencialidad y la protección de datos se abordarán '
-                'durante todo el curso. El trabajo concluirá con un ejercicio que integre inteligencia '
-                'artificial y análisis de datos.',
- 'region': 'Región de Los Ríos',
- 'comuna': 'Valdivia',
- 'lugar': 'Se arrendará un recinto en Valdivia con capacidad y condiciones adecuadas para la '
-          'capacitación de 20 participantes. Su ubicación se confirmará después de la adjudicación, en '
-          'coordinación con el Servicio de Salud Los Ríos.',
+                'La inteligencia artificial se incorporará como apoyo a tareas de análisis, formulación y '
+                'revisión de expresiones, interpretación y comunicación de resultados. Los participantes '
+                'verificarán críticamente los productos generados por las herramientas. La evaluación '
+                'final comprobará el aprendizaje aplicado.',
+ 'herramientas': 'Microsoft Power BI Desktop, Power Query, lenguaje DAX y Power BI Service para '
+                 'demostraciones de publicación; archivos de ejercicios compatibles con Excel/CSV y '
+                 'herramientas de IA generativa para apoyo al análisis. El acceso, las licencias '
+                 'disponibles y los requisitos técnicos de participación serán coordinados con la '
+                 'contraparte institucional.',
+ 'region': 'Región Metropolitana',
+ 'comuna': 'Santiago',
+ 'lugar': 'Capacitación 100% virtual, sin asistencia presencial. Organismo comprador: Servicio Médico '
+          'Legal, sede de referencia Isabel Riquelme, Santiago.',
  'quien_lugar': 'Proveedor',
- 'periodo_ejecucion': 'Segunda quincena de noviembre de 2026; 2 jornadas presenciales.',
- 'fecha_ejecucion': 'Las fechas de las dos jornadas se coordinarán con el organismo comprador una vez '
-                    'adjudicado el servicio, dentro de la segunda quincena de noviembre de 2026.',
- 'equipamiento': 'El servicio contempla el recinto y el equipamiento de sala necesario para las '
-                 'actividades. Cada participante deberá contar con un computador propio o proporcionado '
-                 'por el organismo comprador. La OTEC no suministrará computadores individuales. El '
-                 'acceso a internet y las condiciones de uso de las herramientas se coordinarán antes '
-                 'del inicio del curso.',
- 'cafeteria': 'Servicio para 20 participantes durante las dos jornadas presenciales, con dos pausas por '
-              'jornada, coordinadas con la programación de la actividad. Cada servicio incluirá café, '
-              'té o infusiones, agua o jugo, un mini sándwich y una porción de fruta o bocado dulce por '
-              'participante. Comprende utensilios, montaje, atención, reposición de bebidas y retiro. '
-              'Las necesidades alimentarias especiales deberán informarse previamente para coordinar '
-              'las alternativas correspondientes.',
- 'materiales': 'Cada participante recibirá acceso a un kit digital: manual y presentaciones en PDF; '
-               'guía de instrucciones para IA; cuaderno de ejercicios; bases de datos simuladas; '
-               'planillas de análisis; plantillas de gráficos e informes; y ficha de uso responsable de '
-               'IA. Se entregará una guía breve impresa para las actividades presenciales. El estudio '
-               'autónomo contará con guía, archivos de trabajo, caso integrador y criterios de '
-               'evaluación, alineados con sus cuatro horas pedagógicas. Los ejercicios utilizarán '
-               'información ficticia.',
- 'perfil_docente': 'Titulado en Informática, Control de Gestión o carrera afín; experiencia comprobable '
-                   'de al menos 5 años en IA generativa, análisis y visualización de datos y '
-                   'optimización de procesos administrativos. Dominio de prompts, planillas, '
-                   'indicadores, reportes, protección de datos y uso responsable de IA.',
- 'referencia_cv': 'El currículum del relator y los antecedentes de sus competencias y certificaciones '
-                  'acompañan la propuesta en la documentación adjunta.',
- 'evaluacion': 'Se aplicará un diagnóstico inicial sin nota, ejercicios guiados con retroalimentación '
-               'durante el curso y una evaluación final mediante un caso integrador individual. El '
-               'participante trabajará con una base simulada, elaborará un indicador o gráfico y '
-               'preparará un informe breve apoyado por IA, revisando exactitud y uso responsable de la '
-               'información. La evaluación final se expresará en escala de 1 a 7.',
- 'aprobacion': 'Se propone una nota mínima de aprobación de 4,0 y una asistencia mínima del 75 %. El '
-               'certificado y el informe final registrarán la calificación y el resultado de cada '
-               'participante.',
- 'entrega_certificados': 'Los certificados individuales y el informe final se entregarán en PDF dentro '
-                         'de cinco días hábiles posteriores al término del curso. Se acompañará una '
-                         'planilla editable con los resultados.\n'
-                         '\n'
-                         'Cada certificado identificará al participante mediante su nombre y RUT e '
-                         'incluirá el nombre del curso, las fechas de inicio y término, la nota '
-                         'obtenida, las horas pedagógicas y la identificación de la OTEC. Se contempla '
-                         'la firma de la representante legal y del relator. El informe final '
-                         'incorporará la identificación de los participantes, calificaciones en escala '
-                         'de 1 a 7, asistencia, resultado de aprobación, fechas y horas del curso.',
- 'destino_informe': 'Unidad de Capacitación de la Dirección del Servicio de Salud Los Ríos',
+ 'periodo_ejecucion': 'Noviembre/diciembre de 2026. Las clases se realizarán en modalidad virtual, en las '
+                      'fechas que se coordinen con la contraparte técnica.',
+ 'fecha_ejecucion': 'Se propondrá un cronograma de sesiones que totalice 24 horas, sujeto a coordinación '
+                    'y aceptación del Servicio Médico Legal durante noviembre/diciembre de 2026.',
+ 'equipamiento': 'El proveedor habilitará el medio de videoconferencia y entregará recursos digitales '
+                 'para los ejercicios. Los requerimientos de computador, conectividad, instalación de '
+                 'Power BI y licencias para publicación se comunicarán y coordinarán antes del inicio del '
+                 'curso.',
+ 'cafeteria': '',
+ 'materiales': 'Kit de aprendizaje digital con presentaciones, guías por módulo, archivos y bases de '
+               'datos simuladas, ejercicios de Power Query y DAX, ejemplos de visualización, '
+               'instrucciones del proyecto integrador y rúbrica de evaluación. No se utilizarán datos '
+               'institucionales reservados en herramientas de IA de terceros.',
+ 'perfil_docente': 'Para desarrollar los contenidos del curso se presenta un relator con experiencia '
+                   'laboral en Microsoft Power BI, inteligencia de negocios, análisis de datos e '
+                   'inteligencia artificial aplicada. Los términos de referencia no establecen título '
+                   'profesional, certificación Microsoft ni años mínimos obligatorios.',
+ 'referencia_cv': 'Se acompaña el archivo CV - Diego Zamorano y Antecedentes.pdf, con currículum, '
+                  'certificado de título y respaldos de experiencias de relatoría. El oferente confirma '
+                  'el dominio del profesional en Power Query, DAX y Power BI Service.',
+ 'observaciones': 'El curso se ejecutará bajo las condiciones de confidencialidad y coordinación '
+                  'establecidas por el Servicio Médico Legal. El calendario específico será acordado con '
+                  'la contraparte técnica; el compromiso ofertado comprende íntegramente las 24 horas y '
+                  'los ocho módulos descritos.',
+ 'evaluacion': 'Se aplicará una evaluación final de aprendizaje mediante un ejercicio práctico '
+               'integrador: importación y depuración de datos, modelado, cálculo de indicadores, '
+               'visualización y análisis apoyado por IA. Se utilizará una pauta de evaluación consistente '
+               'y se conservará el registro individual de resultados.',
+ 'aprobacion': 'La pauta de evaluación y las condiciones de aprobación se informarán a los participantes '
+               'al inicio y se coordinarán con la contraparte técnica, manteniendo como requisito central '
+               'la evaluación final exigida.',
+ 'entrega_certificados': 'Se entregarán diplomas digitales individuales de participación, con nombre de '
+                         'participante, nombre del curso, duración y fechas de ejecución; se contempla un '
+                         'identificador verificable. Se entregará además un resumen de asistencia y '
+                         'resultados de evaluación a la contraparte técnica al cierre del servicio.',
+ 'destino_informe': 'contraparte técnica o unidad de capacitación que designe el Servicio Médico Legal',
  'cantidad': 1,
- 'valor_unitario': 2000000,
+ 'valor_unitario': 2690000,
  'despacho': 0,
  'impuesto': 'Exento / sin impuesto',
  'tasa': 19,
- 'incluye_precio': 'El valor incluye relatoría, preparación de la actividad, materiales, recinto y '
-                   'equipamiento de sala, cafetería, evaluación, certificados e informe final. Los '
-                   'computadores serán aportados por los participantes o por el organismo comprador.',
- 'detalle': 'Curso de IA y análisis de datos para 20 participantes: 20 horas pedagógicas (16 '
-            'presenciales y 4 autónomas). Incluye relatoría, materiales, recinto, cafetería, '
-            'evaluación, certificados e informe final. Valor global exento: $2.000.000.',
- 'adjuntos_esperados': 2,
- 'adjuntos_solicitados': 'ANEXO Nº 1_ COMPRAS AGILES.docx\n'
-                         'BASES TECNICAS CURSO APLICACION IA Y ANALISIS DE DATOS.pdf',
- 'fecha_propuesta': '',
- 'que_ofrecemos': 'Ofrecemos la ejecución del curso para 20 participantes, con 20 horas pedagógicas: 16 '
-                  'presenciales, distribuidas en dos jornadas en Valdivia, y 4 de estudio autónomo. El '
-                  'servicio comprende relatoría, materiales, recinto y equipamiento de sala, cafetería, '
-                  'evaluación, certificación e informe final.',
- 'herramientas': 'Se trabajará con herramientas de inteligencia artificial generativa, planillas de '
-                 'cálculo y recursos de visualización de datos. Su selección considerará el acceso de '
-                 'los participantes y las condiciones de uso de la institución. Los ejercicios '
-                 'comprenderán la formulación de instrucciones, la revisión de textos, la organización '
-                 'de datos, el uso de fórmulas y tablas dinámicas, y la preparación de gráficos e '
-                 'informes.',
- 'documentacion_adjunta': 'La oferta se acompaña del Anexo Nº 1, Identificación del Oferente, y del '
-                          'currículum del relator con sus antecedentes de competencias y '
-                          'certificaciones.',
- 'cargo_contacto': 'Director de Administración y Finanzas',
- 'numero_oc': '',
- 'requisitos_oc': '',
- 'observaciones': 'Experiencia del relator: las bases solicitan al menos cinco años de experiencia en '
-                  'la temática. El profesional propuesto declara trayectoria relacionada con IA y '
-                  'análisis de datos desde junio de 2022, equivalente a aproximadamente cuatro años y '
-                  'cinco meses a noviembre de 2026; su experiencia en relatoría de IA generativa se '
-                  'inicia en febrero de 2024. Estos antecedentes se presentan para evaluación del '
-                  'organismo comprador.\n'
-                  '\n'
-                  'Computadores de los participantes: la oferta considera el recinto y su equipamiento '
-                  'de sala. Los computadores individuales deberán ser aportados por los participantes o '
-                  'por el organismo comprador. Esta condición requiere la conformidad del comprador '
-                  'antes de la ejecución.'}
+ 'incluye_precio': 'Precio global por 24 horas virtuales para hasta 16 participantes. Incluye relatoría, '
+                   'planificación y preparación de sesiones, uso de plataforma de videoconferencia, '
+                   'materiales digitales, ejercicios guiados, proyecto integrador con IA, evaluación '
+                   'final, diplomas individuales y coordinación técnica. No contempla actividades '
+                   'presenciales ni traslados.',
+ 'detalle': 'Curso Power BI con IA, 24 horas virtuales, para 12 a 16 participantes. Ocho módulos, '
+            'ejercicios prácticos, proyecto integrador, evaluación final y diplomas individuales. Oferta '
+            'global: $2.690.000 exenta.',
+ 'adjuntos_esperados': 1,
+ 'adjuntos_solicitados': 'Currículum y antecedentes del relator (respaldo técnico complementario).',
+ 'documentacion_adjunta': 'Se acompaña CV de Diego Antonio Zamorano Pérez con certificado de título y '
+                          'antecedentes documentales de relatorías. La propuesta contiene además el '
+                          'programa, metodología, cumplimiento de términos técnicos, evaluación y valor '
+                          'global del servicio.',
+ 'fecha_propuesta': '11-11-2026'}
 
 # Textos de apertura editables. Las llaves se completan desde DATOS_LICITACION.
-INTRODUCCIONES = {'proceso': 'La presente propuesta responde al proceso {proceso}, convocado por {comprador}, para la '
-            'contratación del servicio que se detalla a continuación.',
- 'objetivos': 'La capacitación está orientada a desarrollar capacidades de aplicación directa en las '
-              'funciones de los participantes. Sus objetivos y actividades se organizan conforme a los '
-              'contenidos solicitados por el organismo comprador.',
- 'programa': 'El programa contempla {horas_exigidas:g} horas pedagógicas. Los contenidos se organizan por '
-             'jornada y modalidad, con una secuencia que combina fundamentos, práctica y aplicación al '
-             'trabajo.',
- 'metodologia': 'Las actividades vinculan los contenidos del curso con situaciones de trabajo de los '
-                'participantes. Los recursos de apoyo permitirán practicar durante las jornadas y reforzar '
-                'lo aprendido de manera autónoma.',
- 'logistica': 'La capacitación se realizará en {comuna}, {region}, en modalidad {modalidad_curso}. La '
-              'coordinación del recinto y de las fechas se efectuará con el organismo comprador.',
- 'relator': 'La ejecución estará a cargo del profesional identificado en esta sección. Se presentan su '
-            'formación, experiencia y disponibilidad, junto con los antecedentes relacionados con el perfil '
-            'solicitado.',
- 'requisitos': 'El servicio considera los componentes solicitados en las bases técnicas. Se detalla su '
-               'incorporación en la oferta y el antecedente o compromiso que corresponde a cada requisito.',
- 'certificacion': 'El aprendizaje se evaluará mediante actividades prácticas y una instancia final de '
-                  'aplicación. Los resultados se registrarán en los certificados individuales y en el '
-                  'informe de cierre.',
- 'economica': 'Se presenta el valor global del servicio para {cupos} participantes, de acuerdo con el '
-              'programa y las condiciones de ejecución descritas en esta propuesta.',
- 'documentos': 'Los antecedentes administrativos y profesionales se presentan como documentación adjunta '
-               'para la evaluación de la oferta.',
- 'identificacion': 'La contratación y las comunicaciones relacionadas con la propuesta se gestionarán con '
-                   'los siguientes antecedentes del oferente.'}
+INTRODUCCIONES = {'proceso': 'La propuesta responde a la Compra Ágil {proceso}, convocada por {comprador}, para la '
+            'prestación integral de un curso de Power BI con inteligencia artificial.',
+ 'objetivos': 'El programa desarrolla capacidades progresivas para transformar datos en información '
+              'confiable, utilizando Power BI y herramientas de IA como apoyo práctico.',
+ 'programa': 'El curso contempla 24 horas de capacitación virtual, organizadas en ocho módulos que '
+             'avanzan desde los fundamentos y la preparación de datos hasta la elaboración de un proyecto '
+             'integrador.',
+ 'metodologia': 'Las actividades están diseñadas para favorecer la aplicación inmediata: demostración, '
+                'práctica guiada, resolución de casos y retroalimentación mediante datos simulados.',
+ 'logistica': 'La capacitación se ejecutará mediante clases virtuales. El calendario se coordinará con el '
+              'Servicio Médico Legal durante noviembre/diciembre de 2026.',
+ 'relator': 'La relatoría principal estará a cargo de Diego Antonio Zamorano Pérez, cuyo perfil reúne '
+            'experiencia aplicada en Power BI, control de gestión, análisis de datos e inteligencia '
+            'artificial. Su currículum y antecedentes se acompañan al expediente.',
+ 'requisitos': 'La siguiente matriz vincula los requerimientos expresos del Servicio Médico Legal con los '
+               'compromisos concretos asumidos en esta oferta.',
+ 'certificacion': 'El aprendizaje se comprobará con una evaluación final práctica y se respaldará '
+                  'mediante diplomas individuales de participación y registro de resultados.',
+ 'economica': 'La propuesta económica considera un servicio global de 24 horas virtuales para 12 a 16 '
+              'participantes, con todos los componentes descritos en este documento.',
+ 'documentos': 'Los antecedentes del relator se incluyen en el expediente para complementar la evaluación '
+               'técnica.',
+ 'identificacion': 'Los siguientes datos corresponden al oferente, conforme a la información facilitada '
+                   'en el código base.'}
 
 def datos_licitacion():
     d=copy.deepcopy(DATOS_LICITACION)
@@ -468,49 +486,60 @@ def items_check(textos):
 
 
 def nuevo(ejemplo_activo=True):
-    d=datos_licitacion()
+    d = datos_licitacion()
     if not ejemplo_activo:
-        for seccion,k,_,tipo,_ in PREGUNTAS:
-            if seccion==1: continue
-            if tipo in {"entero","decimal"}: d[k]=0.0 if tipo=="decimal" else 0
-            elif k not in {"modalidad","modalidad_curso","quien_lugar","impuesto"}: d[k]=""
-        d.update(cantidad=1,tasa=19,fecha_propuesta=hoy())
-    modulos=[{"id":uuid4().hex[:12],"jornada":a,"nombre":n,"contenido":c,"horas":float(h),"tipo":t}
-             for a,n,c,h,t in MODULOS] if ejemplo_activo else []
-    rel=copy.deepcopy(RELATOR_INICIAL)
-    rel.update(id=uuid4().hex[:12],checklist=items_check(REQ_RELATOR))
-    for row in rel["checklist"]:
-        req=row["requisito"]
-        if "5 años" in req:
-            row.update(estado="A evaluación del comprador",respaldo=rel["experiencia"])
-        elif "Título" in req:
-            row.update(estado="Declarado",respaldo="Ingeniero Civil Industrial, según el currículum adjunto.")
-        elif "Análisis" in req:
-            row.update(estado="Declarado",respaldo="Currículum, diplomado en Data Science e IA y antecedentes de manejo de herramientas de productividad.")
-        else:
-            row.update(estado="Respaldado",respaldo="Antecedentes de relatoría, competencias y certificaciones incluidos en el compilado del CV.")
-    compra=items_check(REQ_COMPRA)
-    for row in compra:
-        if "5 años" in row["requisito"]:
-            row.update(estado="A evaluación del comprador",respaldo="La experiencia efectiva se informa en los antecedentes del relator. Ver observaciones.")
-        elif "Lugar" in row["requisito"]:
-            row.update(estado="A evaluación del comprador",respaldo="Recinto y equipamiento de sala incluidos. Computadores individuales aportados por participantes o comprador. Ver observaciones.")
-        elif "Currículum" in row["requisito"]:
-            row.update(estado="Declarado",respaldo="Currículum y antecedentes de competencias y certificaciones en la documentación adjunta.")
-        else:
-            row.update(estado="Comprometido",respaldo={
-                "Programa del curso con módulos o temario":"Programa por módulos, con contenidos y horas por jornada. Total: 20 horas pedagógicas.",
-                "Material para ejecutar el curso":"Kit digital, guía impresa y recursos para estudio autónomo; detalle en Metodología y recursos de aprendizaje.",
-                "Servicio de cafetería para participantes":"Dos pausas por jornada durante dos días, para 20 participantes; detalle en Lugar y condiciones de ejecución.",
-                "Certificación de los participantes":"Certificados individuales e informe final de resultados; detalle en Evaluación, certificación e informe final."
-            }.get(row["requisito"],"Según el alcance descrito en la propuesta."))
-    certificacion=items_check(REQ_CERT)
-    for row in certificacion:
-        row.update(estado="Comprometido",respaldo="Certificados e informe final dentro de cinco días hábiles posteriores al término del curso.")
-    return {"version":6,"datos":d,"modulos":modulos,"docentes":[rel],"compra":compra,
-            "certificacion":certificacion,"logos":{"oferente":{"nombre":"","base64":""}, "comprador":{"nombre":"","base64":""}},
+        for _, k, _, tipo, _ in PREGUNTAS:
+            if k in {"oferente", "nombre_comercial", "rut_oferente", "domicilio_empresa",
+                     "contacto_oferta", "cargo_contacto", "telefono", "correo",
+                     "representante", "rut_representante", "cargo_representante"}:
+                continue
+            if tipo in {"entero", "decimal"}:
+                d[k] = 0.0 if tipo == "decimal" else 0
+            elif k not in {"modalidad", "modalidad_curso", "quien_lugar", "impuesto"}:
+                d[k] = ""
+        d.update(cantidad=1, tasa=19, fecha_propuesta=hoy())
+    rows = [{"id": uuid4().hex[:12], "jornada": a, "nombre": n, "contenido": c,
+             "horas": float(h), "tipo": t} for a,n,c,h,t in MODULOS] if ejemplo_activo else []
+    rel = copy.deepcopy(RELATOR_INICIAL)
+    rel["id"] = uuid4().hex[:12]
+    rel["checklist"] = items_check(REQ_RELATOR)
+    soportes_rel = [
+        ("Respaldado", "Certificado de profesionales del Registro Civil, incluido en el CV adjunto."),
+        ("Declarado", "Siel Consultores: reportes financieros y operativos automatizados en Power BI, según CV."),
+        ("Declarado", "Experiencia en control BI, reportabilidad y KPI, según CV."),
+        ("Declarado", "Competencias técnicas confirmadas por el oferente; ejercicios contemplados en módulos 3, 4 y 5."),
+        ("Declarado", "Capacitaciones en IA y aplicación de herramientas de IA generativa, según CV."),
+        ("Respaldado", "Certificados de relatoría para la Subsecretaría de Educación Parvularia y SLEP Llanquihue."),
+        ("Comprometido", "Relatoría de los ocho módulos, proyecto práctico y evaluación final del programa."),
+    ]
+    for row, (estado, respaldo) in zip(rel["checklist"], soportes_rel):
+        row.update(estado=estado, respaldo=respaldo)
+    compra = items_check(REQ_COMPRA)
+    soportes_compra = [
+        "Clases virtuales teórico-prácticas; cobertura de hasta 16 profesionales.",
+        "Programa de ocho módulos, 24 horas; ejecución noviembre/diciembre 2026.",
+        "Programa desglosado en los ocho módulos de los términos de referencia.",
+        "Demostraciones, ejercicios guiados, práctica progresiva y proyecto integrador.",
+        "Evaluación final aplicada mediante ejercicio integrador y registro de resultados.",
+        "Diplomas individuales digitales con identificación del participante.",
+        "Coordinador técnico del proveedor y calendario concertado con la contraparte institucional.",
+        "Ejercicios con datos simulados y cumplimiento de las cláusulas de reserva del SML.",
+    ]
+    for row,respaldo in zip(compra,soportes_compra):
+        row.update(estado="Comprometido",respaldo=respaldo)
+    cert = items_check(REQ_CERT)
+    for row,respaldo in zip(cert,[
+        "Evaluación práctica final y registro individual de aprendizaje.",
+        "Diploma individual digital de participación al terminar el curso.",
+        "El diploma identificará al participante, curso, duración y fechas de ejecución.",
+        "Identificador único o código de verificación para cada diploma.",
+        "Resumen final de asistencia, evaluación y entregables."]):
+        row.update(estado="Comprometido",respaldo=respaldo)
+    return {"version":6,"datos":d,"modulos":rows,"docentes":[rel],
+            "compra":compra,"certificacion":cert,
+            "logos":{"oferente":{"nombre":"","base64":""},"comprador":{"nombre":"","base64":""}},
             "archivos":[],"declarados":copy.deepcopy(ADJUNTOS_DECLARADOS),
-            "marcar_borrador":False,"incluir_revision":False,"incluir_admin":True}
+            "marcar_borrador":False,"incluir_revision":False,"incluir_admin":False}
 
 
 def slug(s, maximo=90):
@@ -812,8 +841,8 @@ def faltantes(b,paso,token=None):
                 if raw: preparar_logo(raw,nombre)
             except Exception as e: r.append(f"Revisar logo {rol}: {e}")
         count=len(disponibles(b,token)) if token else len(b["archivos"])
-        if "Anexo Nº 1" not in {a["categoria"] for a in b["archivos"]}:
-            r.append("Anexo Nº 1 declarado: cargar su original completado y firmado para incorporarlo al ZIP.")
+        if "CV y respaldos relator" not in {a["categoria"] for a in b["archivos"]}:
+            r.append("Adjuntar CV y respaldos del relator al expediente antes del envío.")
         if count<int(d["adjuntos_esperados"]): r.append(f"Adjuntos: {count} de {d['adjuntos_esperados']} disponibles.")
         if count>int(d["adjuntos_esperados"]): r.append("Ajustar cantidad esperada de adjuntos: hay más archivos cargados.")
     return r
@@ -844,7 +873,7 @@ def esqueleto_markdown(b,solo_estructura=False):
             if p==i:
                 out += [f"### {pregunta}", "[COMPLETAR]" if solo_estructura else str(d[k] or "[PENDIENTE]"), ""]
         if i==5:
-            out += ["### Módulos: jornada / nombre / contenidos / horas pedagógicas / modalidad",""]
+            out += ["### Módulos: bloque / nombre / contenidos / horas de capacitación / modalidad",""]
             out += ["[AGREGAR MÓDULOS]"] if solo_estructura else [f"- {m['jornada']} | {m['nombre']} | {m['contenido']} | {m['horas']:g} h | {m['tipo']}" for m in b["modulos"]]
         if i==7:
             for doc in b["docentes"]:
@@ -1140,7 +1169,7 @@ def generar_pdf(b, token=None, solo_portada=False):
         ficha = [
             ("Lugar", f"{d['comuna']}, {d['region']}"),
             ("Participantes", f"{d['cupos']} personas"),
-            ("Duración", f"{total_curso:g} horas pedagógicas"),
+            ("Duración", f"{total_curso:g} horas de capacitación"),
             ("Valor ofertado", pesos(total_precio) if total_precio is not None else "Por definir"),
         ]
         y = 345
@@ -1243,7 +1272,6 @@ def generar_pdf(b, token=None, solo_portada=False):
         ["Organismo comprador", d["comprador"] + "\nRUT " + d["rut_comprador"]],
         ["Modalidad y código", d["modalidad"] + "\n" + d["proceso"]],
         ["Categoría del servicio", d["rubro"]],
-        ["ID del ítem", d["id_item"]],
         ["Lugar de ejecución", d["comuna"] + ", " + d["region"]],
         ["Modalidad del curso", d["modalidad_curso"]],
     ], [156, ancho-156]))
@@ -1275,7 +1303,7 @@ def generar_pdf(b, token=None, solo_portada=False):
         modulos = tabla(["Módulo / modalidad", "Contenidos", "Horas"],
             [[m["nombre"] + "\n" + m["tipo"], m["contenido"], f"{m['horas']:g}"]
              for m in filas]
-            + [["Total " + jornada.lower(), "Horas pedagógicas",
+            + [["Total " + jornada.lower(), "Horas de capacitación",
                 f"{sum(m['horas'] for m in filas):g}"]],
             [141, ancho-189, 48])
         modulos.setStyle(TableStyle([
@@ -1284,17 +1312,17 @@ def generar_pdf(b, token=None, solo_portada=False):
         ]))
         story.append(modulos)
     story.append(Spacer(1, 6))
-    story.append(P(f"Duración total del programa: {sum(totales.values()):g} horas pedagógicas.", "h2"))
+    story.append(P(f"Duración total del programa: {sum(totales.values()):g} horas de capacitación.", "h2"))
 
     cap("Metodología y recursos de aprendizaje", "metodologia")
     story.extend(campo("Desarrollo de las actividades", d["metodologia"]))
     story.extend(campo("Herramientas de trabajo", d["herramientas"]))
     story.extend(campo("Materiales para los participantes", d["materiales"]))
 
-    cap("Lugar y condiciones de ejecución", "logistica")
+    cap("Condiciones de ejecución virtual", "logistica")
     story.extend(campo("Recinto y ubicación", d["lugar"]))
     responsable = {
-        "Proveedor": "El recinto será dispuesto por el oferente.",
+        "Proveedor": "El proveedor habilitará la plataforma de videoconferencia para las clases virtuales.",
         "Comprador": "El recinto será dispuesto por el organismo comprador.",
         "Compartido": "La habilitación del recinto se coordinará entre el oferente y el organismo comprador.",
         "Por definir": "El responsable del recinto se confirmará antes de la ejecución.",
@@ -1582,7 +1610,7 @@ def main():
                             a,c,e=st.columns([1,2,1])
                             with a: widget(["modulos",j,"jornada"],"Jornada / bloque")
                             with c: widget(["modulos",j,"nombre"],"Nombre del módulo")
-                            with e: widget(["modulos",j,"horas"],"Horas pedagógicas","decimal")
+                            with e: widget(["modulos",j,"horas"],"Horas de capacitación","decimal")
                             widget(["modulos",j,"contenido"],"¿Qué contenidos se abordarán?","area")
                             widget(["modulos",j,"tipo"],"Modalidad del módulo",opciones=["Presencial","Autónomo","Virtual"])
                             if st.button("Eliminar módulo",key="del_m_"+m["id"]):
