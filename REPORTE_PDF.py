@@ -1,4 +1,4 @@
-# VERSION: 7.0 - Reporte editorial estilo LaTeX / paleta Beamer
+# VERSION: 8.0 - Generación limpia y detalles en pestaña independiente
 # CURSO: Aplicacion de Inteligencia Artificial y Analisis de Datos para la Gestion de Personas
 # CODIGO: 1057545-246-COT26 | MODALIDAD: Compra Agil
 # FECHA Y HORA DE ACTUALIZACION: 11-11-2026 00:57 America/Santiago
@@ -8,12 +8,14 @@
 # INSTRUCCIONES DE USO Y ADAPTACION A FUTURAS LICITACIONES
 # 1. Instalar: python -m pip install -r requirements.txt
 #    Dependencias: streamlit, reportlab, svglib, pillow, defusedxml.
-# 2. Ejecutar: python -m streamlit run REPORTE_PDF_BEAMER_LATEX.py (Python 3.10 o superior).
-# 3. El formulario pregunta por comprador, modalidad, lugar, participantes,
+# 2. Ejecutar: python -m streamlit run REPORTE_PDF_BEAMER_SIMPLE.py (Python 3.10 o superior).
+# 3. La pestaña «Generar PDF» solo tiene logo opcional del comprador y botones.
+#    La pestaña «Detalles y edición» contiene el formulario, con apartados cerrados.
+#    El formulario pregunta por comprador, modalidad, lugar, participantes,
 #    objetivos, contenidos, horas, docente, materiales, requisitos y precio.
 #    Revisar cada respuesta, cargar los documentos y pulsar Generar reporte PDF.
-# 4. Logo: se busca OTEC_Santa_Monica_Opcion_1.svg en la carpeta del programa
-#    o en assets/, logos/ e images/. Puede reemplazarse en el formulario por
+# 4. Logo del oferente: se busca OTEC_Santa_Monica_Opcion_1.svg en la carpeta
+#    o en assets/, logos/ e images/. Puede reemplazarse en «Detalles» por
 #    SVG, PNG o JPG. Si no existe, se utiliza cabecera institucional en texto.
 # 5. Para otra licitacion, editar DATOS_LICITACION, MODULOS, RELATOR_INICIAL,
 #    ADJUNTOS_DECLARADOS, REQ_COMPRA, REQ_RELATOR y REQ_CERT. Actualizar este
@@ -32,7 +34,7 @@
 # 10. Formulario completo, sin bloqueos. No hay guardado persistente de progreso;
 #     conservar la sesion abierta y descargar los documentos antes de cerrarla.
 #
-# PRUEBA LOCAL: python REPORTE_PDF_BEAMER_LATEX.py --demo-pdf propuesta.pdf
+# PRUEBA LOCAL: python REPORTE_PDF_BEAMER_SIMPLE.py --demo-pdf propuesta.pdf
 # El logo institucional es opcional; sin él se usa una portada tipográfica.
 """Formulario reutilizable por preguntas y generador de propuesta PDF A4."""
 from __future__ import annotations
@@ -55,6 +57,7 @@ from zoneinfo import ZoneInfo
 
 import reportlab
 from reportlab.graphics import renderPDF
+from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_LEFT, TA_JUSTIFY
 from reportlab.lib.pagesizes import A4
@@ -69,7 +72,7 @@ from reportlab.platypus import (
 
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_NAME = "OTEC_Santa_Monica_Opcion_1.svg"
-PDF_RENDER_VERSION = "v7-estilo-latex-beamer-tradicional"
+PDF_RENDER_VERSION = "v8-editorial-dos-pestanas-logo-comprador"
 # Gama inspirada en las presentaciones Beamer clásicas: azul estructural,
 # azul petróleo, fondos casi blancos y reglas finas. Se usa con moderación.
 BEAMER_PALETA = {
@@ -505,7 +508,7 @@ def nuevo(ejemplo_activo=True):
     for row in certificacion:
         row.update(estado="Comprometido",respaldo="Certificados e informe final dentro de cinco días hábiles posteriores al término del curso.")
     return {"version":6,"datos":d,"modulos":modulos,"docentes":[rel],"compra":compra,
-            "certificacion":certificacion,"logos":{"oferente":{"nombre":"","base64":""}},
+            "certificacion":certificacion,"logos":{"oferente":{"nombre":"","base64":""}, "comprador":{"nombre":"","base64":""}},
             "archivos":[],"declarados":copy.deepcopy(ADJUNTOS_DECLARADOS),
             "marcar_borrador":False,"incluir_revision":False,"incluir_admin":True}
 
@@ -555,6 +558,8 @@ def intervalo(inicio, fin):
 
 
 def logo_local(rol="oferente"):
+    if rol != "oferente":
+        return None  # Nunca utilizar el logo del oferente como el del comprador.
     nombres = [LOGO_NAME, "logo_otec.svg", "logo.svg", "logo_otec.png", "logo.png"]
     raices = list(dict.fromkeys([BASE_DIR, Path.cwd()]))
     carpetas = [carpeta for raiz in raices for carpeta in
@@ -654,7 +659,7 @@ def preparar_logo(raw, nombre):
 
 
 def bytes_logo(b, rol):
-    item=b["logos"][rol]
+    item=b.get("logos", {}).get(rol, {"base64":"", "nombre":""})
     if item["base64"]:
         return base64.b64decode(item["base64"],validate=True),item["nombre"]
     ruta=logo_local(rol)
@@ -727,8 +732,8 @@ def validar(b):
         for row in lista:
             if not isinstance(row,dict) or row.get("estado") not in ESTADOS or any(not isinstance(row.get(k),str) or len(row[k])>5000 for k in ["id","requisito","respaldo"]):
                 raise ValueError("Requisito inválido.")
-    for rol in ["oferente"]:
-        item=b.get("logos",{}).get(rol,{})
+    for rol in ["oferente", "comprador"]:
+        item=b.get("logos",{}).get(rol,{"nombre":"", "base64":""})
         if not isinstance(item.get("nombre"),str) or len(item["nombre"])>200 or not isinstance(item.get("base64"),str) or len(item["base64"])>7000000:
             raise ValueError("Logo inválido.")
         if item["base64"]: preparar_logo(base64.b64decode(item["base64"],validate=True),item["nombre"])
@@ -961,10 +966,46 @@ def estilos_pdf():
         "label": ParagraphStyle(
             "etiqueta_informe", fontName=FUENTE_SANS_BOLD,
             fontSize=8.3, leading=11, textColor=MUTED, spaceAfter=0),
+        "enumeracion": ParagraphStyle(
+            "enumeracion_editorial", fontName=FUENTE_SERIF, fontSize=10,
+            leading=14.8, textColor=INK, spaceAfter=5,
+            alignment=TA_JUSTIFY, leftIndent=19, firstLineIndent=-16,
+            allowWidows=0, allowOrphans=0),
         "money": ParagraphStyle(
             "monto_informe", fontName=FUENTE_SERIF_BOLD,
             fontSize=10.3, leading=14, textColor=NAVY),
     }
+
+
+class CanvasConTotal(Canvas):
+    """Numera «Página n de N» sin alterar el cuerpo ni las tablas del PDF."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._estados_de_pagina = []
+        self._destinos_pagina = []
+
+    def showPage(self):
+        self._estados_de_pagina.append(dict(self.__dict__))
+        self._destinos_pagina = []
+        self._startPage()
+
+    def save(self):
+        numero_total = len(self._estados_de_pagina)
+        for estado in self._estados_de_pagina:
+            self.__dict__.update(estado)
+            for destino in self._destinos_pagina:
+                self.bookmarkPage(destino)
+            if self._pageNumber > 1:
+                ancho, _ = A4
+                self.saveState()
+                self.setFillColor(MUTED)
+                self.setFont(FUENTE_SANS, 7.3)
+                self.drawRightString(ancho - 57, 31,
+                                     f"Página {self._pageNumber} de {numero_total}")
+                self.restoreState()
+            super().showPage()
+        super().save()
 
 
 class DocumentoEditorial(SimpleDocTemplate):
@@ -972,6 +1013,7 @@ class DocumentoEditorial(SimpleDocTemplate):
     def afterFlowable(self, flowable):
         clave = getattr(flowable, "_marca_seccion", None)
         if clave:
+            self.canv._destinos_pagina.append(clave)
             self.canv.bookmarkPage(clave)
             self.canv.addOutlineEntry(flowable._titulo_seccion, clave, level=0)
 
@@ -1024,7 +1066,12 @@ def generar_pdf(b, token=None, solo_portada=False):
         raw_logo, nombre_logo = bytes_logo(b, "oferente")
         logo = preparar_logo(raw_logo, nombre_logo) if raw_logo else None
     except Exception as exc:
-        raise ValueError(f"No se pudo interpretar el logo institucional: {exc}") from exc
+        raise ValueError(f"No se pudo interpretar el logo del oferente: {exc}") from exc
+    try:
+        raw_comprador, nombre_comprador = bytes_logo(b, "comprador")
+        logo_comprador = preparar_logo(raw_comprador, nombre_comprador) if raw_comprador else None
+    except Exception as exc:
+        raise ValueError(f"No se pudo interpretar el logo del organismo comprador: {exc}") from exc
 
     def texto_ajustado(c, texto, x, borde_superior, anchura, altura,
                        tamano=12, negrita=False, color=INK, centrado=False):
@@ -1054,9 +1101,22 @@ def generar_pdf(b, token=None, solo_portada=False):
         entidad = " ".join(d["nombre_comercial"].strip().split())
         if len(entidad) > 50:
             entidad = entidad[:47] + "..."
-        c.drawString(margen_izq, h-75, entidad.upper())
-        if logo:
-            dibujar_logo(c, logo, w-200, h-115, 140, 55, "")
+        if logo_comprador:
+            # Los dos logos conservan su proporción, separados y con su rol
+            # expresamente identificado. El del comprador es opcional.
+            c.setFont(FUENTE_SANS_BOLD, 7.5)
+            c.drawString(margen_izq, h-64, "OFERENTE")
+            c.drawRightString(w-margen_der, h-64, "ORGANISMO COMPRADOR")
+            if logo:
+                dibujar_logo(c, logo, margen_izq, h-121, 150, 49, "")
+            else:
+                texto_ajustado(c, entidad.upper(), margen_izq, h-89, 220, 34,
+                               tamano=9.3, negrita=True, color=NAVY)
+            dibujar_logo(c, logo_comprador, w-margen_der-160, h-121, 160, 49, "")
+        else:
+            c.drawString(margen_izq, h-75, entidad.upper())
+            if logo:
+                dibujar_logo(c, logo, w-200, h-115, 140, 55, "")
         c.setStrokeColor(NAVY)
         c.setLineWidth(.9)
         c.line(margen_izq, h-127, w-margen_der, h-127)
@@ -1142,7 +1202,7 @@ def generar_pdf(b, token=None, solo_portada=False):
         c.drawString(margen_izq, 31,
                      "Borrador · revisión pendiente" if b["marcar_borrador"]
                      else "Propuesta técnica y económica")
-        c.drawRightString(w-margen_der, 31, f"Página {doc.page}")
+        # La numeración con total se agrega al finalizar la composición.
         c.restoreState()
 
     buffer = BytesIO()
@@ -1153,7 +1213,7 @@ def generar_pdf(b, token=None, solo_portada=False):
         keywords="propuesta técnica, propuesta económica, capacitación", allowSplitting=1)
     story = [Spacer(1, 1)]
     if solo_portada:
-        doc.build(story, onFirstPage=portada, onLaterPages=paginas)
+        doc.build(story, onFirstPage=portada, onLaterPages=paginas, canvasmaker=CanvasConTotal)
         return buffer.getvalue()
     story.append(PageBreak())
     numero_seccion = 0
@@ -1205,7 +1265,7 @@ def generar_pdf(b, token=None, solo_portada=False):
     story.extend(campo("Objetivo general", d["objetivo_general"]))
     story.append(P("Objetivos específicos", "h2"))
     for i, linea in enumerate(filter(str.strip, d["objetivos_especificos"].splitlines()), 1):
-        story.append(P(f"{i}. {linea.strip()}"))
+        story.append(P(f"{i}. {linea.strip()}", "enumeracion"))
     story.extend(campo("Participantes", f"La actividad contempla {d['cupos']} participantes. "
                        + d["participantes"]))
     story.extend(campo("Conocimientos previos", d["prerrequisitos"]))
@@ -1279,9 +1339,15 @@ def generar_pdf(b, token=None, solo_portada=False):
         story.extend(campo(etiqueta, d[clave]))
     story.extend(parrafos("El informe final será entregado a la " + d["destino_informe"] + "."))
     story.append(P("Contenido de los entregables", "h2"))
-    story.append(tabla(["Requisito", "Estado declarado"],
+    tabla_entregables = tabla(["Requisito", "Estado declarado"],
         [[x["requisito"], EstadoPDF(x["estado"])] for x in b["certificacion"]],
-        [ancho-132, 132]))
+        [ancho-132, 132])
+    # Tabla compacta para evitar dejar medio folio vacío antes de los entregables.
+    tabla_entregables.setStyle(TableStyle([
+        ("TOPPADDING", (0, 0), (-1, -1), 4),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+    ]))
+    story.append(tabla_entregables)
 
     cap("Propuesta económica", "economica")
     neto, iva, total = montos(d)
@@ -1316,7 +1382,7 @@ def generar_pdf(b, token=None, solo_portada=False):
         story.append(P(f"{i}. {nombre}"))
 
     if b["incluir_admin"]:
-        cap("Identificación del oferente", "identificacion")
+        cap("Identificación del oferente", "identificacion", pagina_nueva=True)
         story.append(P("Datos institucionales", "h2"))
         story.append(tabla(["Antecedente", "Información"],
             [["Razón social", d["oferente"]],
@@ -1346,16 +1412,36 @@ def generar_pdf(b, token=None, solo_portada=False):
             for elemento in lista:
                 story.append(P("- " + elemento, "small"))
 
-    doc.build(story, onFirstPage=portada, onLaterPages=paginas)
+    doc.build(story, onFirstPage=portada, onLaterPages=paginas, canvasmaker=CanvasConTotal)
     return buffer.getvalue()
+
+
+def firma_propuesta(b):
+    """Firma del contenido visible del PDF y de sus fuentes externas.
+
+    Evita serializar los archivos anexos, que pueden sumar decenas de MB.
+    """
+    datos = {k: v for k, v in b.items() if k not in {"archivos", "logos"}}
+    datos["archivos"] = [
+        {k: v for k, v in a.items() if k != "base64"} for a in b.get("archivos", [])
+    ]
+    datos["logos"] = [
+        (rol, info.get("nombre", ""), hashlib.sha256(info.get("base64", "").encode()).hexdigest())
+        for rol, info in sorted(b.get("logos", {}).items())
+    ]
+    try:
+        local, _ = bytes_logo(b, "oferente")
+        datos["logo_local_oferente"] = hashlib.sha256(local or b"").hexdigest()
+    except Exception:
+        datos["logo_local_oferente"] = "logo_no_disponible"
+    serial = json.dumps(datos, sort_keys=True, ensure_ascii=False)
+    return hashlib.sha256((PDF_RENDER_VERSION + serial).encode()).hexdigest()
 
 
 def main():
     import streamlit as st
-    st.set_page_config(page_title="OTEC Santa Mónica | Propuestas",page_icon="📄",layout="wide")
-    st.title("Propuestas técnicas y económicas | OTEC Santa Mónica")
-    st.caption("Formulario de preparación de ofertas. Genera informes A4 con composición editorial clásica y paleta Beamer.")
-    st.info("Propuesta precargada: Compra Ágil 1057545-246-COT26, 20 participantes y 20 horas pedagógicas. Oferta global: $2.000.000, exenta de IVA. Revisa y adapta todas las respuestas para el proceso que vayas a ofertar.")
+    st.set_page_config(page_title="Propuesta técnica | OTEC Santa Mónica",page_icon="📄",layout="centered")
+    st.title("Propuesta técnica y económica")
     if "modelo_propuesta_v6" not in st.session_state:
         # Una versión anterior puede haber dejado widgets con valores de ejemplo.
         for clave in list(st.session_state):
@@ -1363,6 +1449,7 @@ def main():
                 del st.session_state[clave]
         st.session_state.modelo_propuesta_v6=nuevo()
     b=st.session_state.modelo_propuesta_v6
+    b.setdefault("logos", {}).setdefault("comprador", {"nombre":"", "base64":""})
     def leer(path):
         obj=b
         for k in path: obj=obj[k]
@@ -1434,145 +1521,181 @@ def main():
             st.session_state["aviso_logo_"+rol]=""
         except Exception as exc: st.session_state["aviso_logo_"+rol]=str(exc)
 
-    for seccion,nombre in enumerate(PASOS):
-        with st.expander(f"{seccion+1:02d}. {nombre}",expanded=seccion in {0,12}):
-            preguntas(seccion)
-            if seccion==0:
-                d=b["datos"]
-                st.caption("Publicación a primer cierre: "+intervalo(d["publicacion"],d["cierre_1"]))
-                st.caption("Publicación a segundo cierre: "+intervalo(d["publicacion"],d["cierre_2"]))
-            if seccion==1:
-                st.caption("Contacto: Enrique Armando Brun Urrutia, Director de Administración y Finanzas. +56 9 6359 6523 · ebrun@otecsantamonica.com")
-            if seccion==5:
-                st.markdown("**¿Qué módulos, contenidos y horas tendrá el programa?**")
-                for j,m in enumerate(b["modulos"]):
-                    with st.container(border=True):
-                        st.markdown(f"**Módulo {j+1}**")
-                        a,c,e=st.columns([1,2,1])
-                        with a: widget(["modulos",j,"jornada"],"Jornada / bloque")
-                        with c: widget(["modulos",j,"nombre"],"Nombre del módulo")
-                        with e: widget(["modulos",j,"horas"],"Horas pedagógicas","decimal")
-                        widget(["modulos",j,"contenido"],"¿Qué contenidos se abordarán?","area")
-                        widget(["modulos",j,"tipo"],"Modalidad del módulo",opciones=["Presencial","Autónomo","Virtual"])
-                        if st.button("Eliminar módulo",key="del_m_"+m["id"]):
-                            b["modulos"].pop(j)
-                            for k in list(st.session_state):
-                                if k.startswith("q_modulos_"): del st.session_state[k]
-                            st.rerun()
-                if st.button("Agregar módulo"):
-                    b["modulos"].append(dict(id=uuid4().hex[:12],jornada="Nueva jornada",nombre="Nuevo módulo",contenido="",horas=0.0,tipo="Presencial"))
-                    st.rerun()
-                tot=horas(b); st.metric("Horas pedagógicas del programa",f"{sum(tot.values()):g}")
-                for jornada in dict.fromkeys(m["jornada"] for m in b["modulos"]):
-                    h=sum(m["horas"] for m in b["modulos"] if m["jornada"]==jornada)
-                    st.caption(f"Total {jornada.lower()}: {h:g} horas pedagógicas")
-                st.caption(" / ".join(f"{k}: {v:g} horas" for k,v in tot.items()))
-                if abs(sum(tot.values())-b["datos"]["horas_exigidas"])>.01:
-                    st.warning("La suma del programa no coincide con las horas exigidas. Puedes generar el borrador y corregirla después.")
-            if seccion==7:
-                st.caption("Relator identificado según el CV aportado. Se informa la experiencia efectiva; el requisito de cinco años queda expresamente a evaluación del comprador.")
-                for j,rel in enumerate(b["docentes"]):
-                    st.markdown(f"**Relator {j+1}**")
-                    for k,label in [("nombre","¿Cuál es su nombre completo?"),("rut","¿Cuál es su RUT?"),("titulo","¿Cuál es su título profesional?"),("experiencia","¿Qué experiencia efectiva declara en la temática?"),("disponibilidad","¿Cuál es su disponibilidad confirmada?")]:
-                        widget(["docentes",j,k],label)
-                    checklist(["docentes",j,"checklist"],f"Checklist del relator {j+1}")
-                    if st.button("Eliminar relator",key="del_doc_"+rel["id"]):
-                        b["docentes"].pop(j)
-                        for k in list(st.session_state):
-                            if k.startswith("q_docentes_"): del st.session_state[k]
+    tab_generar, tab_detalles = st.tabs(["Generar PDF", "Detalles y edición"])
+
+    with tab_generar:
+        # Generación directa con los datos precargados o los editados en la otra pestaña.
+        st.file_uploader(
+            "Logo del organismo comprador (opcional)",
+            type=["svg", "png", "jpg", "jpeg"],
+            key=f"upload_logo_comprador_{st.session_state.get('logo_comprador_revision',0)}",
+            on_change=cargar_logo,
+            args=("comprador", f"upload_logo_comprador_{st.session_state.get('logo_comprador_revision',0)}"),
+            help="Se incorpora exclusivamente en la portada, junto a la identificación del oferente.",
+        )
+        if st.session_state.get("aviso_logo_comprador"):
+            st.error(st.session_state["aviso_logo_comprador"])
+        if b["logos"].get("comprador", {}).get("base64"):
+            st.caption("Logo seleccionado: " + b["logos"]["comprador"]["nombre"])
+            if st.button("Quitar logo del comprador", type="secondary"):
+                b["logos"]["comprador"] = {"nombre":"", "base64":""}
+                st.session_state["aviso_logo_comprador"] = ""
+                st.session_state["logo_comprador_revision"] = st.session_state.get("logo_comprador_revision",0) + 1
+                st.rerun()
+
+        firma_actual = firma_propuesta(b)
+        if st.button("Generar PDF", type="primary"):
+            try:
+                st.session_state.propuesta_pdf = generar_pdf(b)
+                st.session_state.propuesta_firma = firma_actual
+                st.success("PDF generado correctamente.")
+            except Exception as exc:
+                st.session_state.pop("propuesta_pdf",None)
+                st.session_state.pop("propuesta_firma",None)
+                st.error(f"No se pudo generar el PDF: {exc}")
+        if st.session_state.get("propuesta_pdf"):
+            if st.session_state.get("propuesta_firma") == firma_actual:
+                st.download_button(
+                    "Descargar PDF", st.session_state.propuesta_pdf,
+                    file_name=f"Propuesta_{slug(b['datos']['proceso'],80)}.pdf",
+                    mime="application/pdf", type="primary",
+                )
+            else:
+                st.caption("Existen cambios pendientes. Vuelve a generar el PDF para actualizarlos.")
+
+    with tab_detalles:
+        st.caption("Edita los datos, módulos, requisitos, anexos y condiciones del proceso. La generación se realiza desde la primera pestaña.")
+        for seccion,nombre in enumerate(PASOS):
+            with st.expander(f"{seccion+1:02d}. {nombre}",expanded=False):
+                preguntas(seccion)
+                if seccion==0:
+                    d=b["datos"]
+                    st.caption("Publicación a primer cierre: "+intervalo(d["publicacion"],d["cierre_1"]))
+                    st.caption("Publicación a segundo cierre: "+intervalo(d["publicacion"],d["cierre_2"]))
+                if seccion==1:
+                    dd = b["datos"]
+                    st.caption("Contacto: " + " · ".join(filter(None, [
+                        dd["contacto_oferta"], dd["cargo_contacto"],
+                        dd["telefono"], dd["correo"]])))
+                if seccion==5:
+                    st.markdown("**¿Qué módulos, contenidos y horas tendrá el programa?**")
+                    for j,m in enumerate(b["modulos"]):
+                        with st.container(border=True):
+                            st.markdown(f"**Módulo {j+1}**")
+                            a,c,e=st.columns([1,2,1])
+                            with a: widget(["modulos",j,"jornada"],"Jornada / bloque")
+                            with c: widget(["modulos",j,"nombre"],"Nombre del módulo")
+                            with e: widget(["modulos",j,"horas"],"Horas pedagógicas","decimal")
+                            widget(["modulos",j,"contenido"],"¿Qué contenidos se abordarán?","area")
+                            widget(["modulos",j,"tipo"],"Modalidad del módulo",opciones=["Presencial","Autónomo","Virtual"])
+                            if st.button("Eliminar módulo",key="del_m_"+m["id"]):
+                                b["modulos"].pop(j)
+                                for k in list(st.session_state):
+                                    if k.startswith("q_modulos_"): del st.session_state[k]
+                                st.rerun()
+                    if st.button("Agregar módulo"):
+                        b["modulos"].append(dict(id=uuid4().hex[:12],jornada="Nueva jornada",nombre="Nuevo módulo",contenido="",horas=0.0,tipo="Presencial"))
                         st.rerun()
-                if st.button("Agregar otro relator"):
-                    b["docentes"].append(dict(id=uuid4().hex[:12],nombre="",rut="",titulo="",experiencia="",disponibilidad="Por coordinar",checklist=items_check(REQ_RELATOR)))
-                    st.rerun()
-            if seccion==8:
-                st.caption("Las condiciones se revisan contra las bases aportadas. Si existe una orden de compra, incorpora su número, condiciones y documento en el formulario.")
-                checklist(["compra"],"Requisitos de contratación")
-            if seccion==9: checklist(["certificacion"],"¿Qué incluirán los certificados y el informe final?")
-            if seccion==10:
-                neto,iva,total=montos(b["datos"])
-                a,c,e=st.columns(3); a.metric("Neto + despacho",pesos(neto)); c.metric("Impuesto",pesos(iva) if iva is not None else "Por definir")
-                e.metric("Total",pesos(total) if total is not None else "Por definir")
-                st.caption("El PDF presenta el valor ofertado, el presupuesto disponible y el alcance del servicio.")
-                comparacion=comparar_presupuesto(b["datos"])
-                if comparacion: st.metric("Comparación con presupuesto",comparacion["porcentaje"])
-                if total is not None and total>b["datos"]["presupuesto"]>0: st.warning("La oferta supera el presupuesto estimado del comprador.")
-            if seccion==11:
-                st.markdown("**Logo institucional para la portada**")
-                contenedor_logo=st.container()
-                for rol,col in [("oferente",contenedor_logo)]:
-                    with col:
-                        key="upload_logo_"+rol
-                        st.file_uploader("Adjuntar logo institucional (SVG, PNG o JPG)",type=["svg","png","jpg","jpeg"],key=key,on_change=cargar_logo,args=(rol,key))
-                        if st.session_state.get("aviso_logo_"+rol): st.error(st.session_state["aviso_logo_"+rol])
-                        try:
-                            raw,n=bytes_logo(b,rol)
-                            if raw:
-                                preparar_logo(raw,n)
-                                st.image(raw.decode("utf-8") if n.lower().endswith(".svg") else raw,width=210)
-                                st.caption(("Logo por defecto de GitHub: " if rol=="oferente" and not b["logos"][rol]["base64"] else "Logo listo: ")+n)
-                            else: st.info("Logo opcional. Si no se incorpora, la portada se genera con cabecera institucional de texto.")
-                        except Exception as exc: st.warning(str(exc))
-                st.caption(f"Logo opcional: {LOGO_NAME}, en la carpeta del script o en assets/, logos/ o images/. Sin logo, se utiliza cabecera institucional tipográfica.")
-                st.markdown("**Documentación adjunta: bases, anexos, CV y respaldos**")
-                st.caption("Ajusta la cantidad esperada para incluir todos los documentos. Máximo 20 MB por archivo y 100 MB en total. Los originales van en el ZIP; el PDF muestra su inventario.")
-                categoria=st.selectbox("Categoría del lote que incorporarás",CATEGORIAS_ADJUNTOS,key="categoria_lote")
-                subidos=st.file_uploader("Seleccionar archivos",type=["pdf","doc","docx","xls","xlsx","txt","png","jpg","jpeg","svg"],accept_multiple_files=True,key="uploads_documentos")
-                if st.button("Incorporar archivos al formulario",disabled=not subidos):
-                    errors=[]
-                    for archivo in subidos:
-                        try: agregar_archivo(b,archivo.name,archivo.getvalue(),categoria)
-                        except Exception as exc: errors.append(f"{archivo.name}: {exc}")
-                    if errors: st.session_state.aviso_archivos="\n".join(errors)
-                    st.rerun()
-                if st.session_state.get("aviso_archivos"): st.warning(st.session_state.pop("aviso_archivos"))
-                st.write(f"**{len(b['archivos'])} de {b['datos']['adjuntos_esperados']} archivos incorporados**")
-                for j,a in enumerate(b["archivos"]):
-                    with st.container(border=True):
-                        st.caption("Original: "+a["nombre"])
-                        a.setdefault("descripcion",titulo_documento(a["categoria"]))
-                        widget(["archivos",j,"descripcion"],"¿Qué nombre descriptivo debe aparecer en la propuesta?")
-                        widget(["archivos",j,"categoria"],"¿Qué tipo de documento es?",opciones=CATEGORIAS_ADJUNTOS)
-                        if st.button("Retirar archivo",key="del_a_"+a["id"]):
-                            b["archivos"].pop(j)
+                    tot=horas(b); st.metric("Horas pedagógicas del programa",f"{sum(tot.values()):g}")
+                    for jornada in dict.fromkeys(m["jornada"] for m in b["modulos"]):
+                        h=sum(m["horas"] for m in b["modulos"] if m["jornada"]==jornada)
+                        st.caption(f"Total {jornada.lower()}: {h:g} horas pedagógicas")
+                    st.caption(" / ".join(f"{k}: {v:g} horas" for k,v in tot.items()))
+                    if abs(sum(tot.values())-b["datos"]["horas_exigidas"])>.01:
+                        st.warning("La suma del programa no coincide con las horas exigidas. Puedes generar el borrador y corregirla después.")
+                if seccion==7:
+                    st.caption("Relator identificado según el CV aportado. Se informa la experiencia efectiva; el requisito de cinco años queda expresamente a evaluación del comprador.")
+                    for j,rel in enumerate(b["docentes"]):
+                        st.markdown(f"**Relator {j+1}**")
+                        for k,label in [("nombre","¿Cuál es su nombre completo?"),("rut","¿Cuál es su RUT?"),("titulo","¿Cuál es su título profesional?"),("experiencia","¿Qué experiencia efectiva declara en la temática?"),("disponibilidad","¿Cuál es su disponibilidad confirmada?")]:
+                            widget(["docentes",j,k],label)
+                        checklist(["docentes",j,"checklist"],f"Checklist del relator {j+1}")
+                        if st.button("Eliminar relator",key="del_doc_"+rel["id"]):
+                            b["docentes"].pop(j)
                             for k in list(st.session_state):
-                                if k.startswith("q_archivos_"): del st.session_state[k]
+                                if k.startswith("q_docentes_"): del st.session_state[k]
                             st.rerun()
-            if seccion==12:
-                widget(["incluir_admin"],"Incluir identificación legal y datos bancarios","bool")
-                widget(["marcar_borrador"],"Marcar el PDF como borrador","bool")
-                widget(["incluir_revision"],"Incluir hoja adicional de revisión al final del PDF","bool")
-                lista=pendientes(b)
-                if lista:
-                    st.info(f"Hay {sum(len(v) for _,v in lista)} observaciones de revisión o carga. Puedes generar la propuesta; los estados se muestran de forma explícita.")
-                    for i,items in lista: st.caption(PASOS[i]+": "+"; ".join(items))
-                else: st.success("Los campos requeridos y la carga documental están completos. Los estados del checklist siguen siendo declaraciones del oferente para evaluación del comprador.")
-                st.markdown("**Esqueleto reutilizable para IA**")
-                md=esqueleto_markdown(b); plantilla=esqueleto_markdown(b,True)
-                a,c=st.columns(2)
-                with a: st.download_button("Descargar preguntas y respuestas (.md)",md.encode(),file_name="Preguntas_y_respuestas.md",mime="text/markdown")
-                with c: st.download_button("Descargar esqueleto vacío para IA (.md)",plantilla.encode(),file_name="Esqueleto_propuesta_IA.md",mime="text/markdown")
-                st.text_area("Texto para copiar y completar con IA",md,height=210,disabled=True)
-                fuentes=[]
-                for rol in ["oferente"]:
-                    try:
-                        raw,_=bytes_logo(b,rol); fuentes.append(hashlib.sha256(raw or b"").hexdigest())
-                    except Exception: fuentes.append("logo_no_valido")
-                firma=hashlib.sha256((PDF_RENDER_VERSION+json.dumps(b,sort_keys=True,ensure_ascii=False)+"".join(fuentes)).encode()).hexdigest()
-                st.divider()
-                if st.button("Generar reporte PDF",type="primary"):
-                    try:
-                        with st.spinner("Preparando propuesta PDF..."):
-                            st.session_state.propuesta_pdf=generar_pdf(b)
-                            st.session_state.propuesta_firma=firma
-                        st.success("Reporte generado. Descárgalo a continuación.")
-                    except Exception as exc: st.error(f"No se pudo generar el reporte: {exc}")
-                if st.session_state.get("propuesta_firma")==firma:
-                    codigo=slug(b["datos"]["proceso"],80)
-                    st.download_button("Descargar propuesta PDF",st.session_state.propuesta_pdf,file_name=f"Propuesta_{codigo}.pdf",mime="application/pdf",type="primary")
-                    st.download_button("Descargar PDF y adjuntos (.zip)",exportar_zip(b,st.session_state.propuesta_pdf),file_name=f"Expediente_{codigo}.zip",mime="application/zip")
-                elif st.session_state.get("propuesta_pdf"):
-                    st.info("Las respuestas cambiaron. Genera el reporte nuevamente para descargar la versión actualizada.")
-    st.caption("Formulario sin guardado de progreso: conserva abierta esta sesión mientras editas y descarga los documentos que necesites.")
+                    if st.button("Agregar otro relator"):
+                        b["docentes"].append(dict(id=uuid4().hex[:12],nombre="",rut="",titulo="",experiencia="",disponibilidad="Por coordinar",checklist=items_check(REQ_RELATOR)))
+                        st.rerun()
+                if seccion==8:
+                    st.caption("Las condiciones se revisan contra las bases aportadas. Si existe una orden de compra, incorpora su número, condiciones y documento en el formulario.")
+                    checklist(["compra"],"Requisitos de contratación")
+                if seccion==9: checklist(["certificacion"],"¿Qué incluirán los certificados y el informe final?")
+                if seccion==10:
+                    neto,iva,total=montos(b["datos"])
+                    a,c,e=st.columns(3); a.metric("Neto + despacho",pesos(neto)); c.metric("Impuesto",pesos(iva) if iva is not None else "Por definir")
+                    e.metric("Total",pesos(total) if total is not None else "Por definir")
+                    st.caption("El PDF presenta el valor ofertado, el presupuesto disponible y el alcance del servicio.")
+                    comparacion=comparar_presupuesto(b["datos"])
+                    if comparacion: st.metric("Comparación con presupuesto",comparacion["porcentaje"])
+                    if total is not None and total>b["datos"]["presupuesto"]>0: st.warning("La oferta supera el presupuesto estimado del comprador.")
+                if seccion==11:
+                    st.markdown("**Logo del oferente para la portada**")
+                    contenedor_logo=st.container()
+                    for rol,col in [("oferente",contenedor_logo)]:
+                        with col:
+                            key="upload_logo_"+rol
+                            st.file_uploader("Adjuntar logo institucional (SVG, PNG o JPG)",type=["svg","png","jpg","jpeg"],key=key,on_change=cargar_logo,args=(rol,key))
+                            if st.session_state.get("aviso_logo_"+rol): st.error(st.session_state["aviso_logo_"+rol])
+                            try:
+                                raw,n=bytes_logo(b,rol)
+                                if raw:
+                                    preparar_logo(raw,n)
+                                    if not n.lower().endswith(".svg"):
+                                        st.image(raw,width=180)
+                                    st.caption(("Logo por defecto de GitHub: " if rol=="oferente" and not b["logos"][rol]["base64"] else "Logo listo: ")+n)
+                                else: st.info("Logo opcional. Si no se incorpora, la portada se genera con cabecera institucional de texto.")
+                            except Exception as exc: st.warning(str(exc))
+                    st.caption(f"Logo opcional: {LOGO_NAME}, en la carpeta del script o en assets/, logos/ o images/. Sin logo, se utiliza cabecera institucional tipográfica.")
+                    st.markdown("**Documentación adjunta: bases, anexos, CV y respaldos**")
+                    st.caption("Ajusta la cantidad esperada para incluir todos los documentos. Máximo 20 MB por archivo y 100 MB en total. Los originales van en el ZIP; el PDF muestra su inventario.")
+                    categoria=st.selectbox("Categoría del lote que incorporarás",CATEGORIAS_ADJUNTOS,key="categoria_lote")
+                    subidos=st.file_uploader("Seleccionar archivos",type=["pdf","doc","docx","xls","xlsx","txt","png","jpg","jpeg","svg"],accept_multiple_files=True,key="uploads_documentos")
+                    if st.button("Incorporar archivos al formulario",disabled=not subidos):
+                        errors=[]
+                        for archivo in subidos:
+                            try: agregar_archivo(b,archivo.name,archivo.getvalue(),categoria)
+                            except Exception as exc: errors.append(f"{archivo.name}: {exc}")
+                        if errors: st.session_state.aviso_archivos="\n".join(errors)
+                        st.rerun()
+                    if st.session_state.get("aviso_archivos"): st.warning(st.session_state.pop("aviso_archivos"))
+                    st.write(f"**{len(b['archivos'])} de {b['datos']['adjuntos_esperados']} archivos incorporados**")
+                    for j,a in enumerate(b["archivos"]):
+                        with st.container(border=True):
+                            st.caption("Original: "+a["nombre"])
+                            a.setdefault("descripcion",titulo_documento(a["categoria"]))
+                            widget(["archivos",j,"descripcion"],"¿Qué nombre descriptivo debe aparecer en la propuesta?")
+                            widget(["archivos",j,"categoria"],"¿Qué tipo de documento es?",opciones=CATEGORIAS_ADJUNTOS)
+                            if st.button("Retirar archivo",key="del_a_"+a["id"]):
+                                b["archivos"].pop(j)
+                                for k in list(st.session_state):
+                                    if k.startswith("q_archivos_"): del st.session_state[k]
+                                st.rerun()
+                if seccion==12:
+                    widget(["incluir_admin"],"Incluir identificación legal y datos bancarios","bool")
+                    widget(["marcar_borrador"],"Marcar el PDF como borrador","bool")
+                    widget(["incluir_revision"],"Incluir hoja adicional de revisión al final del PDF","bool")
+                    lista=pendientes(b)
+                    if lista:
+                        st.info(f"Hay {sum(len(v) for _,v in lista)} observaciones de revisión o carga. Puedes generar la propuesta; los estados se muestran de forma explícita.")
+                        for i,items in lista: st.caption(PASOS[i]+": "+"; ".join(items))
+                    else: st.success("Los campos requeridos y la carga documental están completos. Los estados del checklist siguen siendo declaraciones del oferente para evaluación del comprador.")
+                    st.markdown("**Esqueleto reutilizable para IA**")
+                    md=esqueleto_markdown(b); plantilla=esqueleto_markdown(b,True)
+                    a,c=st.columns(2)
+                    with a: st.download_button("Descargar preguntas y respuestas (.md)",md.encode(),file_name="Preguntas_y_respuestas.md",mime="text/markdown")
+                    with c: st.download_button("Descargar esqueleto vacío para IA (.md)",plantilla.encode(),file_name="Esqueleto_propuesta_IA.md",mime="text/markdown")
+                    st.text_area("Texto para copiar y completar con IA",md,height=210,disabled=True)
+                    if st.session_state.get("propuesta_firma") == firma_propuesta(b):
+                        st.divider()
+                        st.download_button(
+                            "Descargar expediente completo (.zip)",
+                            exportar_zip(b, st.session_state.propuesta_pdf),
+                            file_name=f"Expediente_{slug(b['datos']['proceso'],80)}.zip",
+                            mime="application/zip",
+                        )
+        st.caption("El formulario permanece en esta sesión. Descarga el expediente antes de cerrar la aplicación.")
 
 
 if __name__=="__main__":
