@@ -1,4 +1,4 @@
-# VERSION: 8.0 - Generación limpia y detalles en pestaña independiente
+# VERSION: 8.1 - Portada sin rótulos encima de los logos
 # CURSO: Aplicacion de Inteligencia Artificial y Analisis de Datos para la Gestion de Personas
 # CODIGO: 1057545-246-COT26 | MODALIDAD: Compra Agil
 # FECHA Y HORA DE ACTUALIZACION: 11-11-2026 00:57 America/Santiago
@@ -72,7 +72,7 @@ from reportlab.platypus import (
 
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_NAME = "OTEC_Santa_Monica_Opcion_1.svg"
-PDF_RENDER_VERSION = "v8-editorial-dos-pestanas-logo-comprador"
+PDF_RENDER_VERSION = "v8.1-editorial-dos-pestanas-logos-sin-rotulos"
 # Gama inspirada en las presentaciones Beamer clásicas: azul estructural,
 # azul petróleo, fondos casi blancos y reglas finas. Se usa con moderación.
 BEAMER_PALETA = {
@@ -1102,11 +1102,8 @@ def generar_pdf(b, token=None, solo_portada=False):
         if len(entidad) > 50:
             entidad = entidad[:47] + "..."
         if logo_comprador:
-            # Los dos logos conservan su proporción, separados y con su rol
-            # expresamente identificado. El del comprador es opcional.
-            c.setFont(FUENTE_SANS_BOLD, 7.5)
-            c.drawString(margen_izq, h-64, "OFERENTE")
-            c.drawRightString(w-margen_der, h-64, "ORGANISMO COMPRADOR")
+            # Ambos logos, sin rótulos superiores. Se preservan sus
+            # proporciones y la línea fina de separación inferior.
             if logo:
                 dibujar_logo(c, logo, margen_izq, h-121, 150, 49, "")
             else:
