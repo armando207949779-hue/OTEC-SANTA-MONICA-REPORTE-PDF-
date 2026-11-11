@@ -101,12 +101,14 @@ PREGUNTAS = [
  (1,"nombre_comercial","¿Cuál es el nombre comercial?","texto",True),
  (1,"rut_oferente","¿Cuál es el RUT de la empresa?","texto",True),
  (1,"domicilio_empresa","¿Cuál es el domicilio de la empresa?","area",True),
- (1,"telefono","¿Cuál es el teléfono de contacto?","texto",True),
- (1,"correo","¿Cuál es el correo de contacto?","texto",True),
+ (1,"contacto_oferta","¿Quién es el contacto de la licitación por parte del oferente?","texto",False),
+ (1,"telefono","¿Cuál es el teléfono del contacto de la licitación?","texto",True),
+ (1,"correo","¿Cuál es el correo del contacto de la licitación?","texto",True),
  (1,"representante","¿Quién es la representante legal?","texto",True),
  (1,"rut_representante","¿Cuál es el RUT de la representante?","texto",True),
  (1,"cargo_representante","¿Cuál es su cargo?","texto",False),
  (1,"domicilio_representante","¿Cuál es el domicilio de la representante?","texto",False),
+ (1,"telefono_representante","¿Cuál es el teléfono de la representante legal?","texto",False),
  (1,"personeria","¿Qué notaría, fecha y repertorio identifica la personería?","area",False),
  (1,"banco","¿Cuál es el banco de la empresa?","texto",False),
  (1,"tipo_cuenta","¿Cuál es el tipo de cuenta?","texto",False),
@@ -196,9 +198,10 @@ def ejemplo():
         contacto_comprador="POR CONFIRMAR - Unidad de Capacitación",
         oferente="CENTRO DE CAPACITACION SANTA MONICA LIMITADA", nombre_comercial="OTEC Santa Mónica",
         rut_oferente="76.176.857-3", domicilio_empresa="Isabel La Católica 4394, oficina 517, piso 5, bloque B, Las Condes, Santiago de Chile, Región Metropolitana",
-        telefono="+56 9 5807 5021", correo="ebrun@otecsantamonica.com",
+        contacto_oferta="ebrun", telefono="+56 9 6359 6523", correo="ebrun@otecsantamonica.com",
         representante="María Carmen Urrutia Peña", rut_representante="11.518.133-5",
         cargo_representante="Representante legal", domicilio_representante="La Concepción 793, Quillota, Región de Valparaíso",
+        telefono_representante="+56 9 5807 5021",
         personeria="Antecedente por confirmar con escritura y vigencia: notaria Lidia María Chahuán Issa, La Calera; escritura de 10-03-2026, repertorio 625-2026.",
         banco="BancoEstado", tipo_cuenta="Chequera electrónica", cuenta="29170792066",
         correo_pagos="ebrun@otecsantamonica.com", codigo_sence="C8828904 (dato informado; verificar respaldo)",
@@ -312,14 +315,16 @@ def intervalo(inicio, fin):
 def logo_local(rol="oferente"):
     nombres = [LOGO_NAME, "logo_otec.svg", "logo.svg", "logo_otec.png", "logo.png"] if rol=="oferente" else ["logo_comprador.svg", "logo_comprador.png", "logo_comprador.jpg"]
     raices = list(dict.fromkeys([BASE_DIR, Path.cwd()]))
-    for raiz in raices:
-        for carpeta in [raiz, raiz/"assets", raiz/"logos", raiz/"images", raiz/"static"]:
+    carpetas = [carpeta for raiz in raices for carpeta in
+                [raiz, raiz/"assets", raiz/"logos", raiz/"images", raiz/"static"]]
+    # Priorizar el nombre exacto de GitHub, incluso si hay logos genéricos.
+    for nombre in nombres:
+        for carpeta in carpetas:
             if not carpeta.is_dir():
                 continue
             archivos = {p.name.casefold():p for p in carpeta.iterdir() if p.is_file()}
-            for nombre in nombres:
-                if nombre.casefold() in archivos:
-                    return archivos[nombre.casefold()]
+            if nombre.casefold() in archivos:
+                return archivos[nombre.casefold()]
     return None
 
 
@@ -600,7 +605,7 @@ def generar_pdf(b,token=None,solo_portada=False):
         caja(c,d["periodo_ejecucion"],48,229,499,35,11)
         caja(c,d["nombre_comercial"],48,183,499,32,18,True,color=NAVY)
         caja(c,d["oferente"]+" | RUT "+d["rut_oferente"],48,150,499,28,9)
-        caja(c,d["correo"]+" | "+d["telefono"],48,125,499,20,9)
+        caja(c,"Contacto licitación: "+d["correo"]+" | "+d["telefono"],48,125,499,20,9)
         caja(c,"Emisión: "+d["fecha_propuesta"],48,91,499,20,9,color=MUTED)
         c.setStrokeColor(GOLD); c.line(48,72,547,72)
         caja(c,"BORRADOR DE TRABAJO - CONTIENE PROPUESTAS Y EJEMPLOS EDITABLES" if trabajo else "PROPUESTA REVISADA POR EL OFERENTE",48,44,499,20,7.5,True,color=MUTED)
@@ -689,10 +694,10 @@ def generar_pdf(b,token=None,solo_portada=False):
     if b["incluir_admin"]:
         story.append(PageBreak()); cap("10 / Identificación administrativa")
         story.append(tabla(["Empresa","Información"],[["Razón social",d["oferente"]],["RUT",d["rut_oferente"]],["Domicilio",d["domicilio_empresa"]],
-            ["Contacto",d["telefono"]+" / "+d["correo"]],["Código SENCE informado",d["codigo_sence"]]],[135,ancho-135]))
+            ["Contacto de la licitación",d["contacto_oferta"]+" / "+d["telefono"]+" / "+d["correo"]],["Código SENCE informado",d["codigo_sence"]]],[135,ancho-135]))
         story.append(P("Representante legal","h2"))
         story.append(tabla(["Antecedente","Información"],[["Nombre",d["representante"]],["RUT",d["rut_representante"]],["Cargo",d["cargo_representante"]],
-            ["Domicilio",d["domicilio_representante"]],["Contacto",d["telefono"]+" / "+d["correo"]],["Personería",d["personeria"]]],[135,ancho-135]))
+            ["Domicilio",d["domicilio_representante"]],["Teléfono",d["telefono_representante"]],["Personería",d["personeria"]]],[135,ancho-135]))
         story.append(P("Datos bancarios","h2"))
         story.append(tabla(["Antecedente","Información"],[["Titular",d["oferente"]],["RUT titular",d["rut_oferente"]],["Banco",d["banco"]],
             ["Tipo de cuenta",d["tipo_cuenta"]],["Número de cuenta",d["cuenta"]],["Correo pagos",d["correo_pagos"]]],[135,ancho-135]))
@@ -717,6 +722,14 @@ def main():
     if "modelo_propuesta_v3" not in st.session_state:
         st.session_state.modelo_propuesta_v3=nuevo()
     b=st.session_state.modelo_propuesta_v3
+    # Compatibilidad con una sesión abierta durante la actualización del script.
+    # El correo de la representante no se solicita ni se incluye en el reporte.
+    if "telefono_representante" not in b["datos"]:
+        b["datos"]["telefono_representante"]="+56 9 5807 5021"
+        b["datos"]["contacto_oferta"]="ebrun"
+        if re.sub(r"\D", "", b["datos"].get("telefono", ""))=="56958075021":
+            b["datos"]["telefono"]="+56 9 6359 6523"
+            st.session_state.pop("q_datos_telefono",None)
 
     def leer(path):
         obj=b
@@ -796,7 +809,7 @@ def main():
                 st.caption("Publicación a primer cierre: "+intervalo(d["publicacion"],d["cierre_1"]))
                 st.caption("Publicación a segundo cierre: "+intervalo(d["publicacion"],d["cierre_2"]))
             if seccion==1:
-                st.caption("Empresa: Las Condes. Representante legal: Quillota. La cuenta informada es Chequera electrónica; la personería debe confirmarse con su documento de respaldo.")
+                st.caption("Empresa: Las Condes. Representante legal: Quillota, teléfono +56 9 5807 5021. Contacto de licitación: ebrun, +56 9 6359 6523, ebrun@otecsantamonica.com. No se incluye correo de la representante legal.")
             if seccion==5:
                 st.markdown("**¿Qué módulos, contenidos y horas tendrá el programa?**")
                 for j,m in enumerate(b["modulos"]):
@@ -856,7 +869,7 @@ def main():
                             if raw:
                                 preparar_logo(raw,n)
                                 st.image(raw.decode("utf-8") if n.lower().endswith(".svg") else raw,width=210)
-                                st.caption("Logo listo: "+n)
+                                st.caption(("Logo por defecto de GitHub: " if rol=="oferente" and not b["logos"][rol]["base64"] else "Logo listo: ")+n)
                             else: st.info("Logo pendiente. En el borrador se mostrará un recuadro de referencia.")
                         except Exception as exc: st.warning(str(exc))
                 st.caption(f"Logo OTEC automático: {LOGO_NAME}, en la carpeta del script o en assets/, logos/ o images/ del repositorio GitHub. El logo del comprador se carga por separado.")
