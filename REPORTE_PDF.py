@@ -1,8 +1,8 @@
-# VERSION: 5.0 - Presentacion y redaccion profesional
+# VERSION: 6.0 - Estados visuales, observaciones y oferta actualizada
 # CURSO: Aplicacion de Inteligencia Artificial y Analisis de Datos para la Gestion de Personas
 # CODIGO: 1057545-246-COT26 | MODALIDAD: Compra Agil
-# FECHA Y HORA DE ACTUALIZACION: 11-11-2026 03:40 UTC
-# ORGANISMO: Servicio de Salud Los Rios | OFERTA: $2.300.000 CLP, exenta de IVA
+# FECHA Y HORA DE ACTUALIZACION: 11-11-2026 00:57 America/Santiago
+# ORGANISMO: Servicio de Salud Los Rios | OFERTA: $2.000.000 CLP, exenta de IVA
 # -*- coding: utf-8 -*-
 #
 # INSTRUCCIONES DE USO Y ADAPTACION A FUTURAS LICITACIONES
@@ -64,12 +64,12 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, PageBreak, Table, TableStyle,
-    CondPageBreak, HRFlowable,
+    CondPageBreak, HRFlowable, Flowable,
 )
 
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_NAME = "OTEC_Santa_Monica_Opcion_1.svg"
-PDF_RENDER_VERSION = "v5-editorial-profesional"
+PDF_RENDER_VERSION = "v6-estados-visuales-oferta-2000000"
 NAVY, GOLD = colors.HexColor("#153445"), colors.HexColor("#B78D45")
 INK, MUTED = colors.HexColor("#243F4D"), colors.HexColor("#5B707D")
 PALE, LINE = colors.HexColor("#F0F4F5"), colors.HexColor("#DBE3E7")
@@ -86,10 +86,10 @@ PASOS = ["Proceso y comprador", "Identificación del oferente", "Quiénes somos 
          "Relator y respaldos", "Requisitos de compra", "Certificación",
          "Oferta económica", "Logo y documentación adjunta", "Revisión y PDF"]
 ESTADOS = ["Por verificar", "Comprometido", "Declarado", "Respaldado", "A evaluación del comprador", "Cumple", "No cumple", "No aplica"]
-CATEGORIAS_ADJUNTOS = ["Anexo Nº 1", "Bases técnicas", "CV y respaldos relator", "CV relator", "Respaldo relator", "Propuesta / otro"]
+CATEGORIAS_ADJUNTOS = ["Anexo Nº 1", "Bases técnicas", "CV y respaldos relator", "CV relator", "Respaldo relator", "Propuesta / otro", "Orden de compra"]
 ADJUNTOS_DECLARADOS = [
     {"nombre":"ANEXO Nº 1 - IDENTIFICACION DEL OFERENTE", "categoria":"Anexo Nº 1"},
-    {"nombre":"CV Daniel Vargas H Compilado IA(4).pdf", "categoria":"CV y respaldos relator"},
+    {"nombre":"Currículum del relator y antecedentes de competencias y certificaciones", "categoria":"CV y respaldos relator"},
 ]
 RELATOR_INICIAL = {
     "nombre":"Daniel Cristóbal Vargas Herrera", "rut":"20.522.550-1",
@@ -110,6 +110,8 @@ PREGUNTAS = [
  (0,"rut_comprador","¿Cuál es el RUT del comprador?","texto",True),
  (0,"rubro","¿A qué rubro o categoría pertenece el servicio?","texto",False),
  (0,"id_item","¿Cuál es el ID del ítem en la ficha?","texto",False),
+ (0,"numero_oc","¿Cuál es el número de la orden de compra, si ya fue emitida?","texto",False),
+ (0,"requisitos_oc","¿Qué condiciones adicionales establece la orden de compra?","area",False),
  (0,"publicacion","¿Cuándo se publicó el proceso? Fecha y hora.","texto",False),
  (0,"cierre_1","¿Cuándo cierra el primer llamado? Fecha y hora.","texto",True),
  (0,"cierre_2","¿Cuándo cierra el segundo llamado, si corresponde?","texto",False),
@@ -155,6 +157,7 @@ PREGUNTAS = [
  (6,"materiales","¿Qué materiales se entregarán?","area",True),
  (7,"perfil_docente","¿Qué perfil y experiencia exige la licitación al docente?","area",True),
  (7,"referencia_cv","¿Dónde se presenta el CV y sus respaldos?","area",True),
+ (8,"observaciones","¿Qué observaciones o condiciones debe evaluar el comprador?","area",False),
  (9,"evaluacion","¿Cómo se evaluará el aprendizaje y cuál será la escala?","area",True),
  (9,"aprobacion","¿Qué condiciones de asistencia y aprobación se proponen?","area",False),
  (9,"entrega_certificados","¿Cuándo y cómo se entregarán certificados e informe?","area",True),
@@ -337,7 +340,7 @@ DATOS_LICITACION = {'proceso': '1057545-246-COT26',
                          'de 1 a 7, asistencia, resultado de aprobación, fechas y horas del curso.',
  'destino_informe': 'Unidad de Capacitación de la Dirección del Servicio de Salud Los Ríos',
  'cantidad': 1,
- 'valor_unitario': 2300000,
+ 'valor_unitario': 2000000,
  'despacho': 0,
  'impuesto': 'Exento / sin impuesto',
  'tasa': 19,
@@ -346,7 +349,7 @@ DATOS_LICITACION = {'proceso': '1057545-246-COT26',
                    'computadores serán aportados por los participantes o por el organismo comprador.',
  'detalle': 'Curso de IA y análisis de datos para 20 participantes: 20 horas pedagógicas (16 '
             'presenciales y 4 autónomas). Incluye relatoría, materiales, recinto, cafetería, '
-            'evaluación, certificados e informe final. Valor global exento: $2.300.000.',
+            'evaluación, certificados e informe final. Valor global exento: $2.000.000.',
  'adjuntos_esperados': 2,
  'adjuntos_solicitados': 'ANEXO Nº 1_ COMPRAS AGILES.docx\n'
                          'BASES TECNICAS CURSO APLICACION IA Y ANALISIS DE DATOS.pdf',
@@ -364,8 +367,20 @@ DATOS_LICITACION = {'proceso': '1057545-246-COT26',
  'documentacion_adjunta': 'La oferta se acompaña del Anexo Nº 1, Identificación del Oferente, y del '
                           'currículum del relator con sus antecedentes de competencias y '
                           'certificaciones.',
- 'cargo_contacto': 'Director de Administración y Finanzas'}
-
+ 'cargo_contacto': 'Director de Administración y Finanzas',
+ 'numero_oc': '',
+ 'requisitos_oc': '',
+ 'observaciones': 'Experiencia del relator: las bases solicitan al menos cinco años de experiencia en '
+                  'la temática. El profesional propuesto declara trayectoria relacionada con IA y '
+                  'análisis de datos desde junio de 2022, equivalente a aproximadamente cuatro años y '
+                  'cinco meses a noviembre de 2026; su experiencia en relatoría de IA generativa se '
+                  'inicia en febrero de 2024. Estos antecedentes se presentan para evaluación del '
+                  'organismo comprador.\n'
+                  '\n'
+                  'Computadores de los participantes: la oferta considera el recinto y su equipamiento '
+                  'de sala. Los computadores individuales deberán ser aportados por los participantes o '
+                  'por el organismo comprador. Esta condición requiere la conformidad del comprador '
+                  'antes de la ejecución.'}
 
 # Textos de apertura editables. Las llaves se completan desde DATOS_LICITACION.
 INTRODUCCIONES = {'proceso': 'La presente propuesta responde al proceso {proceso}, convocado por {comprador}, para la '
@@ -432,17 +447,22 @@ def nuevo(ejemplo_activo=True):
     compra=items_check(REQ_COMPRA)
     for row in compra:
         if "5 años" in row["requisito"]:
-            row.update(estado="A evaluación del comprador",respaldo=rel["experiencia"])
+            row.update(estado="A evaluación del comprador",respaldo="La experiencia efectiva se informa en los antecedentes del relator. Ver observaciones.")
         elif "Lugar" in row["requisito"]:
-            row.update(estado="Comprometido",respaldo="Recinto arrendado por la OTEC tras adjudicar; computadores aportados por participantes o comprador, según condiciones de esta propuesta.")
+            row.update(estado="A evaluación del comprador",respaldo="Recinto y equipamiento de sala incluidos. Computadores individuales aportados por participantes o comprador. Ver observaciones.")
         elif "Currículum" in row["requisito"]:
             row.update(estado="Declarado",respaldo="Currículum y antecedentes de competencias y certificaciones en la documentación adjunta.")
         else:
-            row.update(estado="Comprometido",respaldo="Prestación descrita en el programa y alcance de la presente propuesta.")
+            row.update(estado="Comprometido",respaldo={
+                "Programa del curso con módulos o temario":"Programa por módulos, con contenidos y horas por jornada. Total: 20 horas pedagógicas.",
+                "Material para ejecutar el curso":"Kit digital, guía impresa y recursos para estudio autónomo; detalle en Metodología y recursos de aprendizaje.",
+                "Servicio de cafetería para participantes":"Dos pausas por jornada durante dos días, para 20 participantes; detalle en Lugar y condiciones de ejecución.",
+                "Certificación de los participantes":"Certificados individuales e informe final de resultados; detalle en Evaluación, certificación e informe final."
+            }.get(row["requisito"],"Según el alcance descrito en la propuesta."))
     certificacion=items_check(REQ_CERT)
     for row in certificacion:
         row.update(estado="Comprometido",respaldo="Certificados e informe final dentro de cinco días hábiles posteriores al término del curso.")
-    return {"version":5,"datos":d,"modulos":modulos,"docentes":[rel],"compra":compra,
+    return {"version":6,"datos":d,"modulos":modulos,"docentes":[rel],"compra":compra,
             "certificacion":certificacion,"logos":{"oferente":{"nombre":"","base64":""}},
             "archivos":[],"declarados":copy.deepcopy(ADJUNTOS_DECLARADOS),
             "marcar_borrador":False,"incluir_revision":False,"incluir_admin":True}
@@ -628,7 +648,7 @@ def dibujar_logo(c, logo, x, y, w, h, etiqueta):
 
 def validar(b):
     b=copy.deepcopy(b)
-    if b.get("version")!=5: raise ValueError("Versión de formulario no compatible.")
+    if b.get("version")!=6: raise ValueError("Versión de formulario no compatible.")
     plantilla=nuevo()
     if not isinstance(b.get("datos"),dict):
         raise ValueError("El respaldo no contiene respuestas.")
@@ -671,6 +691,8 @@ def validar(b):
             raise ValueError("Logo inválido.")
         if item["base64"]: preparar_logo(base64.b64decode(item["base64"],validate=True),item["nombre"])
     for a in b["archivos"]:
+        if not isinstance(a.get("descripcion",""),str) or len(a.get("descripcion",""))>500:
+            raise ValueError("Descripción de documento inválida.")
         if any(not isinstance(a.get(k),str) or len(a[k])>300 for k in ["id","nombre","guardado","categoria","sha256"]):
             raise ValueError("Archivo inválido.")
         if Path(a["guardado"]).name!=a["guardado"] or a["guardado"] in {".",".."}:
@@ -701,6 +723,7 @@ def agregar_archivo(b,nombre,raw,categoria):
         raise ValueError("El total de adjuntos de esta sesión supera los 100 MB.")
     a={"id":uuid4().hex[:12],"nombre":Path(nombre).name[:200],"categoria":categoria,
        "guardado":slug(Path(nombre).stem,90)+"_"+h[:12]+suf,"sha256":h,"bytes":len(raw)}
+    a["descripcion"]=titulo_documento(categoria)
     a["base64"]=base64.b64encode(raw).decode("ascii")
     b["archivos"].append(a)
     return True
@@ -718,6 +741,8 @@ def faltantes(b,paso,token=None):
         if not b["modulos"]: r.append("Agregar módulos y contenidos.")
         if abs(sum(horas(b).values())-float(d["horas_exigidas"]))>.01:
             r.append("La suma de horas del programa no coincide con las horas exigidas.")
+    if paso==0 and d["numero_oc"].strip() and not any(a["categoria"]=="Orden de compra" for a in b["archivos"]):
+        r.append("Orden de compra indicada: cargar el documento para revisión.")
     if paso==7:
         for i,doc in enumerate(b["docentes"],1):
             if not doc["nombre"].strip() or "EJEMPLO" in doc["nombre"].upper() or not doc["rut"].strip() or "COMPLETAR" in doc["rut"].upper():
@@ -778,14 +803,91 @@ def esqueleto_markdown(b,solo_estructura=False):
         if i==7:
             for doc in b["docentes"]:
                 out += ["### Relator: nombre / RUT / título / experiencia / disponibilidad", "[COMPLETAR]" if solo_estructura else f"{doc['nombre']} | {doc['rut']} | {doc['titulo']} | {doc['experiencia']} | {doc['disponibilidad']}"]
-                out += [f"- [ ] {x['requisito']}" if solo_estructura else f"- {x['requisito']}: {x['estado']}. Respaldo: {x['respaldo'] or '[PENDIENTE]'}" for x in doc["checklist"]]
+                out += [f"- [ ] {x['requisito']}" if solo_estructura else f"- {x['requisito']}: {etiqueta_estado(x['estado'])}. Respaldo: {x['respaldo'] or '[PENDIENTE]'}" for x in doc["checklist"]]
         if i in {8,9}:
-            out += [f"- [ ] {x['requisito']}" if solo_estructura else f"- {x['requisito']}: {x['estado']}. Respaldo: {x['respaldo'] or '[PENDIENTE]'}" for x in b["compra" if i==8 else "certificacion"]]
+            out += [f"- [ ] {x['requisito']}" if solo_estructura else f"- {x['requisito']}: {etiqueta_estado(x['estado'])}. Respaldo: {x['respaldo'] or '[PENDIENTE]'}" for x in b["compra" if i==8 else "certificacion"]]
         if i==11 and not solo_estructura:
             out += [f"- Documento declarado: {a['nombre']} | Categoría: {a['categoria']}" for a in b["declarados"]]
-            out += [f"- Archivo: {a['nombre']} | Categoría: {a['categoria']}" for a in b["archivos"]]
+            out += [f"- Documento: {descripcion_documento(a)} | Categoría: {a['categoria']}" for a in b["archivos"]]
         out += [""]
     return "\n".join(out)
+
+
+ESTADOS_VISUALES = {
+    "Por verificar": ("pendiente", "Por revisar"),
+    "Comprometido": ("tick", "Incluido"),
+    "Declarado": ("tick", "Informado"),
+    "Respaldado": ("tick", "Con respaldo"),
+    "A evaluación del comprador": ("alerta", "Observación"),
+    "Cumple": ("tick", "En orden"),
+    "No cumple": ("cruz", "No cumple"),
+    "No aplica": ("neutro", "No aplica"),
+}
+
+
+def etiqueta_estado(estado):
+    tipo, texto = ESTADOS_VISUALES.get(estado, ("pendiente", "Por revisar"))
+    return {"tick":"✓", "alerta":"△", "cruz":"✕", "pendiente":"○", "neutro":"–"}[tipo]+" "+texto
+
+
+class EstadoPDF(Flowable):
+    """Iconos vectoriales: evitan depender de fuentes emoji en el PDF."""
+    def __init__(self, estado):
+        Flowable.__init__(self)
+        self.tipo,self.texto=ESTADOS_VISUALES.get(estado,("pendiente","Por revisar"))
+        self.parrafo=Paragraph(escape(self.texto),ParagraphStyle("estado",fontName="OTEC",fontSize=7.5,leading=10))
+
+    def wrap(self, availWidth, availHeight):
+        self.width=availWidth
+        _, alto=self.parrafo.wrap(max(10,availWidth-14),availHeight)
+        self.height=max(12,alto)
+        return self.width,self.height
+
+    def draw(self):
+        c=self.canv; c.saveState()
+        tono={"tick":"#18734A","alerta":"#A76508","cruz":"#B33939"}.get(self.tipo,"#5B707D")
+        c.setStrokeColor(colors.HexColor(tono));c.setLineWidth(1.4)
+        y=self.height-6
+        if self.tipo=="tick":
+            camino=c.beginPath();camino.moveTo(1,y);camino.lineTo(4,y-3);camino.lineTo(10,y+4);c.drawPath(camino)
+        elif self.tipo=="alerta":
+            camino=c.beginPath();camino.moveTo(0,y-4);camino.lineTo(10,y-4);camino.lineTo(5,y+5);camino.close();c.drawPath(camino)
+            c.line(5,y-1,5,y+2);c.circle(5,y-2.5,.35,stroke=1,fill=0)
+        elif self.tipo=="cruz":
+            c.line(1,y-3,9,y+4);c.line(1,y+4,9,y-3)
+        elif self.tipo=="pendiente": c.circle(5,y,3.5,stroke=1,fill=0)
+        else: c.line(1,y,9,y)
+        self.parrafo.drawOn(c,14,self.height-self.parrafo.height)
+        c.restoreState()
+
+
+def comparar_presupuesto(d):
+    """Porcentaje sobre el presupuesto del comprador; incluye impuestos aplicables."""
+    total=montos(d)[2]; presupuesto=int(d["presupuesto"])
+    if total is None or presupuesto<=0: return None
+    diferencia=presupuesto-total
+    porcentaje=(Decimal(abs(diferencia))*100/Decimal(presupuesto)).quantize(Decimal("0.01"),rounding=ROUND_HALF_UP)
+    numero=f"{porcentaje:.2f}".replace(".",",")
+    if diferencia>0:
+        return {"porcentaje":f"{numero} % BAJO EL PRESUPUESTO", "diferencia":f"Diferencia a favor del comprador: {pesos(diferencia)}."}
+    if diferencia<0:
+        return {"porcentaje":f"{numero} % SOBRE EL PRESUPUESTO", "diferencia":f"Diferencia sobre el presupuesto: {pesos(-diferencia)}."}
+    return {"porcentaje":"0,00 % - IGUAL AL PRESUPUESTO", "diferencia":"La oferta coincide con el presupuesto del comprador."}
+
+
+def titulo_documento(categoria):
+    return {
+        "Anexo Nº 1":"Anexo Nº 1: Identificación del oferente",
+        "CV y respaldos relator":"Currículum del relator y antecedentes de competencias y certificaciones",
+        "CV relator":"Currículum del relator",
+        "Respaldo relator":"Antecedentes de competencias y certificaciones del relator",
+        "Bases técnicas":"Bases técnicas del servicio",
+        "Orden de compra":"Orden de compra del servicio",
+    }.get(categoria,"Antecedente complementario de la oferta")
+
+
+def descripcion_documento(archivo):
+    return archivo.get("descripcion", "").strip() or titulo_documento(archivo["categoria"])
 
 
 def estilos_pdf():
@@ -806,7 +908,7 @@ def generar_pdf(b,token=None,solo_portada=False):
     def P(t,style="body"):
         return Paragraph(escape(limpiar(t or "Por completar")).replace("\n","<br/>"),sty[style])
     def tabla(headers,rows,widths=None):
-        data=[[P(x,"th") for x in headers]]+[[P(x,"small") for x in row] for row in rows]
+        data=[[P(x,"th") for x in headers]]+[[x if isinstance(x,Flowable) else P(x,"small") for x in row] for row in rows]
         t=Table(data,colWidths=widths or [ancho/len(headers)]*len(headers),repeatRows=1,splitByRow=1,splitInRow=1,hAlign="LEFT")
         t.setStyle(TableStyle([("BACKGROUND",(0,0),(-1,0),NAVY),("VALIGN",(0,0),(-1,-1),"TOP"),
             ("ROWBACKGROUNDS",(0,1),(-1,-1),[colors.white,PALE]),("LEFTPADDING",(0,0),(-1,-1),9),
@@ -892,10 +994,11 @@ def generar_pdf(b,token=None,solo_portada=False):
         ["Organismo comprador",d["comprador"]+"\nRUT "+d["rut_comprador"]],
         ["Modalidad y código",d["modalidad"]+"\n"+d["proceso"]],
         ["Categoría del servicio",d["rubro"]],
-        ["Ítem",d["id_item"]],
+        ["ID del ítem",d["id_item"]],
         ["Lugar de ejecución",d["comuna"]+", "+d["region"]],
         ["Modalidad del curso",d["modalidad_curso"]],
     ],[165,ancho-165]))
+    if d["numero_oc"].strip(): story.extend(campo("Orden de compra",d["numero_oc"]))
     story.append(P("Fechas del proceso","h2"))
     fechas=[[label,d[k]] for label,k in [("Publicación","publicacion"),("Cierre del primer llamado","cierre_1"),("Cierre del segundo llamado","cierre_2")] if d[k].strip()]
     if fechas: story.append(tabla(["Hito","Fecha y hora"],fechas,[245,ancho-245]))
@@ -943,43 +1046,53 @@ def generar_pdf(b,token=None,solo_portada=False):
         story.extend(parrafos(f"RUT {rel['rut']}. {rel['titulo']}."))
         story.extend(parrafos(rel["experiencia"]))
         story.extend(parrafos(rel["disponibilidad"]))
-        story.append(tabla(["Requisito","Estado","Antecedente"],[[x["requisito"],x["estado"],x["respaldo"]] for x in rel["checklist"]],[178,91,ancho-269]))
+        story.append(tabla(["Requisito","Estado","Antecedente"],[[x["requisito"],EstadoPDF(x["estado"]),x["respaldo"]] for x in rel["checklist"]],[178,91,ancho-269]))
     story.extend(campo("Documentación de respaldo",d["referencia_cv"]))
 
-    story.append(PageBreak()); cap("Requisitos del servicio","requisitos")
-    story.append(tabla(["Requisito de las bases","Propuesta"],[[x["requisito"],x["estado"]+". "+x["respaldo"]] for x in b["compra"]],[200,ancho-200]))
+    story.append(PageBreak()); cap("Requisitos de contratación y observaciones","requisitos")
+    story.append(tabla(["Requisito","Estado","Respuesta de la oferta"],[[x["requisito"],EstadoPDF(x["estado"]),x["respaldo"]] for x in b["compra"]],[175,90,ancho-265]))
+    if d["requisitos_oc"].strip(): story.extend(campo("Condiciones de la orden de compra",d["requisitos_oc"]))
+    if d["observaciones"].strip(): story.extend(campo("Observaciones",d["observaciones"]))
 
     story.append(PageBreak()); cap("Evaluación, certificación e informe final","certificacion")
     for label,k in [("Evaluación del aprendizaje","evaluacion"),("Aprobación","aprobacion"),("Entrega de certificados y resultados","entrega_certificados")]:
         story.extend(campo(label,d[k]))
     story.extend(parrafos("El informe final será entregado a la "+d["destino_informe"]+"."))
     story.append(P("Contenido de los entregables","h2"))
-    story.append(tabla(["Requisito","Estado"],[[x["requisito"],x["estado"]] for x in b["certificacion"]],[ancho-110,110]))
+    story.append(tabla(["Requisito","Estado"],[[x["requisito"],EstadoPDF(x["estado"])] for x in b["certificacion"]],[ancho-110,110]))
 
     story.append(PageBreak()); cap("Propuesta económica","economica")
     neto,iva,total=montos(d)
+    comparacion=comparar_presupuesto(d)
     banner=Table([[P("VALOR TOTAL OFERTADO","banner_label"),P("PRESUPUESTO DEL COMPRADOR","banner_label")],
-        [P(pesos(total) if total is not None else "Por definir","banner_value"),P(pesos(d["presupuesto"]),"banner_value")]],colWidths=[ancho/2]*2)
+        [P(pesos(total) if total is not None else "Por definir","banner_value"),P(pesos(d["presupuesto"]),"banner_value")],
+        [P("VALORES EN PESOS CHILENOS","banner_label"),P(comparacion["porcentaje"] if comparacion else "SIN COMPARACIÓN DISPONIBLE","banner_label")]],colWidths=[ancho/2]*2)
     banner.setStyle(TableStyle([("BACKGROUND",(0,0),(-1,-1),NAVY),("LEFTPADDING",(0,0),(-1,-1),17),
-        ("RIGHTPADDING",(0,0),(-1,-1),10),("TOPPADDING",(0,0),(-1,0),15),("BOTTOMPADDING",(0,1),(-1,1),15),
+        ("RIGHTPADDING",(0,0),(-1,-1),10),("TOPPADDING",(0,0),(-1,0),15),("BOTTOMPADDING",(0,2),(-1,2),15),
         ("VALIGN",(0,0),(-1,-1),"TOP"),("LINEBEFORE",(1,0),(1,-1),.5,GOLD)]))
     story.extend([banner,Spacer(1,10)])
+    if comparacion: story.append(P(comparacion["diferencia"],"note"))
     tratamiento="Oferta exenta de IVA." if d["impuesto"]=="Exento / sin impuesto" else (f"Valor con impuesto del {d['tasa']} %." if d["impuesto"]=="Con impuesto" else "Tratamiento tributario por definir.")
     story.append(P(tratamiento))
     story.extend(campo("Alcance del valor ofertado",d["incluye_precio"]))
     story.append(Spacer(1,10)); cap("Documentación de la oferta","documentos")
     story.extend(parrafos(d["documentacion_adjunta"]))
-    nombres=[x["nombre"] for x in b["declarados"]]
-    nombres += [x["nombre"] for x in b["archivos"] if x["categoria"]!="Bases técnicas"]
+    cargadas={x["categoria"] for x in b["archivos"]}
+    nombres=[x["nombre"] for x in b["declarados"] if x["categoria"] not in cargadas]
+    nombres += [descripcion_documento(x) for x in b["archivos"] if x["categoria"]!="Bases técnicas"]
     for i,nombre in enumerate(dict.fromkeys(nombres),1): story.append(P(f"{i}. {nombre}"))
 
     if b["incluir_admin"]:
         story.append(PageBreak()); cap("Identificación del oferente","identificacion")
-        story.extend(campo("Razón social",d["oferente"]))
-        story.extend(parrafos("RUT "+d["rut_oferente"]+".\n"+d["domicilio_empresa"]))
-        story.extend(campo("Contacto de la propuesta",d["contacto_oferta"]+"\n"+d["cargo_contacto"]))
-        story.extend(parrafos("Teléfono: "+d["telefono"]+"\nCorreo: "+d["correo"]))
-        story.extend(campo("Representante legal",d["representante"]+"\nRUT "+d["rut_representante"]+"\n"+d["cargo_representante"]))
+        story.append(P("Empresa","h2"))
+        story.append(tabla(["Antecedente","Información"],[["Razón social",d["oferente"]],["RUT",d["rut_oferente"]],
+            ["Domicilio",d["domicilio_empresa"]]],[135,ancho-135]))
+        story.append(P("Contacto de la propuesta","h2"))
+        story.append(tabla(["Antecedente","Información"],[["Nombre",d["contacto_oferta"]],["Cargo",d["cargo_contacto"]],
+            ["Teléfono",d["telefono"]],["Correo",d["correo"]]],[135,ancho-135]))
+        story.append(P("Representante legal","h2"))
+        story.append(tabla(["Antecedente","Información"],[["Nombre",d["representante"]],["RUT",d["rut_representante"]],
+            ["Cargo",d["cargo_representante"]]],[135,ancho-135]))
         story.append(P("Datos para transferencia","h2"))
         story.append(tabla(["Antecedente","Información"],[["Titular",d["oferente"]],["RUT",d["rut_oferente"]],
             ["Banco",d["banco"]],["Tipo de cuenta",d["tipo_cuenta"]],["Número",d["cuenta"]],["Correo",d["correo_pagos"]]],[135,ancho-135]))
@@ -999,14 +1112,14 @@ def main():
     st.set_page_config(page_title="OTEC Santa Mónica | Propuestas",page_icon="📄",layout="wide")
     st.title("Constructor de propuestas · OTEC Santa Mónica")
     st.caption("Formulario completo por preguntas. Edita las respuestas, revisa los requisitos y genera una propuesta PDF profesional.")
-    st.info("Propuesta precargada: Compra Ágil 1057545-246-COT26, 20 participantes y 20 horas pedagógicas. Oferta global: $2.300.000, exenta de IVA. Revisa y adapta todas las respuestas para el proceso que vayas a ofertar.")
-    if "modelo_propuesta_v5" not in st.session_state:
+    st.info("Propuesta precargada: Compra Ágil 1057545-246-COT26, 20 participantes y 20 horas pedagógicas. Oferta global: $2.000.000, exenta de IVA. Revisa y adapta todas las respuestas para el proceso que vayas a ofertar.")
+    if "modelo_propuesta_v6" not in st.session_state:
         # Una versión anterior puede haber dejado widgets con valores de ejemplo.
         for clave in list(st.session_state):
             if clave.startswith("q_") or clave in {"propuesta_pdf","propuesta_firma"}:
                 del st.session_state[clave]
-        st.session_state.modelo_propuesta_v5=nuevo()
-    b=st.session_state.modelo_propuesta_v5
+        st.session_state.modelo_propuesta_v6=nuevo()
+    b=st.session_state.modelo_propuesta_v6
     def leer(path):
         obj=b
         for k in path: obj=obj[k]
@@ -1022,7 +1135,9 @@ def main():
         if key not in st.session_state: st.session_state[key]=leer(path)
         kw=dict(key=key,on_change=cambiar,args=(path,key))
         if tipo=="bool": return st.checkbox(label,**kw)
-        if opciones is not None: return st.selectbox(label,opciones,**kw)
+        if opciones is not None:
+            formato={"format_func":etiqueta_estado} if opciones==ESTADOS else {}
+            return st.selectbox(label,opciones,**formato,**kw)
         if tipo in {"entero","decimal"}:
             minimo=1 if path[-1]=="cantidad" else 0
             tope=100 if path[-1] in {"tasa","adjuntos_esperados"} else 10000 if path[-1] in {"horas","horas_exigidas","cupos"} else 10**12
@@ -1126,13 +1241,17 @@ def main():
                 if st.button("Agregar otro relator"):
                     b["docentes"].append(dict(id=uuid4().hex[:12],nombre="",rut="",titulo="",experiencia="",disponibilidad="Por coordinar",checklist=items_check(REQ_RELATOR)))
                     st.rerun()
-            if seccion==8: checklist(["compra"],"¿Cómo cumpliremos cada requisito obligatorio de compra?")
+            if seccion==8:
+                st.caption("Las condiciones se revisan contra las bases aportadas. Si existe una orden de compra, incorpora su número, condiciones y documento en el formulario.")
+                checklist(["compra"],"Requisitos de contratación")
             if seccion==9: checklist(["certificacion"],"¿Qué incluirán los certificados y el informe final?")
             if seccion==10:
                 neto,iva,total=montos(b["datos"])
                 a,c,e=st.columns(3); a.metric("Neto + despacho",pesos(neto)); c.metric("Impuesto",pesos(iva) if iva is not None else "Por definir")
                 e.metric("Total",pesos(total) if total is not None else "Por definir")
                 st.caption("El PDF presenta el valor ofertado, el presupuesto disponible y el alcance del servicio.")
+                comparacion=comparar_presupuesto(b["datos"])
+                if comparacion: st.metric("Comparación con presupuesto",comparacion["porcentaje"])
                 if total is not None and total>b["datos"]["presupuesto"]>0: st.warning("La oferta supera el presupuesto estimado del comprador.")
             if seccion==11:
                 st.markdown("**Logo institucional para la portada**")
@@ -1166,7 +1285,9 @@ def main():
                 st.write(f"**{len(b['archivos'])} de {b['datos']['adjuntos_esperados']} archivos incorporados**")
                 for j,a in enumerate(b["archivos"]):
                     with st.container(border=True):
-                        st.write(a["nombre"])
+                        st.caption("Original: "+a["nombre"])
+                        a.setdefault("descripcion",titulo_documento(a["categoria"]))
+                        widget(["archivos",j,"descripcion"],"¿Qué nombre descriptivo debe aparecer en la propuesta?")
                         widget(["archivos",j,"categoria"],"¿Qué tipo de documento es?",opciones=CATEGORIAS_ADJUNTOS)
                         if st.button("Retirar archivo",key="del_a_"+a["id"]):
                             b["archivos"].pop(j)
