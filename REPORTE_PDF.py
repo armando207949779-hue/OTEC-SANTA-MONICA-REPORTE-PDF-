@@ -1,4 +1,4 @@
-# VERSION: 8.3 - SML / perfil relator y modulo 7 corregidos; contacto visible
+# VERSION: 8.4 - SML / Diego titular y Daniel alternativo (sin oferta alternativa de precio)
 # CURSO: Power BI con IA: Fundamentos y Aplicaciones para Profesionales
 # CODIGO: 837-465-COT26 | MODALIDAD: Compra Ágil
 # FECHA: 11-11-2026 America/Santiago
@@ -10,7 +10,7 @@
 # INSTRUCCIONES DE USO Y ADAPTACION A FUTURAS LICITACIONES
 # 1. Instalar: python -m pip install -r requirements.txt
 #    Dependencias: streamlit, reportlab, svglib, pillow, defusedxml.
-# 2. Ejecutar: python -m streamlit run Generador_Propuesta_SML_837-465-COT26_FINAL_CORREGIDO.py (Python 3.10 o superior).
+# 2. Ejecutar: python -m streamlit run Generador_Propuesta_SML_837-465-COT26_DOS_RELATORES.py (Python 3.10 o superior).
 # 3. La pestaña «Generar PDF» solo tiene logo opcional del comprador y botones.
 #    La pestaña «Detalles y edición» contiene el formulario, con apartados cerrados.
 #    El formulario pregunta por comprador, modalidad, lugar, participantes,
@@ -27,15 +27,15 @@
 #    Las notas de carga y revision pertenecen al formulario, no al informe.
 # 7. Descargar las preguntas y respuestas o el esqueleto Markdown para trabajar
 #    con IA. Revisar los antecedentes antes de incorporar cambios al codigo.
-# 8. Adjuntar el CV de Diego Zamorano y sus respaldos; otros anexos solo si se
-#    exigen expresamente. El ZIP incluye únicamente archivos cargados.
+# 8. Adjuntar CV y respaldos de Diego Zamorano y Daniel Vargas si se presentan
+#    ambos en la oferta. El ZIP incluye únicamente archivos cargados.
 # 9. No se deben atribuir certificaciones no documentadas. El PDF no incluye
 #    costos internos ni márgenes. El contacto institucional aparece siempre en
 #    su propia sección, independiente del anexo administrativo opcional.
 # 10. Formulario completo, sin bloqueos. No hay guardado persistente de progreso;
 #     conservar la sesion abierta y descargar los documentos antes de cerrarla.
 #
-# PRUEBA LOCAL: python Generador_Propuesta_SML_837-465-COT26_FINAL_CORREGIDO.py --demo-pdf propuesta.pdf
+# PRUEBA LOCAL: python Generador_Propuesta_SML_837-465-COT26_DOS_RELATORES.py --demo-pdf propuesta.pdf
 # El logo institucional es opcional; sin él se usa una portada tipográfica.
 """Formulario reutilizable por preguntas y generador de propuesta PDF A4."""
 from __future__ import annotations
@@ -133,8 +133,9 @@ PASOS = ["Proceso y comprador", "Identificación del oferente", "Quiénes somos 
          "Oferta económica", "Logo y documentación adjunta", "Revisión y PDF"]
 ESTADOS = ["Por verificar", "Comprometido", "Declarado", "Respaldado", "A evaluación del comprador", "Cumple", "No cumple", "No aplica"]
 CATEGORIAS_ADJUNTOS = ["Bases técnicas", "CV y respaldos relator", "CV relator", "Respaldo relator", "Propuesta / otro", "Orden de compra"]
-ADJUNTOS_DECLARADOS = [{'nombre': 'CV - Diego Zamorano y Antecedentes.pdf', 'categoria': 'CV y respaldos relator'}]
-RELATOR_INICIAL = {'nombre': 'Diego Antonio Zamorano Pérez',
+ADJUNTOS_DECLARADOS = [{'nombre': 'CV - Diego Zamorano y Antecedentes.pdf', 'categoria': 'CV y respaldos relator'},
+                       {'nombre': 'CV - Daniel Vargas H Compilado.pdf', 'categoria': 'CV y respaldos relator'}]
+RELATOR_INICIAL = {'rol': 'Relator principal (prioridad 1)', 'nombre': 'Diego Antonio Zamorano Pérez',
  'rut': '20.185.347-8',
  'titulo': 'Ingeniero Civil Industrial, Pontificia Universidad Católica de Valparaíso (título acreditado)',
  'experiencia': 'Diego Antonio Zamorano Pérez cuenta con experiencia laboral en el desarrollo '
@@ -146,6 +147,30 @@ RELATOR_INICIAL = {'nombre': 'Diego Antonio Zamorano Pérez',
                 'Servicio Local de Educación Pública Llanquihue.',
  'disponibilidad': 'Relator propuesto para ejecutar el programa virtual durante noviembre/diciembre de '
                    '2026, según coordinación de calendario con el Servicio Médico Legal.'}
+RELATOR_ALTERNATIVO = {
+ 'rol': 'Relator alternativo de contingencia (prioridad 2)',
+ 'nombre': 'Daniel Cristóbal Vargas Herrera',
+ 'rut': '20.522.550-1',
+ 'titulo': 'Ingeniero Civil Industrial, Pontificia Universidad Católica de Valparaíso',
+ 'experiencia': (
+     'Daniel Cristóbal Vargas Herrera es Ingeniero Civil Industrial y cuenta con formación '
+     'en Data Science, Machine Learning e Inteligencia Artificial mediante diplomado de 96 horas '
+     'de la Pontificia Universidad Católica de Valparaíso. Su experiencia incluye implementación '
+     'de soluciones de análisis de datos e inteligencia artificial y relatorías para organismos '
+     'públicos, entre ellos la Subsecretaría de Educación Parvularia y SLEP Llanquihue. '
+     'Sus antecedentes respaldan su experiencia en capacitación, analítica e IA aplicada.'),
+ 'disponibilidad': (
+     'Profesional alternativo de respaldo. Su eventual sustitución del relator principal '
+     'se realizará exclusivamente ante una contingencia, previa autorización del Servicio '
+     'Médico Legal y sin modificar precio, temario, duración ni entregables.'),
+}
+REQ_RELATOR_ALTERNATIVO = [
+    'Título profesional de Ingeniería Civil Industrial',
+    'Formación académica en ciencia de datos e inteligencia artificial',
+    'Experiencia en capacitación en inteligencia artificial para instituciones públicas',
+    'Participación en proyectos de análisis de datos e inteligencia artificial',
+]
+
 MODALIDADES = ["Compra Ágil", "Licitación pública", "Licitación privada", "Convenio Marco",
                "Trato directo", "Compra por cotización", "Subasta Inversa Electrónica",
                "Contratos para la Innovación", "Diálogo Competitivo de Innovación", "Otra"]
@@ -405,13 +430,13 @@ DATOS_LICITACION = {'proceso': '837-465-COT26',
                'datos simuladas, ejercicios de Power Query y DAX, ejemplos de visualización, '
                'instrucciones del proyecto integrador y rúbrica de evaluación. No se utilizarán datos '
                'institucionales reservados en herramientas de IA de terceros.',
- 'perfil_docente': 'Para desarrollar los contenidos del curso se presenta un relator con experiencia '
-                   'laboral en Microsoft Power BI, inteligencia de negocios, análisis de datos e '
+ 'perfil_docente': 'La ejecución de las 24 horas se propone a cargo de Diego Antonio Zamorano Pérez, '
+                   'con experiencia laboral en Microsoft Power BI, inteligencia de negocios, análisis de datos e '
                    'inteligencia artificial aplicada. Los términos de referencia no establecen título '
                    'profesional, certificación Microsoft ni años mínimos obligatorios.',
- 'referencia_cv': 'Se acompaña el archivo CV - Diego Zamorano y Antecedentes.pdf, con currículum, '
-                  'certificado de título y respaldos de experiencias de relatoría. El oferente confirma '
-                  'el dominio del profesional en Power Query, DAX y Power BI Service.',
+ 'referencia_cv': 'Se presentan los CV de Diego Antonio Zamorano Pérez (principal) y Daniel Cristóbal Vargas Herrera (alternativo), con currículums, '
+                  'certificados y respaldos de experiencias de relatoría. El oferente confirma específicamente '
+                  'el dominio de Diego Zamorano en Power Query, DAX y Power BI Service.',
  'observaciones': 'El curso se ejecutará bajo las condiciones de confidencialidad y coordinación '
                   'establecidas por el Servicio Médico Legal. El calendario específico será acordado con '
                   'la contraparte técnica; el compromiso ofertado comprende íntegramente las 24 horas y '
@@ -441,9 +466,9 @@ DATOS_LICITACION = {'proceso': '837-465-COT26',
  'detalle': 'Curso Power BI con IA, 24 horas virtuales, para 12 a 16 participantes. Ocho módulos, '
             'ejercicios prácticos, proyecto integrador, evaluación final y diplomas individuales. Oferta '
             'global: $2.690.000 exenta.',
- 'adjuntos_esperados': 1,
- 'adjuntos_solicitados': 'Currículum y antecedentes del relator (respaldo técnico complementario).',
- 'documentacion_adjunta': 'Se acompaña CV de Diego Antonio Zamorano Pérez con certificado de título y '
+ 'adjuntos_esperados': 2,
+ 'adjuntos_solicitados': 'Currículum y antecedentes de ambos profesionales propuestos (respaldo técnico complementario).',
+ 'documentacion_adjunta': 'Se acompañan los CV de Diego Antonio Zamorano Pérez y Daniel Cristóbal Vargas Herrera, con certificados de título y '
                           'antecedentes documentales de relatorías. La propuesta contiene además el '
                           'programa, metodología, cumplimiento de términos técnicos, evaluación y valor '
                           'global del servicio.',
@@ -461,9 +486,9 @@ INTRODUCCIONES = {'proceso': 'La propuesta responde a la Compra Ágil {proceso},
                 'práctica guiada, resolución de casos y retroalimentación mediante datos simulados.',
  'logistica': 'La capacitación se ejecutará mediante clases virtuales. El calendario se coordinará con el '
               'Servicio Médico Legal durante noviembre/diciembre de 2026.',
- 'relator': 'La relatoría principal estará a cargo de Diego Antonio Zamorano Pérez, cuyo perfil reúne '
+ 'relator': 'La relatoría principal de las 24 horas estará a cargo de Diego Antonio Zamorano Pérez, cuyo perfil reúne '
             'experiencia aplicada en Power BI, control de gestión, análisis de datos e inteligencia '
-            'artificial. Su currículum y antecedentes se acompañan al expediente.',
+            'artificial. Daniel Cristóbal Vargas Herrera se presenta únicamente como profesional alternativo de contingencia, sujeto a aprobación previa del Servicio Médico Legal y sin cambio de precio, duración ni contenidos. Ambos currículums y antecedentes se acompañan al expediente.',
  'requisitos': 'La siguiente matriz vincula los requerimientos expresos del Servicio Médico Legal con los '
                'compromisos concretos asumidos en esta oferta.',
  'certificacion': 'El aprendizaje se comprobará con una evaluación final práctica y se respaldará '
@@ -515,6 +540,16 @@ def nuevo(ejemplo_activo=True):
     ]
     for row, (estado, respaldo) in zip(rel["checklist"], soportes_rel):
         row.update(estado=estado, respaldo=respaldo)
+    alt = copy.deepcopy(RELATOR_ALTERNATIVO)
+    alt["id"] = uuid4().hex[:12]
+    alt["checklist"] = items_check(REQ_RELATOR_ALTERNATIVO)
+    for row, (estado, respaldo) in zip(alt["checklist"], [
+        ("Respaldado", "Ingeniero Civil Industrial PUCV; documentos en su compilado de antecedentes."),
+        ("Respaldado", "Diplomado Data Science, Machine Learning, IA y Deep Learning de 96 horas, PUCV."),
+        ("Respaldado", "Constancias de relatoría en instituciones públicas, incluidos SLEP Llanquihue y Subsecretaría de Educación Parvularia."),
+        ("Declarado", "Experiencia profesional en análisis de datos e implementación de IA, según currículum."),
+    ]):
+        row.update(estado=estado, respaldo=respaldo)
     compra = items_check(REQ_COMPRA)
     soportes_compra = [
         "Clases virtuales teórico-prácticas; cobertura de hasta 16 profesionales.",
@@ -536,7 +571,7 @@ def nuevo(ejemplo_activo=True):
         "Identificador único o código de verificación para cada diploma.",
         "Resumen final de asistencia, evaluación y entregables."]):
         row.update(estado="Comprometido",respaldo=respaldo)
-    return {"version":6,"datos":d,"modulos":rows,"docentes":[rel],
+    return {"version":6,"datos":d,"modulos":rows,"docentes":[rel,alt],
             "compra":compra,"certificacion":cert,
             "logos":{"oferente":{"nombre":"","base64":""},"comprador":{"nombre":"","base64":""}},
             "archivos":[],"declarados":copy.deepcopy(ADJUNTOS_DECLARADOS),
@@ -878,7 +913,7 @@ def esqueleto_markdown(b,solo_estructura=False):
             out += ["[AGREGAR MÓDULOS]"] if solo_estructura else [f"- {m['jornada']} | {m['nombre']} | {m['contenido']} | {m['horas']:g} h | {m['tipo']}" for m in b["modulos"]]
         if i==7:
             for doc in b["docentes"]:
-                out += ["### Relator: nombre / RUT / título / experiencia / disponibilidad", "[COMPLETAR]" if solo_estructura else f"{doc['nombre']} | {doc['rut']} | {doc['titulo']} | {doc['experiencia']} | {doc['disponibilidad']}"]
+                out += ["### Relator: nombre / RUT / título / experiencia / disponibilidad", "[COMPLETAR]" if solo_estructura else f"{doc.get('rol', 'Relator')} | {doc['nombre']} | {doc['rut']} | {doc['titulo']} | {doc['experiencia']} | {doc['disponibilidad']}"]
                 out += [f"- [ ] {x['requisito']}" if solo_estructura else f"- {x['requisito']}: {etiqueta_estado(x['estado'])}. Respaldo: {x['respaldo'] or '[PENDIENTE]'}" for x in doc["checklist"]]
         if i in {8,9}:
             out += [f"- [ ] {x['requisito']}" if solo_estructura else f"- {x['requisito']}: {etiqueta_estado(x['estado'])}. Respaldo: {x['respaldo'] or '[PENDIENTE]'}" for x in b["compra" if i==8 else "certificacion"]]
@@ -1336,10 +1371,16 @@ def generar_pdf(b, token=None, solo_portada=False):
     if d["cafeteria"].strip():
         story.extend(campo("Servicio de cafetería", d["cafeteria"]))
 
-    cap("Relator y antecedentes profesionales", "relator")
-    story.extend(campo("Perfil del relator propuesto", d["perfil_docente"]))
+    cap("Equipo de relatoría y antecedentes profesionales", "relator")
+    story.extend(campo("Relatoría principal y alternativa", d["perfil_docente"]))
+    story.extend(parrafos(
+        "La oferta contempla un relator principal (Diego Zamorano) y un alternativo de contingencia "
+        "(Daniel Vargas). Diego es el profesional programado para impartir la totalidad del curso. "
+        "Daniel no constituye una segunda oferta ni reemplaza libremente al titular: cualquier "
+        "sustitución deberá contar con autorización previa del Servicio Médico Legal y preservar "
+        "las 24 horas, los ocho módulos y el precio ofertado."))
     for rel in b["docentes"]:
-        story.append(P(rel["nombre"], "h2"))
+        story.append(P(rel.get("rol", "Relator propuesto") + ": " + rel["nombre"], "h2"))
         story.extend(parrafos(f"RUT {rel['rut']}. {rel['titulo']}."))
         story.extend(parrafos(rel["experiencia"]))
         story.extend(parrafos(rel["disponibilidad"]))
@@ -1482,6 +1523,27 @@ def main():
                 del st.session_state[clave]
         st.session_state.modelo_propuesta_v6=nuevo()
     b=st.session_state.modelo_propuesta_v6
+    # Migrar una sesión creada con el generador de un solo relator una sola vez.
+    if "sml_dos_relatores_migracion_v1" not in st.session_state:
+        if len(b.get("docentes", [])) == 1 and "Zamorano" in b["docentes"][0].get("nombre", ""):
+            alternativo = copy.deepcopy(RELATOR_ALTERNATIVO)
+            alternativo["id"] = uuid4().hex[:12]
+            alternativo["checklist"] = items_check(REQ_RELATOR_ALTERNATIVO)
+            for row, (estado, respaldo) in zip(alternativo["checklist"], [
+                ("Respaldado", "Ingeniero Civil Industrial PUCV, según antecedentes."),
+                ("Respaldado", "Diplomado de 96 horas en Data Science e IA, PUCV."),
+                ("Respaldado", "Certificados de relatoría en instituciones públicas."),
+                ("Declarado", "Experiencia en análisis de datos e IA, según CV.")
+            ]):
+                row.update(estado=estado, respaldo=respaldo)
+            b["docentes"][0].setdefault("rol", "Relator principal (prioridad 1)")
+            b["docentes"].append(alternativo)
+            b["datos"]["perfil_docente"] = DATOS_LICITACION["perfil_docente"]
+            b["datos"]["referencia_cv"] = DATOS_LICITACION["referencia_cv"]
+            b["datos"]["documentacion_adjunta"] = DATOS_LICITACION["documentacion_adjunta"]
+            b["declarados"] = copy.deepcopy(ADJUNTOS_DECLARADOS)
+            b["datos"]["adjuntos_esperados"] = 2
+        st.session_state.sml_dos_relatores_migracion_v1 = True
     # Corregir únicamente el recorte histórico exacto de 500 caracteres
     # causado por el text_input en el campo de experiencia. Respeta cualquier
     # contenido distinto que haya editado el usuario.
@@ -1653,7 +1715,7 @@ def main():
                     st.caption("Relator identificado según el CV aportado. Su experiencia y competencias se describen conforme a los antecedentes disponibles.")
                     for j,rel in enumerate(b["docentes"]):
                         st.markdown(f"**Relator {j+1}**")
-                        for k,label in [("nombre","¿Cuál es su nombre completo?"),("rut","¿Cuál es su RUT?"),("titulo","¿Cuál es su título profesional?"),("experiencia","¿Qué experiencia efectiva declara en la temática?"),("disponibilidad","¿Cuál es su disponibilidad confirmada?")]:
+                        for k,label in [("rol","¿Cuál es su función en la propuesta?") , ("nombre","¿Cuál es su nombre completo?"),("rut","¿Cuál es su RUT?"),("titulo","¿Cuál es su título profesional?"),("experiencia","¿Qué experiencia efectiva declara en la temática?"),("disponibilidad","¿Cuál es su disponibilidad confirmada?")]:
                             widget(["docentes",j,k],label)
                         checklist(["docentes",j,"checklist"],f"Checklist del relator {j+1}")
                         if st.button("Eliminar relator",key="del_doc_"+rel["id"]):
@@ -1662,7 +1724,7 @@ def main():
                                 if k.startswith("q_docentes_"): del st.session_state[k]
                             st.rerun()
                     if st.button("Agregar otro relator"):
-                        b["docentes"].append(dict(id=uuid4().hex[:12],nombre="",rut="",titulo="",experiencia="",disponibilidad="Por coordinar",checklist=items_check(REQ_RELATOR)))
+                        b["docentes"].append(dict(id=uuid4().hex[:12],rol="Relator adicional",nombre="",rut="",titulo="",experiencia="",disponibilidad="Por coordinar",checklist=items_check(REQ_RELATOR)))
                         st.rerun()
                 if seccion==8:
                     st.caption("Las condiciones se revisan contra las bases aportadas. Si existe una orden de compra, incorpora su número, condiciones y documento en el formulario.")
