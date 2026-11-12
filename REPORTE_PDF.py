@@ -1,32 +1,13 @@
-# VERSION: 11.0 - La Pintana / expediente integral y relator con experiencia equivalente cualitativa
-# CURSO: Programa de Capacitación y Adopción Organizacional de Inteligencia Artificial
-# CÓDIGO: 2273-984-COT26 | MODALIDAD: Compra Ágil | 28 participantes | 20 horas cronológicas
-# ORGANISMO: I. Municipalidad de La Pintana | Presupuesto: $5.040.000 IVA incluido
-# PRECIO PROPUESTO: $4.390.000 CLP TOTAL, exento de IVA segun oferente; costo interno estimado $3.370.000
-# FECHA: 12-11-2026 America/Santiago
-# Origen: generador editorial OTEC Santa Mónica, ajustado a bases técnicas aportadas.
-# AVISO: La trayectoria del relator es cualitativamente pertinente; sin datos verificables no se acredita el umbral de 2.500 personas.
-# Los certificados de Marcelo respaldan relatorías, pero no el número de asistentes por actividad.
-# Exención de IVA informada por el oferente. El precio es propuesto, no reemplaza la verificacion de requisitos excluyentes.
-# El recinto será proporcionado en La Pintana según bases; no se ha contratado un salón concreto.
-# Uso: python -m pip install -r requirements.txt
-#      python -m streamlit run Generador_Propuesta_La_Pintana_2273-984-COT26_FINAL.py
-# Prueba: python Generador_Propuesta_La_Pintana_2273-984-COT26_FINAL.py --demo-pdf Propuesta_La_Pintana_FINAL.pdf
-
 # -*- coding: utf-8 -*-
-#
-# INSTRUCCIONES DE USO
-# 1. Instalar dependencias: python -m pip install -r requirements.txt
-# 2. Ejecutar: python -m streamlit run Generador_Propuesta_La_Pintana_2273-984-COT26_FINAL.py
-# 3. Precio precargado definitivo para esta propuesta comercial: $4.390.000 exento de IVA.
-#    El recinto lo aporta el oferente en La Pintana; fechas dentro de noviembre según bases.
-# 4. Adjuntar CV, diplomas, constancias y respaldos institucionales en la sección de anexos.
-# 5. La experiencia del relator no sustituye automáticamente el requisito numérico 9.1 del oferente.
-# 6. Usar «Generar PDF» y luego descargar el expediente ZIP. Incluye SOLO los archivos cargados.
-# 7. Sin sesión persistente: descargar el expediente antes de cerrar Streamlit.
-# 8. Demo sin Streamlit: python Generador_Propuesta_La_Pintana_2273-984-COT26_FINAL.py --demo-pdf Propuesta_La_Pintana_FINAL.pdf
-# El logo del oferente es opcional; si no se encuentra se usa una portada tipográfica.
-"""Formulario reutilizable por preguntas y generador de propuesta PDF A4."""
+"""Generador de propuesta técnica y económica: Compra Ágil 2273-984-COT26.
+
+Uso:
+    python -m pip install -r requirements.txt
+    python -m streamlit run Generador_La_Pintana_2273-984-COT26_FINAL_DEPURADO.py
+
+Prueba sin interfaz:
+    python Generador_La_Pintana_2273-984-COT26_FINAL_DEPURADO.py --demo-pdf Propuesta_La_Pintana.pdf
+"""
 from __future__ import annotations
 
 import argparse
@@ -62,7 +43,7 @@ from reportlab.platypus import (
 
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_NAME = "OTEC_Santa_Monica_Opcion_1.svg"
-PDF_RENDER_VERSION = "v11.0-la-pintana-4390000-20261112"
+PDF_RENDER_VERSION = "v12.0-la-pintana-documento-publico-depurado"
 # Gama inspirada en las presentaciones Beamer clásicas: azul estructural,
 # azul petróleo, fondos casi blancos y reglas finas. Se usa con moderación.
 BEAMER_PALETA = {
@@ -127,12 +108,18 @@ CATEGORIAS_ADJUNTOS = ["Bases técnicas", "CV y respaldos relator", "CV relator"
 ADJUNTOS_DECLARADOS = []  # El PDF lista únicamente los documentos cargados realmente.
 
 RELATOR_INICIAL = {
-    'rol':'Relator principal', 'nombre':'Luis Marcelo Ortiz Contreras',
-    'rut':'9.052.506-9',
-    'titulo':'Profesor de Matemática y Licenciado en Educación, Universidad de Concepción (1987); Máster en Tecnologías para la Educación y el Conocimiento, UNED/Universidad de Concepción (estudios 2006-2008).',
-    'experiencia': (
-        'Luis Marcelo Ortiz Contreras es Profesor de Matemática y Licenciado en Educación por la Universidad de Concepción, con trayectoria docente universitaria y escolar acreditada. Su currículum y sus publicaciones profesionales en LinkedIn describen actividades de relatoría, talleres y seminarios sobre Inteligencia Artificial e IA generativa desde 2023 hasta 2026, incluidos trabajos en Tarapacá y Atacama en 2023, talleres en 2024 y capacitaciones para instituciones públicas y educativas en 2025 y 2026. Entre los respaldos aportados destacan cursos de IA vinculados al MINEDUC/Programa Inglés Abre Puertas y al Servicio de Registro Civil e Identificación. También declara experiencia en reportabilidad, seguimiento de plataformas y análisis de información en PNUD y British Council, vinculada a procesos de implementación y gestión de proyectos tecnológicos. El oferente confirma su trayectoria profesional y de relatorías en los períodos declarados. La amplitud de su formación y la diversidad de instituciones atendidas permiten presentar una experiencia formativa cualitativamente equivalente en pertinencia y complejidad a programas de amplia cobertura; ello no implica equivalencia numérica con el mínimo de personas capacitadas exigido a la entidad oferente. No se cuenta con información consolidada de participantes que permita calcular y respaldar ese total. La acreditación de tres años específicos de desarrollo, implementación o liderazgo de proyectos de IA o datos queda sujeta al contenido de constancias laborales y proyectos verificables.'),
-    'disponibilidad':'Relator propuesto para la ejecución presencial del programa en La Pintana durante noviembre de 2026; calendario y disponibilidad sujetos a coordinación y confirmación con la contraparte.'
+    "rol": "Relator principal",
+    "nombre": "Luis Marcelo Ortiz Contreras",
+    "rut": "9.052.506-9",
+    "titulo": (
+        "Profesor de Matemática y Licenciado en Educación, Universidad de Concepción (1987). "
+        "Máster en Tecnologías para la Educación y el Conocimiento, UNED / Universidad de Concepción."
+    ),
+    "experiencia": 'Luis Marcelo Ortiz Contreras es Profesor de Matemática y Licenciado en Educación de la Universidad de Concepción, con amplia trayectoria en docencia universitaria y escolar y estudios de posgrado en tecnologías para la educación. Su experiencia en formación aplicada de Inteligencia Artificial se desarrolla desde 2023, con talleres, cursos y actividades de transferencia para establecimientos educacionales y organismos públicos. Entre sus antecedentes destacan relatorías y formación en IA vinculadas al Programa Inglés Abre Puertas del Ministerio de Educación, el Servicio de Registro Civil e Identificación y actividades de formación para instituciones educativas y públicas. También ha desempeñado funciones vinculadas a gestión de plataformas, análisis de información, seguimiento y reportabilidad en proyectos asociados a PNUD y British Council. Estas experiencias permiten abordar asistentes de IA generativa, elaboración de documentos, planificación de actividades y uso responsable de datos desde una metodología accesible para equipos profesionales no técnicos.',
+    "disponibilidad": (
+        "Relator titular designado para las cinco jornadas presenciales de noviembre de 2026 "
+        "y las dos mentorías de seguimiento de diciembre de 2026."
+    ),
 }
 
 
@@ -312,13 +299,7 @@ DATOS_LICITACION = {'proceso': '2273-984-COT26',
  'tipo_cuenta': '',
  'cuenta': '',
  'correo_pagos': '',
- 'quienes': 'Centro de Capacitación Santa Mónica Limitada es un organismo dedicado al fortalecimiento de '
-            'competencias laborales y tecnológicas de organizaciones públicas y privadas. Su oferta combina '
-            'prácticas aplicadas, seguimiento y evaluación. Cuenta con antecedentes de contratación de '
-            'capacitación en IA para municipalidades y organismos públicos, respaldados por órdenes de compra '
-            'y facturas que se detallarán en la matriz institucional. El número total de participantes '
-            'capacitados en IA debe sustentarse con registros de ejecución y no se presume por el valor de las '
-            'órdenes.',
+ 'quienes': ('Centro de Capacitación Santa Mónica Limitada desarrolla programas de formación laboral y tecnológica para organizaciones públicas y privadas. Cuenta con antecedentes documentales de servicios de capacitación en Inteligencia Artificial para municipalidades, servicios públicos y entidades educativas, mediante facturas y órdenes de compra que se identifican en el Anexo 2.'),
  'vision': 'Acompañar a equipos profesionales no técnicos en una adopción útil, responsable y verificable de '
            'la inteligencia artificial, protegiendo la privacidad de las personas y mejorando la calidad del '
            'servicio público.',
@@ -364,7 +345,7 @@ DATOS_LICITACION = {'proceso': '2273-984-COT26',
  'region': 'Región Metropolitana',
  'comuna': 'La Pintana',
  'lugar': 'Recinto apto para capacitación presencial dentro de la comuna de La Pintana, proporcionado por OTEC '
-          'Santa Mónica; dirección exacta por confirmar con la contraparte antes de contratar.',
+          'Santa Mónica; ubicación y calendario a coordinar con la contraparte municipal.',
  'quien_lugar': 'Proveedor',
  'periodo_ejecucion': 'Las 20 horas cronológicas se desarrollarán durante noviembre de 2026, en calendario '
                       'coordinado con la Municipalidad. Antes de la primera clase se aplicará diagnóstico; '
@@ -380,9 +361,9 @@ DATOS_LICITACION = {'proceso': '2273-984-COT26',
  'materiales': 'Presentaciones, guías de prompts, fichas de casos de uso, rúbricas, plantillas de '
                'reportabilidad, ejercicios con datos ficticios, pautas de seguridad y documentos digitales de '
                'apoyo.',
- 'perfil_docente': 'Relator titular único: Luis Marcelo Ortiz Contreras, Profesor de Matemática, Licenciado en Educación y profesional con extensa experiencia docente. Conforme al CV, constancias y LinkedIn, el oferente declara una trayectoria de relatorías específicas de IA desde 2023 y labores en gestión, reportabilidad y análisis de información. Sus antecedentes académicos y de capacitación se relacionan en el Anexo 1 y deben incorporarse efectivamente al expediente. La evaluación de los años específicos de proyectos profesionales de IA o datos se efectuará sobre los documentos presentados, sin confundir docencia general con proyectos técnicos.',
- 'referencia_cv': 'ANEXO 1 - ANTECEDENTES DEL RELATOR LUIS MARCELO ORTIZ: currículum, copia de título y grado, diploma de Máster en Tecnología para la Educación y el Conocimiento, constancias de experiencias de relatoría y respaldos de formación específica que se hayan incorporado efectivamente al expediente. El perfil de LinkedIn se cita únicamente como fuente complementaria de trayectoria autodocumentada.',
- 'observaciones': 'La propuesta reúne la experiencia institucional de Santa Mónica en contrataciones de capacitaciones de Inteligencia Artificial con la trayectoria profesional del relator, expuestas por separado en los Anexos 1 y 2. El relator registra una experiencia formativa cualitativamente equivalente por diversidad de instituciones, continuidad de relatorías desde 2023 y pertinencia técnica. No se cuenta, sin embargo, con información consolidada y verificable que permita indicar el número total de personas que recibieron capacitación en IA durante los tres años requeridos. Por ello no se afirma haber acreditado más de 2.500 personas; el requisito numérico del numeral 9.1 corresponde al oferente y su cumplimiento será evaluado conforme a las bases. Los cupos previstos en las órdenes de compra no se consideran personas efectivamente capacitadas. Valor global de la oferta: $4.390.000 exento de IVA según confirmación del oferente. La oferta considera todas las actividades, materiales, recinto, coffee break y entregables.',
+ 'perfil_docente': ('El programa será impartido por Luis Marcelo Ortiz Contreras, Profesor de Matemática de la Universidad de Concepción, con extensa experiencia docente y trayectoria de relatorías de Inteligencia Artificial desde 2023. Sus actividades comprenden IA generativa, herramientas de apoyo administrativo, comunicación institucional, producción documental y formación a equipos del sector público y educativo.'),
+ 'referencia_cv': ('ANEXO 1 - ANTECEDENTES DEL RELATOR LUIS MARCELO ORTIZ: currículum, título profesional, grado académico, estudios de posgrado y certificados o constancias de formación y relatoría.'),
+ 'observaciones': ('La oferta integra capacitación aplicada, logística presencial, evaluación individual, seguimiento mediante mentorías y materiales de apoyo, sin costos adicionales al valor global ofertado.'),
  'evaluacion': 'Diagnóstico inicial previo para establecer línea base; actividades prácticas observadas en '
                'cada módulo; evaluación final individual mediante caso de acompañamiento familiar con datos '
                'simulados y pauta de logro que considere pertinencia, seguridad, calidad del producto y '
@@ -409,7 +390,7 @@ DATOS_LICITACION = {'proceso': '2273-984-COT26',
             'y coffee break, 2 mentorías, evaluación, informe y certificación. Precio total $4.390.000 exento de IVA.',
  'adjuntos_esperados': 15,
  'adjuntos_solicitados': 'ANEXO 1 - ANTECEDENTES DEL RELATOR LUIS MARCELO ORTIZ\nANEXO 2 - EXPERIENCIA INSTITUCIONAL EN CAPACITACIONES DE INTELIGENCIA ARTIFICIAL\nDocumento principal - propuesta técnica y económica con cronograma, logística y oferta global.',
- 'documentacion_adjunta': 'ANEXO 1 - ANTECEDENTES DEL RELATOR LUIS MARCELO ORTIZ: currículum, título universitario, grado, máster y certificados/constancias de relatorías que se adjunten efectivamente. ANEXO 2 - EXPERIENCIA INSTITUCIONAL EN CAPACITACIONES DE INTELIGENCIA ARTIFICIAL: facturas, órdenes de compra y cuadro de experiencia de Santa Mónica que se adjunten efectivamente. El inventario final distingue los documentos realmente cargados de los antecedentes solo descritos.',
+ 'documentacion_adjunta': ('ANEXO 1 - ANTECEDENTES DEL RELATOR LUIS MARCELO ORTIZ: currículum vitae, título profesional, grado académico, formación de posgrado y certificados de experiencia. ANEXO 2 - EXPERIENCIA INSTITUCIONAL EN CAPACITACIONES DE INTELIGENCIA ARTIFICIAL: facturas, órdenes de compra y relación de servicios de capacitación prestados o contratados por Santa Mónica.'),
  'fecha_propuesta': '12-11-2026'}
 
 INTRODUCCIONES = {'proceso': 'Esta propuesta responde a la Compra Ágil {proceso}, convocada por {comprador}, para la adopción '
@@ -423,40 +404,49 @@ INTRODUCCIONES = {'proceso': 'Esta propuesta responde a la Compra Ágil {proceso
                 'verificación humana y herramientas autorizadas.',
  'logistica': 'El oferente propone impartir las 20 horas presenciales en un recinto de la comuna de La Pintana '
               'durante noviembre de 2026, con equipamiento y coffee break a su cargo.',
- 'relator': 'Se propone como relator titular a Luis Marcelo Ortiz Contreras, Profesor de Matemática de la Universidad de Concepción, con trayectoria de relatorías y formación en IA declarada desde 2023. Los Anexos 1 y 2 separan sus antecedentes profesionales de la experiencia del oferente.',
- 'requisitos': 'Se incluye la matriz íntegra de compromisos de ejecución y de requisitos excluyentes de los numerales 8.1 y 9.1. La experiencia formativa cualitativamente equivalente del relator no sustituye la acreditación cuantitativa exigida al oferente.',
+ 'relator': 'La relatoría estará a cargo de Luis Marcelo Ortiz Contreras, Profesor de Matemática de la Universidad de Concepción, con experiencia docente y formación aplicada en Inteligencia Artificial desde 2023.',
+ 'requisitos': 'El programa incorpora los servicios, recursos y productos especificados por la Municipalidad, conforme a los compromisos siguientes.',
  'certificacion': 'Se realizará diagnóstico, evaluación final, dos mentorías de transferencia y entrega de '
                   'informe, carpeta fotográfica y certificaciones a los 28 profesionales conforme a las bases.',
  'economica': 'El precio global incluye recinto, equipamiento, colaciones, 20 horas, diagnóstico, mentorías, '
               'evaluación, informes y certificados para 28 participantes.',
- 'documentos': 'El siguiente listado corresponde únicamente a documentos efectivamente incorporados al expediente. '
-               'Los documentos no presentes no se consideran adjuntos ni acreditados.',
+ 'documentos': 'La documentación de respaldo se organiza en los dos anexos siguientes.',
  'identificacion': 'Los datos institucionales corresponden a Santa Mónica según antecedentes aportados.'}
 
 
 EXPERIENCIAS_IA_REGISTROS = [
-    # comprador, objeto y respaldo, situación documental de participantes
-    ('Municipalidad de Pudahuel', 'Capacitación en uso responsable de ChatGPT Plus. Factura 139 / 2025.', 'No informa número'),
-    ('Municipalidad de Quilicura', 'Búsqueda de empleo con IA, Programa FOMIL. Factura 188 / 2025.', 'No informa número'),
-    ('SEREMI MINVU Atacama', 'IA para funcionarios. Factura 226 / 2026.', '28 cupos previstos'),
-    ('Subsecretaría de Educación Parvularia', 'IA práctica en sector público. Factura 171 / 2025.', 'No informa número'),
-    ('SLEP Llanquihue', 'Herramientas de IA para funcionarios. Factura 180 / 2025.', 'No informa número'),
-    ('SEREMI MINVU Coquimbo', 'IA generativa para el trabajo. Factura 204 / 2025.', '2 cupos previstos'),
-    ('Servicio de Salud Atacama', 'Herramientas prácticas de IA para docentes. Factura 192 / 2025.', 'No informa número'),
-    ('Municipalidad de Hualañé', 'Herramientas de IA para escenarios de aprendizaje. Factura 201 / 2025.', 'No informa número'),
-    ('Municipalidad de Coquimbo', 'Programa Mujeres Jefas de Hogar: IA, 16 horas. OC 2446-1884-AG25.', '20 cupos previstos'),
-    ('INAPI', 'IA en procesos administrativos y formación de audiencias. OC 519302-143-AG26, aceptada.', 'Hasta 23 cupos, ejecución no acreditada'),
+    ("Municipalidad de Pudahuel", "Uso eficiente y responsable de ChatGPT Plus para funcionarios", "Factura N.º 139 / 2025"),
+    ("Municipalidad de Quilicura", "Búsqueda de empleo con Inteligencia Artificial, Programa FOMIL", "Factura N.º 188 / 2025"),
+    ("SEREMI MINVU Atacama", "Inteligencia Artificial para funcionarios", "Factura N.º 226 / 2026"),
+    ("Subsecretaría de Educación Parvularia", "Uso práctico de IA en el sector público", "Factura N.º 171 / 2025"),
+    ("SLEP Llanquihue", "Herramientas de IA para funcionarios", "Factura N.º 180 / 2025"),
+    ("SEREMI MINVU Coquimbo", "IA generativa aplicada al trabajo", "Factura N.º 204 / 2025"),
+    ("Servicio de Salud Atacama", "Herramientas prácticas de IA para docentes", "Factura N.º 192 / 2025"),
+    ("Municipalidad de Hualañé", "Herramientas de IA para escenarios de aprendizaje", "Factura N.º 201 / 2025"),
+    ("Municipalidad de Coquimbo", "IA para el Programa Mujeres Jefas de Hogar, 16 horas", "OC 2446-1884-AG25"),
+    ("INAPI", "IA para procesos administrativos y formación de audiencias (contratación aceptada)", "OC 519302-143-AG26"),
 ]
 
 EXPERIENCIA_EQUIVALENTE = (
-    'El relator propuesto presenta una trayectoria de formación y relatoría en Inteligencia Artificial '
-    'desde 2023, documentada mediante CV, antecedentes profesionales y constancias disponibles. '
-    'Su experiencia es cualitativamente equivalente en diversidad institucional, continuidad temática '
-    'y pertinencia técnica para una capacitación aplicada como la solicitada. Esta descripción no '
-    'constituye equivalencia numérica: no se cuenta con información consolidada y verificable del '
-    'total de personas efectivamente capacitadas en IA. Por lo tanto, no se afirma que el oferente '
-    'acredite el mínimo de más de 2.500 personas exigido por el numeral 9.1.'
+    "El relator presenta experiencia formativa cualitativamente equivalente por la diversidad de "
+    "instituciones atendidas y la pertinencia de sus capacitaciones en IA para equipos profesionales. "
+    "No se dispone de una cifra consolidada de personas efectivamente capacitadas en Inteligencia "
+    "Artificial durante los últimos tres años; en consecuencia, no se declara acreditado el "
+    "mínimo de más de 2.500 participantes exigido al oferente en el numeral 9.1."
 )
+
+COMPROMISOS_DE_EJECUCION = [
+    ("Duración y cobertura", "20 horas cronológicas presenciales para 28 Apoyos Familiares Integrales."),
+    ("Contenido", "Diez módulos con actividades teórico-prácticas y casos del Programa Familias."),
+    ("Diagnóstico inicial", "Aplicación individual a los 28 participantes antes de la primera sesión."),
+    ("Mentorías posteriores", "Dos sesiones de 90 minutos en diciembre de 2026, adicionales a las 20 horas."),
+    ("Logística", "Recinto en La Pintana, computador, proyector, telón, conectividad y coffee break."),
+    ("Evaluación", "Actividades prácticas y evaluación final individual con rúbrica de resultados."),
+    ("Productos", "Informe final individualizado, carpeta fotográfica y 28 certificados nominativos."),
+    ("Protección de datos", "Ejercicios con datos ficticios o anonimizados y revisión humana de resultados."),
+    ("Plazo", "Cinco jornadas presenciales de cuatro horas durante noviembre de 2026."),
+]
+
 
 def datos_licitacion():
     d=copy.deepcopy(DATOS_LICITACION)
@@ -491,7 +481,7 @@ def nuevo(ejemplo_activo=True):
         ('Respaldado','CV y trayectoria docente universitaria desde 2004; verificar certificados de vínculo si se solicitan.'),
         ('Declarado','CV indica diplomado de IA 2023 y cursos de ChatGPT 2024; adjuntar certificado específico del programa.'),
         ('Declarado','CV refiere relatorías de IA desde agosto/octubre de 2023; constancias recibidas respaldan actividades posteriores.'),
-        ('Declarado','El oferente confirma experiencia profesional del relator en proyectos tecnológicos, reportabilidad y análisis de información; el CV y LinkedIn señalan PNUD (2023) y British Council (2024-2025). La acreditación de 3 años completos en proyectos profesionales específicos de IA o análisis de datos requiere evidencia de las funciones y períodos.'),
+        ('Declarado','El oferente confirma experiencia profesional del relator en proyectos tecnológicos, reportabilidad y análisis de información; el CV señalan PNUD (2023) y British Council (2024-2025). La acreditación de 3 años completos en proyectos profesionales específicos de IA o análisis de datos requiere evidencia de las funciones y períodos.'),
         ('Respaldado','CV y constancias de IA aplicada a gestión docente/administrativa; MINEDUC, Registro Civil y Academia Politécnica Militar.'),
         ('Respaldado','Constancias de MINEDUC/Programa Inglés Abre Puertas, Registro Civil y actividades públicas.'),
         ('Por verificar','No se acreditó una certificación de competencias laborales en IA ni membresía gremial o en red especializada con la documentación revisada.'),
@@ -508,7 +498,7 @@ def nuevo(ejemplo_activo=True):
         ('Comprometido','El proveedor se obliga a aportar recinto en la comuna, audiovisual y coffee break.'),
         ('Comprometido','Informe, evaluaciones, fotografías y certificación individual conforme a bases.'),
         ('Declarado','Se identificaron contrataciones de IA con varias entidades públicas y municipales. Incorporar matriz con OC/facturas, fechas, duración y asistentes.'),
-        ('Por verificar','El relator posee experiencia formativa cualitativamente equivalente en diversidad y pertinencia, según CV y LinkedIn; no existe información consolidada del número de personas efectivamente formadas en IA que permita acreditar el requisito de más de 2.500 personas del oferente. No sumar cupos ofertados como asistentes.'),
+        ('Por verificar','El relator posee experiencia formativa cualitativamente equivalente en diversidad y pertinencia, según CV; no existe información consolidada del número de personas efectivamente formadas en IA que permita acreditar el requisito de más de 2.500 personas del oferente. No sumar cupos ofertados como asistentes.'),
         ('Respaldado','OC 2446-1884-AG25: Municipalidad de Coquimbo, capacitación de IA para Mujeres Jefas de Hogar (20 cupos previstos); complementar asistencia.'),
         ('Comprometido','Revisar que monto en formulario de Mercado Público y PDF adjunto sea exactamente el mismo.'),
         ('Comprometido','20 horas en noviembre 2026 y 2 mentorías en diciembre; servicio completo, precio global.'),
@@ -1273,15 +1263,6 @@ def generar_pdf(b, token=None, solo_portada=False):
     ], [156, ancho-156]))
     if d["numero_oc"].strip():
         story.extend(campo("Orden de compra", d["numero_oc"]))
-    fechas = [[etiqueta, d[k]] for etiqueta, k in [
-        ("Publicación", "publicacion"),
-        ("Cierre del primer llamado", "cierre_1"),
-        ("Cierre del segundo llamado", "cierre_2")]
-        if d[k].strip()]
-    if fechas:
-        story.append(P("Fechas del proceso", "h2"))
-        story.append(tabla(["Hito", "Fecha y hora"], fechas, [212, ancho-212]))
-
     cap("Objetivos y participantes", "objetivos")
     story.extend(campo("Objetivo general", d["objetivo_general"]))
     story.append(P("Objetivos específicos", "h2"))
@@ -1332,47 +1313,31 @@ def generar_pdf(b, token=None, solo_portada=False):
         story.extend(campo("Servicio de cafetería", d["cafeteria"]))
 
     cap("Equipo de relatoría y antecedentes profesionales", "relator")
-    story.extend(campo("Relatoría principal", d["perfil_docente"]))
-    story.extend(parrafos(
-        "La propuesta contempla un relator principal: Luis Marcelo Ortiz Contreras. "
-        "Su trayectoria de capacitaciones de IA se declara desde 2023 y se acompaña la evidencia "
-        "disponible de relatorías. El oferente confirma la experiencia profesional expuesta en el CV "
-        "y perfil de LinkedIn; los períodos de proyectos específicos de IA/datos y el volumen total "
-        "de personas capacitadas deben juzgarse conforme a sus documentos verificables."))
     for rel in b["docentes"]:
         story.append(P(rel.get("rol", "Relator propuesto") + ": " + rel["nombre"], "h2"))
-        story.extend(parrafos(f"RUT {rel['rut']}. {rel['titulo']}."))
+        story.extend(parrafos(f"RUT {rel['rut']}. {rel['titulo']}"))
         story.extend(parrafos(rel["experiencia"]))
         story.extend(parrafos(rel["disponibilidad"]))
-        story.append(tabla(["Competencia o antecedente", "Estado", "Respaldo"],
-            [[x["requisito"], EstadoPDF(x["estado"]), x["respaldo"]]
-             for x in rel["checklist"]], [157, 102, ancho-259]))
-    story.extend(campo("Documentación de respaldo", d["referencia_cv"]))
-    story.append(P("Alcance de la experiencia equivalente del relator", "h2"))
-    story.extend(parrafos(EXPERIENCIA_EQUIVALENTE))
+    story.extend(campo("Documentación académica y profesional", d["referencia_cv"]))
 
     cap("Experiencia institucional en Inteligencia Artificial")
     story.extend(parrafos(
-        "Se relacionan las principales facturas y órdenes de compra de Santa Mónica sobre servicios de IA "
-        "identificados en el expediente. Los asistentes efectivos y las duraciones que no figuran en "
-        "los respaldos requieren evidencia de ejecución adicional; la cantidad de servicios contratados "
-        "no representa número de personas capacitadas."))
-    story.append(tabla(["Institución", "Servicio y respaldo", "Participantes"],
-        [[a, b, c] for a,b,c in EXPERIENCIAS_IA_REGISTROS], [135, ancho-235, 100]))
-    story.extend(parrafos(
-        "La matriz anterior permite identificar experiencia contractual con más de cinco instituciones "
-        "distintas y con organismos públicos. En INAPI la orden se encuentra aceptada, por lo que no "
-        "debe presentarse como ejecución acreditada sin su recepción o informe correspondiente. "
-        "El conteo de participantes exigido en el numeral 9.1 no puede inferirse de estos documentos."))
+        "Centro de Capacitación Santa Mónica Limitada presenta antecedentes de capacitación "
+        "en Inteligencia Artificial con municipalidades y organismos del sector público. "
+        "Las facturas corresponden a servicios facturados; las órdenes de compra se identifican "
+        "como documentos de contratación según su estado."))
+    story.append(tabla(["Institución", "Capacitación o servicio de IA", "Documento"],
+        [[a, servicio, respaldo] for a, servicio, respaldo in EXPERIENCIAS_IA_REGISTROS],
+        [132, ancho-259, 127]))
+    story.append(P("Experiencia formativa del equipo ejecutor", "h2"))
+    story.extend(parrafos(EXPERIENCIA_EQUIVALENTE))
 
-    cap("Requisitos de contratación y observaciones", "requisitos")
-    story.append(tabla(["Requisito", "Estado declarado", "Respuesta de la oferta"],
-        [[x["requisito"], EstadoPDF(x["estado"]), x["respaldo"]]
-         for x in b["compra"]], [157, 102, ancho-259]))
+    cap("Compromisos de ejecución del servicio", "requisitos")
+    story.append(tabla(["Componente", "Compromiso de la oferta"],
+        [[nombre, alcance] for nombre, alcance in COMPROMISOS_DE_EJECUCION],
+        [151, ancho-151]))
     if d["requisitos_oc"].strip():
         story.extend(campo("Condiciones de la orden de compra", d["requisitos_oc"]))
-    if d["observaciones"].strip():
-        story.extend(campo("Observaciones", d["observaciones"]))
 
     cap("Evaluación, certificación e informe final", "certificacion")
     for etiqueta, clave in [
@@ -1382,9 +1347,9 @@ def generar_pdf(b, token=None, solo_portada=False):
         story.extend(campo(etiqueta, d[clave]))
     story.extend(parrafos("El informe final será entregado a la " + d["destino_informe"] + "."))
     story.append(P("Contenido de los entregables", "h2"))
-    tabla_entregables = tabla(["Requisito", "Estado declarado"],
-        [[x["requisito"], EstadoPDF(x["estado"])] for x in b["certificacion"]],
-        [ancho-132, 132])
+    tabla_entregables = tabla(["Producto comprometido", "Alcance de entrega"],
+        [[x["requisito"], x["respaldo"]] for x in b["certificacion"]],
+        [ancho*.53, ancho*.47])
     # Tabla compacta para evitar dejar medio folio vacío antes de los entregables.
     tabla_entregables.setStyle(TableStyle([
         ("TOPPADDING", (0, 0), (-1, -1), 4),
@@ -1412,14 +1377,14 @@ def generar_pdf(b, token=None, solo_portada=False):
     story.append(precio)
     story.extend(campo("Alcance del valor ofertado", d["incluye_precio"]))
 
-    cap("Documentación que acompaña la oferta", "documentos")
+    cap("Documentación de respaldo", "documentos")
     story.extend(parrafos(d["documentacion_adjunta"]))
-    cargadas = {x["categoria"] for x in b["archivos"]}
-    nombres = [x["nombre"] for x in b["declarados"] if x["categoria"] not in cargadas]
-    nombres += [descripcion_documento(x) for x in b["archivos"]
-                if x["categoria"] != "Bases técnicas"]
-    for i, nombre in enumerate(dict.fromkeys(nombres), 1):
-        story.append(P(f"{i}. {nombre}"))
+    nombres = [descripcion_documento(x) for x in b["archivos"]
+               if x["categoria"] != "Bases técnicas"]
+    if nombres:
+        story.append(P("Archivos incorporados en el paquete documental", "h2"))
+        for i, nombre in enumerate(dict.fromkeys(nombres), 1):
+            story.append(P(f"{i}. {nombre}"))
 
     # Sección de contacto siempre visible, con independencia de la opción
     # "incluir_admin". No incluye cuentas bancarias ni información sensible.
@@ -1547,15 +1512,15 @@ def main():
     import streamlit as st
     st.set_page_config(page_title="Propuesta técnica | OTEC Santa Mónica",page_icon="📄",layout="centered")
     st.title("Propuesta técnica y económica")
-    if "modelo_propuesta_pintana_v11" not in st.session_state:
+    if "modelo_propuesta_pintana_v12" not in st.session_state:
         # Una versión anterior puede haber dejado widgets con valores de ejemplo.
         for clave in list(st.session_state):
             if clave.startswith("q_") or clave in {"propuesta_pdf","propuesta_firma"}:
                 del st.session_state[clave]
         b_inicial=nuevo()
         cargar_anexos_distribuidos(b_inicial)
-        st.session_state.modelo_propuesta_pintana_v11=b_inicial
-    b=st.session_state.modelo_propuesta_pintana_v11
+        st.session_state.modelo_propuesta_pintana_v12=b_inicial
+    b=st.session_state.modelo_propuesta_pintana_v12
     # Aplicación dedicada a la compra de La Pintana, precargada con un único relator.
     # Corregir únicamente el recorte histórico exacto de 500 caracteres
     # causado por el text_input en el campo de experiencia. Respeta cualquier
