@@ -1482,6 +1482,16 @@ def main():
                 del st.session_state[clave]
         st.session_state.modelo_propuesta_v6=nuevo()
     b=st.session_state.modelo_propuesta_v6
+    # Corregir únicamente el recorte histórico exacto de 500 caracteres
+    # causado por el text_input en el campo de experiencia. Respeta cualquier
+    # contenido distinto que haya editado el usuario.
+    if b.get("docentes"):
+        recortado = RELATOR_INICIAL["experiencia"][:500]
+        if b["docentes"][0].get("experiencia") == recortado:
+            b["docentes"][0]["experiencia"] = RELATOR_INICIAL["experiencia"]
+            clave_widget = "q_docentes_0_experiencia"
+            if st.session_state.get(clave_widget) == recortado:
+                st.session_state[clave_widget] = RELATOR_INICIAL["experiencia"]
     b.setdefault("logos", {}).setdefault("comprador", {"nombre":"", "base64":""})
     def leer(path):
         obj=b
@@ -1506,7 +1516,10 @@ def main():
             tope=100 if path[-1] in {"tasa","adjuntos_esperados"} else 10000 if path[-1] in {"horas","horas_exigidas","cupos"} else 10**12
             if tipo=="decimal": return st.number_input(label,min_value=float(minimo),max_value=float(tope),step=.5,**kw)
             return st.number_input(label,min_value=minimo,max_value=tope,step=1,**kw)
-        if tipo=="area": return st.text_area(label,max_chars=12000,height=130,**kw)
+        # La experiencia profesional es una descripción extensa: nunca usar
+        # text_input(max_chars=500), que recorta silenciosamente el CV.
+        if tipo=="area" or path[-1]=="experiencia":
+            return st.text_area(label,max_chars=12000,height=180,**kw)
         return st.text_input(label,max_chars=255 if tipo=="corto" else 500,**kw)
 
     def preguntas(seccion):
