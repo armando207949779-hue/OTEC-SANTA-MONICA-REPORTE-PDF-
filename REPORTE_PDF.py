@@ -1,28 +1,30 @@
-# VERSION: 9.0 - La Pintana / Luis Marcelo Ortiz titular
+# VERSION: 10.0 - La Pintana / precio comercial fijado / IVA exento informado
 # CURSO: Programa de Capacitación y Adopción Organizacional de Inteligencia Artificial
 # CÓDIGO: 2273-984-COT26 | MODALIDAD: Compra Ágil | 28 participantes | 20 horas cronológicas
 # ORGANISMO: I. Municipalidad de La Pintana | Presupuesto: $5.040.000 IVA incluido
-# PRECIO PRECARGADO: $4.490.000 CLP (propuesta provisional EDITABLE, no confirmada)
+# PRECIO PROPUESTO: $4.390.000 CLP TOTAL, exento de IVA segun oferente; costo interno estimado $3.370.000
 # FECHA: 12-11-2026 America/Santiago
 # Origen: generador editorial OTEC Santa Mónica, ajustado a bases técnicas aportadas.
 # AVISO: Las más de 2.500 personas capacitadas en IA NO están acreditadas en la documentación revisada.
 # Los certificados de Marcelo respaldan relatorías, pero no el número de asistentes por actividad.
-# Revise plazo, modalidad tributaria, recinto y monto en Mercado Público antes de presentar.
+# Exención de IVA informada por el oferente. El precio es propuesto, no reemplaza la verificacion de requisitos excluyentes.
+# El recinto será proporcionado en La Pintana según bases; no se ha contratado un salón concreto.
 # Uso: python -m pip install -r requirements.txt
-#      python -m streamlit run Generador_Propuesta_La_Pintana_2273-984-COT26.py
-# Prueba: python Generador_Propuesta_La_Pintana_2273-984-COT26.py --demo-pdf Borrador_La_Pintana.pdf
+#      python -m streamlit run Generador_Propuesta_La_Pintana_2273-984-COT26_FINAL.py
+# Prueba: python Generador_Propuesta_La_Pintana_2273-984-COT26_FINAL.py --demo-pdf Propuesta_La_Pintana_FINAL.pdf
 
 # -*- coding: utf-8 -*-
 #
 # INSTRUCCIONES DE USO
 # 1. Instalar dependencias: python -m pip install -r requirements.txt
-# 2. Ejecutar: python -m streamlit run Generador_Propuesta_La_Pintana_2273-984-COT26.py
-# 3. Editar recinto, precio e IVA en la pestaña «Detalles y edición».
+# 2. Ejecutar: python -m streamlit run Generador_Propuesta_La_Pintana_2273-984-COT26_FINAL.py
+# 3. Precio precargado definitivo para esta propuesta comercial: $4.390.000 exento de IVA.
+#    El recinto lo aporta el oferente en La Pintana; fechas dentro de noviembre según bases.
 # 4. Adjuntar CV, diplomas, constancias y respaldos institucionales en la sección de anexos.
 # 5. Revisar la matriz de requisitos mínimos. No se acreditan 2.501 personas con las OC disponibles.
 # 6. Usar «Generar PDF» y luego descargar el expediente ZIP. Incluye SOLO los archivos cargados.
 # 7. Sin sesión persistente: descargar el expediente antes de cerrar Streamlit.
-# 8. Demo sin Streamlit: python Generador_Propuesta_La_Pintana_2273-984-COT26.py --demo-pdf Borrador.pdf
+# 8. Demo sin Streamlit: python Generador_Propuesta_La_Pintana_2273-984-COT26_FINAL.py --demo-pdf Propuesta_La_Pintana_FINAL.pdf
 # El logo del oferente es opcional; si no se encuentra se usa una portada tipográfica.
 """Formulario reutilizable por preguntas y generador de propuesta PDF A4."""
 from __future__ import annotations
@@ -60,7 +62,7 @@ from reportlab.platypus import (
 
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_NAME = "OTEC_Santa_Monica_Opcion_1.svg"
-PDF_RENDER_VERSION = "v9.0-la-pintana-mortiz-20261112"
+PDF_RENDER_VERSION = "v10.0-la-pintana-4390000-20261112"
 # Gama inspirada en las presentaciones Beamer clásicas: azul estructural,
 # azul petróleo, fondos casi blancos y reglas finas. Se usa con moderación.
 BEAMER_PALETA = {
@@ -122,14 +124,8 @@ ESTADOS = ["Por verificar", "Comprometido", "Declarado", "Respaldado", "A evalua
 CATEGORIAS_ADJUNTOS = ["Bases técnicas", "CV y respaldos relator", "CV relator", "Respaldo relator",
                         "Experiencia OTEC IA", "Certificado participantes", "Encuestas de satisfacción",
                         "Propuesta / otro", "Orden de compra"]
-ADJUNTOS_DECLARADOS = [
-    {'nombre':'03_CV_Luis_Marcelo_Ortiz_Contreras.pdf','categoria':'CV relator'},
-    {'nombre':'04_Titulo_Grado_y_Master_Marcelo_Ortiz.pdf','categoria':'Respaldo relator'},
-    {'nombre':'05_Certificados_Formacion_IA_Marcelo_Ortiz.pdf','categoria':'Respaldo relator'},
-    {'nombre':'06_Constancias_Relatorias_Marcelo_Ortiz.pdf','categoria':'CV y respaldos relator'},
-    {'nombre':'07_Experiencia_Institucional_IA_Santa_Monica.pdf','categoria':'Experiencia OTEC IA'},
-    {'nombre':'08_Declaracion_Experiencia_y_Participantes_Respaldados.pdf','categoria':'Certificado participantes'},
-]
+ADJUNTOS_DECLARADOS = []  # El PDF lista únicamente los documentos cargados realmente.
+
 RELATOR_INICIAL = {
     'rol':'Relator principal', 'nombre':'Luis Marcelo Ortiz Contreras',
     'rut':'9.052.506-9',
@@ -296,7 +292,7 @@ DATOS_LICITACION = {'proceso': '2273-984-COT26',
  'titulo': 'Programa de Capacitación y Adopción Organizacional de Inteligencia Artificial para Apoyos '
            'Familiares Integrales',
  'comprador': 'I. MUNICIPALIDAD DE LA PINTANA',
- 'rut_comprador': '',
+ 'rut_comprador': '69.253.800-5',
  'rubro': 'Capacitación presencial y adopción de IA generativa para equipos de intervención familiar y gestión '
           'municipal',
  'id_item': '',
@@ -383,8 +379,8 @@ DATOS_LICITACION = {'proceso': '2273-984-COT26',
  'periodo_ejecucion': 'Las 20 horas cronológicas se desarrollarán durante noviembre de 2026, en calendario '
                       'coordinado con la Municipalidad. Antes de la primera clase se aplicará diagnóstico; '
                       'durante diciembre de 2026 se realizarán dos mentorías de acompañamiento.',
- 'fecha_ejecucion': 'Cronograma sugerido: cinco jornadas presenciales de 4 horas cada una en noviembre 2026. '
-                    'Las fechas y la disponibilidad del recinto se cerrarán con la contraparte, respetando el '
+ 'fecha_ejecucion': 'Calendario ofrecido: cinco jornadas presenciales de 4 horas cronológicas cada una en noviembre de 2026. '
+                    'Las fechas y el recinto provisto por la OTEC se coordinarán con la contraparte, respetando el '
                     'plazo de ejecución comprometido. Dos mentorías durante el mes siguiente al cierre.',
  'equipamiento': 'OTEC Santa Mónica proporcionará recinto, computador de apoyo del relator, proyector y telón '
                  'para presentaciones, además de conectividad adecuada a la actividad. Se coordinará acceso de '
@@ -400,7 +396,7 @@ DATOS_LICITACION = {'proceso': '2273-984-COT26',
                    'completa de tres años de proyectos profesionales de IA o datos requiere respaldo '
                    'documental específico; no se presenta como acreditada automáticamente.',
  'referencia_cv': 'Se acompaña CV de Luis Marcelo Ortiz, título de profesor y grado, diploma de máster, '
-                  'constancias de relatorías de IA y certificados de especialización disponibles. La '
+                  'constancias de relatorías de IA y formación especializada declarada en el CV. La '
                   'verificación del perfil se realiza con la matriz de cumplimiento incluida en la propuesta.',
  'observaciones': 'La experiencia personal del relator y la experiencia contractual de Santa Mónica se '
                   'presentan por separado. No se declara como acreditado el mínimo de más de 2.500 '
@@ -408,7 +404,7 @@ DATOS_LICITACION = {'proceso': '2273-984-COT26',
                   'no dispone de nóminas o certificados de ejecución que permitan totalizar 2.501 personas '
                   'efectivamente capacitadas. La aceptación de la experiencia personal del relator como '
                   'experiencia del oferente corresponde exclusivamente a la evaluación del comprador. El '
-                  'precio precargado y la exención de IVA deben validarse antes del envío.',
+                  'precio global propuesto $4.390.000, exento de IVA según información proporcionada por el oferente.',
  'evaluacion': 'Diagnóstico inicial previo para establecer línea base; actividades prácticas observadas en '
                'cada módulo; evaluación final individual mediante caso de acompañamiento familiar con datos '
                'simulados y pauta de logro que considere pertinencia, seguridad, calidad del producto y '
@@ -423,18 +419,17 @@ DATOS_LICITACION = {'proceso': '2273-984-COT26',
                          'capacitación, complementada con acta de mentorías posteriores.',
  'destino_informe': 'contraparte técnica del Programa Familias de la Municipalidad de La Pintana',
  'cantidad': 1,
- 'valor_unitario': 4490000,
+ 'valor_unitario': 4390000,
  'despacho': 0,
  'impuesto': 'Exento / sin impuesto',
- 'tasa': 19,
- 'incluye_precio': 'Oferta global provisional por 20 horas cronológicas presenciales para 28 personas; incluye '
+ 'tasa': 0,
+ 'incluye_precio': 'Precio total y global propuesto: $4.390.000 exento de IVA. Comprende 20 horas cronológicas presenciales para 28 personas; incluye '
                    'diagnóstico inicial, diez módulos, relatoría de Marcelo Ortiz, salón en La Pintana, '
                    'equipamiento audiovisual, coffee break, materiales, dos mentorías el mes siguiente, '
-                   'evaluaciones, informe final, registros fotográficos y 28 certificaciones. Precio editable; '
-                   'validar régimen de IVA y monto antes de presentar.',
+                   'evaluaciones, informe final, registros fotográficos y 28 certificaciones. Cinco jornadas presenciales de cuatro horas y dos mentorías posteriores de noventa minutos cada una, adicionales a las veinte horas. No se cobrará suplemento por los entregables previstos.',
  'detalle': 'Capacitación presencial IA para 28 AFI, 20 horas cronológicas y 10 módulos. Diagnóstico, recinto '
-            'y coffee break, 2 mentorías, evaluación, informe y certificación. Total provisional: $4.490.000.',
- 'adjuntos_esperados': 10,
+            'y coffee break, 2 mentorías, evaluación, informe y certificación. Precio total $4.390.000 exento de IVA.',
+ 'adjuntos_esperados': 15,
  'adjuntos_solicitados': '01 Cotización económica coincidente con portal\n'
                          '02 Propuesta técnica y cronograma\n'
                          '03 CV de Marcelo Ortiz\n'
@@ -445,10 +440,10 @@ DATOS_LICITACION = {'proceso': '2273-984-COT26',
                          '08 Declaración jurada de experiencia y participantes con evidencia\n'
                          '09 Encuestas de satisfacción y recomendaciones\n'
                          '10 Plan logístico, evaluación, mentorías y entregables',
- 'documentacion_adjunta': 'El expediente prevé CV, títulos, certificaciones y constancias del relator; órdenes '
+ 'documentacion_adjunta': 'Se incluye una carpeta de respaldos con CV, títulos, diploma de máster y constancias del relator; órdenes '
                           'de compra y facturas de cursos IA de Santa Mónica; matriz institucional con '
-                          'institución, fecha, duración, participantes comprobados y respaldo; declaración '
-                          'jurada simple y resultados de satisfacción cuando estén disponibles. No se atribuye '
+                          'institución, fecha, datos disponibles de participantes y respaldo; declaración '
+                          'jurada simple y resultados de satisfacción únicamente si se aportan efectivamente. No se atribuye '
                           'acreditación a documentos aún no incorporados.',
  'fecha_propuesta': '12-11-2026'}
 
@@ -474,8 +469,8 @@ INTRODUCCIONES = {'proceso': 'Esta propuesta responde a la Compra Ágil {proceso
                   'informe, carpeta fotográfica y certificaciones a los 28 profesionales conforme a las bases.',
  'economica': 'El precio global incluye recinto, equipamiento, colaciones, 20 horas, diagnóstico, mentorías, '
               'evaluación, informes y certificados para 28 participantes.',
- 'documentos': 'El listado refleja antecedentes previstos y documentos efectivamente cargados al expediente. '
-               'Se deberán adjuntar los respaldos obligatorios antes de la presentación.',
+ 'documentos': 'El siguiente listado corresponde únicamente a documentos efectivamente incorporados al expediente. '
+               'Los documentos no presentes no se consideran adjuntos ni acreditados.',
  'identificacion': 'Los datos institucionales corresponden a Santa Mónica según antecedentes aportados.'}
 
 def datos_licitacion():
@@ -551,7 +546,7 @@ def nuevo(ejemplo_activo=True):
             'compra':compra,'certificacion':cert,
             'logos':{'oferente':{'nombre':'','base64':''},'comprador':{'nombre':'','base64':''}},
             'archivos':[],'declarados':copy.deepcopy(ADJUNTOS_DECLARADOS),
-            'marcar_borrador':True,'incluir_revision':False,'incluir_admin':False}
+            'marcar_borrador':False,'incluir_revision':False,'incluir_admin':False}
 
 
 def slug(s, maximo=90):
@@ -846,6 +841,8 @@ def faltantes(b,paso,token=None):
     if paso in {8,9}:
         lista=b["compra" if paso==8 else "certificacion"]
         r += [x["requisito"]+" - "+x["estado"] for x in lista if x["estado"] in {"Por verificar","No cumple","A evaluación del comprador"}]
+    if paso==10 and int(d["valor_unitario"])<=0:
+        r.append("PRECIO PENDIENTE: no presentar al portal sin definir el valor total y hacerlo coincidir con el PDF.")
     if paso==11:
         for rol in ["oferente"]:
             try:
@@ -949,7 +946,7 @@ class EstadoPDF(Flowable):
 def comparar_presupuesto(d):
     """Porcentaje sobre el presupuesto del comprador; incluye impuestos aplicables."""
     total=montos(d)[2]; presupuesto=int(d["presupuesto"])
-    if total is None or presupuesto<=0: return None
+    if total is None or presupuesto<=0 or int(d["valor_unitario"])<=0: return None
     diferencia=presupuesto-total
     porcentaje=(Decimal(abs(diferencia))*100/Decimal(presupuesto)).quantize(Decimal("0.01"),rounding=ROUND_HALF_UP)
     numero=f"{porcentaje:.2f}".replace(".",",")
@@ -1062,11 +1059,13 @@ class DocumentoEditorial(SimpleDocTemplate):
 def generar_pdf(b, token=None, solo_portada=False):
     b = validar(b)
     d = b["datos"]
+    if int(d["valor_unitario"])<=0:
+        b["marcar_borrador"] = True
     sty = estilos_pdf()
     margen_izq, margen_der = 61, 57
     ancho = A4[0] - margen_izq - margen_der
     total_curso = sum(horas(b).values())
-    total_precio = montos(d)[2]
+    total_precio = montos(d)[2] if int(d["valor_unitario"]) > 0 else None
 
     def P(texto, estilo="body"):
         valor = limpiar(str(texto)) if texto is not None and str(texto).strip() else "Por completar"
@@ -1394,14 +1393,15 @@ def generar_pdf(b, token=None, solo_portada=False):
     cap("Propuesta económica", "economica")
     neto, iva, total = montos(d)
     comparacion = comparar_presupuesto(d)
+    precio_confirmado = int(d["valor_unitario"]) > 0
     impuesto_txt = ("Exento / sin impuesto" if d["impuesto"] == "Exento / sin impuesto"
                     else f"{d['tasa']} %" if d["impuesto"] == "Con impuesto"
                     else "Por definir")
     precio = tabla(["Concepto", "Valor"], [
-        ["Valor global del servicio", pesos(neto)],
+        ["Valor global del servicio", pesos(neto) if precio_confirmado else "Pendiente de revisar costos"],
         ["Tratamiento tributario", impuesto_txt],
         ["Impuesto calculado", pesos(iva) if iva is not None else "Por definir"],
-        ["Total ofertado", pesos(total) if total is not None else "Por definir"],
+        ["Total ofertado", pesos(total) if total is not None and precio_confirmado else "PENDIENTE DE DEFINIR"],
     ], [ancho-157, 157])
     precio.setStyle(TableStyle([
         ("BACKGROUND", (0, -1), (-1, -1), PALE),
@@ -1487,17 +1487,44 @@ def firma_propuesta(b):
     return hashlib.sha256((PDF_RENDER_VERSION + serial).encode()).hexdigest()
 
 
+
+
+def cargar_anexos_distribuidos(b):
+    """Carga al formulario las copias originales incluidas en Anexos/.
+
+    Si se ejecuta solo el .py, se podrá cargar desde la interfaz; nunca
+    simula adjuntos que no existen.
+    """
+    carpeta = BASE_DIR / "Anexos"
+    archivos = sorted(p for p in carpeta.glob("*.pdf") if p.is_file()) if carpeta.exists() else []
+    if not archivos:
+        return 0
+    b["datos"]["adjuntos_esperados"] = len(archivos)
+    n=0
+    for ruta in archivos:
+        nombre = ruta.name
+        categoria = ("CV y respaldos relator" if nombre.startswith(("03_", "04", "06_"))
+                     else "Experiencia OTEC IA" if nombre.startswith("07_FEX")
+                     else "Certificado participantes" if nombre.startswith("07_Matriz")
+                     else "Propuesta / otro")
+        if agregar_archivo(b, nombre, ruta.read_bytes(), categoria):
+            b["archivos"][-1]["descripcion"] = nombre.removesuffix(".pdf").replace("_", " ")
+            n+=1
+    return n
+
 def main():
     import streamlit as st
     st.set_page_config(page_title="Propuesta técnica | OTEC Santa Mónica",page_icon="📄",layout="centered")
     st.title("Propuesta técnica y económica")
-    if "modelo_propuesta_pintana_v9" not in st.session_state:
+    if "modelo_propuesta_pintana_v10" not in st.session_state:
         # Una versión anterior puede haber dejado widgets con valores de ejemplo.
         for clave in list(st.session_state):
             if clave.startswith("q_") or clave in {"propuesta_pdf","propuesta_firma"}:
                 del st.session_state[clave]
-        st.session_state.modelo_propuesta_pintana_v9=nuevo()
-    b=st.session_state.modelo_propuesta_pintana_v9
+        b_inicial=nuevo()
+        cargar_anexos_distribuidos(b_inicial)
+        st.session_state.modelo_propuesta_pintana_v10=b_inicial
+    b=st.session_state.modelo_propuesta_pintana_v10
     # Aplicación dedicada a la compra de La Pintana, precargada con un único relator.
     # Corregir únicamente el recorte histórico exacto de 500 caracteres
     # causado por el text_input en el campo de experiencia. Respeta cualquier
@@ -1585,10 +1612,10 @@ def main():
         except Exception as exc: st.session_state["aviso_logo_"+rol]=str(exc)
 
     st.warning("Requisito 9.1 pendiente: no se acreditan más de 2.500 personas capacitadas en IA. "
-               "El PDF se genera marcado BORRADOR hasta que revises y cierres los requisitos mínimos, "
-               "la tributación y el monto de la cotización.")
-    st.caption("Precio precargado editable: $4.490.000; no es un monto confirmado. "
-               "La dirección del recinto presencial y la aplicación de exención de IVA deben verificarse.")
+               "La experiencia de las 2.501 personas no está respaldada; esta propuesta comercial no supone admisibilidad. "
+               "Se requiere evidencia verificable de requisitos 8.1 y 9.1.")
+    st.caption("Precio comercial fijado: $4.390.000 (exento de IVA según oferente). "
+               "La OTEC asume proveer el recinto en la comuna; el calendario se coordina con la Municipalidad.")
     tab_generar, tab_detalles = st.tabs(["Generar PDF", "Detalles y edición"])
 
     with tab_generar:
@@ -1613,6 +1640,8 @@ def main():
 
         firma_actual = firma_propuesta(b)
         if st.button("Generar PDF", type="primary"):
+            if int(b["datos"]["valor_unitario"])<=0:
+                b["marcar_borrador"] = True
             try:
                 st.session_state.propuesta_pdf = generar_pdf(b)
                 st.session_state.propuesta_firma = firma_actual
@@ -1692,9 +1721,35 @@ def main():
                 if seccion==9: checklist(["certificacion"],"¿Qué incluirán los certificados y el informe final?")
                 if seccion==10:
                     neto,iva,total=montos(b["datos"])
-                    a,c,e=st.columns(3); a.metric("Neto + despacho",pesos(neto)); c.metric("Impuesto",pesos(iva) if iva is not None else "Por definir")
-                    e.metric("Total",pesos(total) if total is not None else "Por definir")
-                    st.caption("El PDF presenta el valor ofertado y el alcance del servicio.")
+                    precio_listo=int(b["datos"]["valor_unitario"])>0
+                    a,c,e=st.columns(3)
+                    a.metric("Neto + despacho",pesos(neto) if precio_listo else "PENDIENTE")
+                    c.metric("Impuesto", "Exento ($0)" if b["datos"]["impuesto"]=="Exento / sin impuesto" else (pesos(iva) if iva is not None else "Por definir"))
+                    e.metric("Total ofertado",pesos(total) if total is not None and precio_listo else "PENDIENTE")
+                    if not precio_listo:
+                        st.warning("Aún no hay precio definitivo: el PDF se generará solo como BORRADOR. No usar $0 para cotizar en Mercado Público.")
+                    st.caption("Precio global propuesto: $4.390.000 exento; 20 horas, recinto, 5 coffee breaks, 2 mentorías y entregables.")
+                    with st.expander("Control de costos internos (no se incorpora al PDF)"):
+                        st.caption("Presupuesto interno estimado, NO son cotizaciones de proveedores. Reemplazar al contratar.")
+                        conceptos=[("relatoria", "Relatoría 20 horas"), ("recinto", "Arriendo de recinto y servicios"),
+                                   ("cafe", "Coffee break para 28 personas"), ("equipos", "Proyector, computador, telón y conectividad"),
+                                   ("traslados", "Traslados y logística"), ("materiales", "Materiales, evaluaciones y certificados"),
+                                   ("mentorias", "Dos mentorías posteriores"), ("administracion", "Coordinación e informes"),
+                                   ("contingencia", "Contingencia y otros costos")]
+                        costos_estimados={"relatoria":1250000,"recinto":600000,"cafe":580000,"equipos":90000,
+                                          "traslados":100000,"materiales":80000,"mentorias":180000,
+                                          "administracion":260000,"contingencia":230000}
+                        costos=[]
+                        for clave,rotulo in conceptos:
+                            costos.append(st.number_input(rotulo, min_value=0, max_value=10000000, value=costos_estimados[clave],
+                                                         step=10000, key="costo_pintana_"+clave))
+                        costo_total=sum(costos)
+                        margen=st.number_input("Margen deseado sobre precio final (%)",min_value=0.0,max_value=70.0,
+                                                value=23.0,step=1.0,key="margen_pintana")
+                        sugerido=round(costo_total/(1-margen/100)) if costo_total and margen<100 else 0
+                        st.metric("Costo interno total",pesos(costo_total))
+                        st.metric("Precio orientativo exento de IVA",pesos(sugerido) if sugerido else "Pendiente de ingresar costos")
+                        st.caption("Esta cifra es solo una referencia comercial. Para ofertar, copia el precio final en 'Valor unitario' del servicio y confirma que no exceda el presupuesto.")
                     comparacion=comparar_presupuesto(b["datos"])
                     if comparacion: st.metric("Comparación con presupuesto",comparacion["porcentaje"])
                     if total is not None and total>b["datos"]["presupuesto"]>0: st.warning("La oferta supera el presupuesto estimado del comprador.")
@@ -1742,7 +1797,11 @@ def main():
                                 st.rerun()
                 if seccion==12:
                     widget(["incluir_admin"],"Incluir identificación legal y datos bancarios","bool")
-                    widget(["marcar_borrador"],"Marcar el PDF como borrador","bool")
+                    if int(b["datos"]["valor_unitario"])<=0:
+                        b["marcar_borrador"]=True
+                        st.warning("Precio pendiente: la propuesta debe permanecer como borrador hasta definir el valor ofertado.")
+                    else:
+                        widget(["marcar_borrador"],"Marcar el PDF como borrador","bool")
                     widget(["incluir_revision"],"Incluir hoja adicional de revisión al final del PDF","bool")
                     lista=pendientes(b)
                     if lista:
@@ -1771,6 +1830,8 @@ if __name__=="__main__":
     parser.add_argument("--demo-pdf",type=Path,help="Generar la propuesta precargada sin iniciar Streamlit (logo opcional)")
     args,_=parser.parse_known_args()
     if args.demo_pdf:
-        args.demo_pdf.write_bytes(generar_pdf(nuevo()))
+        b=nuevo()
+        cargar_anexos_distribuidos(b)
+        args.demo_pdf.write_bytes(generar_pdf(b))
         print(f"PDF generado: {args.demo_pdf.resolve()}")
     else: main()
