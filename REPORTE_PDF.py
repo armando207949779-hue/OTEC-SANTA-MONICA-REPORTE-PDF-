@@ -1,4 +1,4 @@
-# VERSION: 8.2 - SML / Power BI con IA / sección de contacto visible
+# VERSION: 8.3 - SML / perfil relator y modulo 7 corregidos; contacto visible
 # CURSO: Power BI con IA: Fundamentos y Aplicaciones para Profesionales
 # CODIGO: 837-465-COT26 | MODALIDAD: Compra Ágil
 # FECHA: 11-11-2026 America/Santiago
@@ -10,7 +10,7 @@
 # INSTRUCCIONES DE USO Y ADAPTACION A FUTURAS LICITACIONES
 # 1. Instalar: python -m pip install -r requirements.txt
 #    Dependencias: streamlit, reportlab, svglib, pillow, defusedxml.
-# 2. Ejecutar: python -m streamlit run Generador_Propuesta_SML_837-465-COT26_CON_CONTACTO.py (Python 3.10 o superior).
+# 2. Ejecutar: python -m streamlit run Generador_Propuesta_SML_837-465-COT26_FINAL_CORREGIDO.py (Python 3.10 o superior).
 # 3. La pestaña «Generar PDF» solo tiene logo opcional del comprador y botones.
 #    La pestaña «Detalles y edición» contiene el formulario, con apartados cerrados.
 #    El formulario pregunta por comprador, modalidad, lugar, participantes,
@@ -35,7 +35,7 @@
 # 10. Formulario completo, sin bloqueos. No hay guardado persistente de progreso;
 #     conservar la sesion abierta y descargar los documentos antes de cerrarla.
 #
-# PRUEBA LOCAL: python Generador_Propuesta_SML_837-465-COT26_CON_CONTACTO.py --demo-pdf propuesta.pdf
+# PRUEBA LOCAL: python Generador_Propuesta_SML_837-465-COT26_FINAL_CORREGIDO.py --demo-pdf propuesta.pdf
 # El logo institucional es opcional; sin él se usa una portada tipográfica.
 """Formulario reutilizable por preguntas y generador de propuesta PDF A4."""
 from __future__ import annotations
@@ -137,13 +137,13 @@ ADJUNTOS_DECLARADOS = [{'nombre': 'CV - Diego Zamorano y Antecedentes.pdf', 'cat
 RELATOR_INICIAL = {'nombre': 'Diego Antonio Zamorano Pérez',
  'rut': '20.185.347-8',
  'titulo': 'Ingeniero Civil Industrial, Pontificia Universidad Católica de Valparaíso (título acreditado)',
- 'experiencia': 'Experiencia laboral directamente vinculada a Power BI: desarrollo de reportes '
-                'financieros y operativos automatizados para la alta dirección en Siel Consultores '
-                '(2025). Experiencia en diseño de módulos de control BI en Hubconsulting SpA (desde '
-                '2025). En su currículum declara manejo avanzado de Power BI, SQL, Excel avanzado, Python '
-                'para análisis de datos y herramientas de IA generativa. Cuenta con antecedentes '
-                'documentados como relator de IA para funcionarios del sector público, incluida la '
-                'Subsecretaría de Educación Parvularia y SLEP Llanquihue.',
+ 'experiencia': 'Diego Antonio Zamorano Pérez cuenta con experiencia laboral en el desarrollo '
+                'de reportes financieros y operativos automatizados mediante Power BI para Siel '
+                'Consultores, así como en el diseño de módulos de control BI en Hubconsulting SpA. '
+                'Declara manejo avanzado de Power BI, SQL, Excel y Python para análisis de datos. '
+                'Además, posee experiencia documentada como relator de inteligencia artificial para '
+                'instituciones públicas, incluyendo la Subsecretaría de Educación Parvularia y el '
+                'Servicio Local de Educación Pública Llanquihue.',
  'disponibilidad': 'Relator propuesto para ejecutar el programa virtual durante noviembre/diciembre de '
                    '2026, según coordinación de calendario con el Servicio Médico Legal.'}
 MODALIDADES = ["Compra Ágil", "Licitación pública", "Licitación privada", "Convenio Marco",
@@ -281,8 +281,10 @@ MODULOS = [('Bloque I - Fundamentos y preparación',
   'Virtual'),
  ('Bloque II - Análisis, visualización e IA',
   'Módulo 7. Publicación y uso del servicio en la nube',
-  'Publicación y navegación en Power BI Service; espacios de trabajo, permisos, actualización y '
-  'colaboración; uso sujeto a licencias disponibles.',
+  'Se incluye una demostración práctica de publicación de reportes en Microsoft Power BI '
+  'Service, administración de espacios de trabajo, permisos, actualización y distribución '
+  'de información. Las actividades individuales se adaptarán a las licencias y accesos '
+  'disponibles, sin afectar el desarrollo completo del módulo.',
   2,
   'Virtual'),
  ('Bloque II - Análisis, visualización e IA',
@@ -380,11 +382,11 @@ DATOS_LICITACION = {'proceso': '837-465-COT26',
                 'revisión de expresiones, interpretación y comunicación de resultados. Los participantes '
                 'verificarán críticamente los productos generados por las herramientas. La evaluación '
                 'final comprobará el aprendizaje aplicado.',
- 'herramientas': 'Microsoft Power BI Desktop, Power Query, lenguaje DAX y Power BI Service para '
-                 'demostraciones de publicación; archivos de ejercicios compatibles con Excel/CSV y '
-                 'herramientas de IA generativa para apoyo al análisis. El acceso, las licencias '
-                 'disponibles y los requisitos técnicos de participación serán coordinados con la '
-                 'contraparte institucional.',
+ 'herramientas': 'Microsoft Power BI Desktop, Power Query, lenguaje DAX y Power BI Service. '
+                 'El relator demostrará la publicación de un informe en Power BI Service durante '
+                 'el módulo 7. Los participantes trabajarán con archivos de práctica en Excel/CSV '
+                 'y herramientas de IA como apoyo al análisis. Los accesos y licencias individuales '
+                 'se coordinarán previamente con la contraparte técnica.',
  'region': 'Región Metropolitana',
  'comuna': 'Santiago',
  'lugar': 'Capacitación 100% virtual, sin asistencia presencial. Organismo comprador: Servicio Médico '
