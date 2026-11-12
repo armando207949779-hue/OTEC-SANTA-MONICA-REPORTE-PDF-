@@ -1,42 +1,29 @@
-# VERSION: 8.4 - SML / Diego titular y Daniel alternativo (sin oferta alternativa de precio)
-# CURSO: Power BI con IA: Fundamentos y Aplicaciones para Profesionales
-# CODIGO: 837-465-COT26 | MODALIDAD: Compra Ágil
-# FECHA: 11-11-2026 America/Santiago
-# ORGANISMO: Servicio Médico Legal | OFERTA: $2.690.000 CLP, exenta de IVA (a validar al emitir)
-# Código base adaptado desde formulario editorial de OTEC Santa Mónica.
-# Los datos de acceso, calendario y facturación deben revisarse en la ficha oficial.
+# VERSION: 9.0 - La Pintana / Luis Marcelo Ortiz titular
+# CURSO: Programa de Capacitación y Adopción Organizacional de Inteligencia Artificial
+# CÓDIGO: 2273-984-COT26 | MODALIDAD: Compra Ágil | 28 participantes | 20 horas cronológicas
+# ORGANISMO: I. Municipalidad de La Pintana | Presupuesto: $5.040.000 IVA incluido
+# PRECIO PRECARGADO: $4.490.000 CLP (propuesta provisional EDITABLE, no confirmada)
+# FECHA: 12-11-2026 America/Santiago
+# Origen: generador editorial OTEC Santa Mónica, ajustado a bases técnicas aportadas.
+# AVISO: Las más de 2.500 personas capacitadas en IA NO están acreditadas en la documentación revisada.
+# Los certificados de Marcelo respaldan relatorías, pero no el número de asistentes por actividad.
+# Revise plazo, modalidad tributaria, recinto y monto en Mercado Público antes de presentar.
+# Uso: python -m pip install -r requirements.txt
+#      python -m streamlit run Generador_Propuesta_La_Pintana_2273-984-COT26.py
+# Prueba: python Generador_Propuesta_La_Pintana_2273-984-COT26.py --demo-pdf Borrador_La_Pintana.pdf
+
 # -*- coding: utf-8 -*-
 #
-# INSTRUCCIONES DE USO Y ADAPTACION A FUTURAS LICITACIONES
-# 1. Instalar: python -m pip install -r requirements.txt
-#    Dependencias: streamlit, reportlab, svglib, pillow, defusedxml.
-# 2. Ejecutar: python -m streamlit run Generador_Propuesta_SML_837-465-COT26_DOS_RELATORES.py (Python 3.10 o superior).
-# 3. La pestaña «Generar PDF» solo tiene logo opcional del comprador y botones.
-#    La pestaña «Detalles y edición» contiene el formulario, con apartados cerrados.
-#    El formulario pregunta por comprador, modalidad, lugar, participantes,
-#    objetivos, contenidos, horas, docente, materiales, requisitos y precio.
-#    Revisar cada respuesta, cargar los documentos y pulsar Generar reporte PDF.
-# 4. Logo del oferente: se busca OTEC_Santa_Monica_Opcion_1.svg en la carpeta
-#    o en assets/, logos/ e images/. Puede reemplazarse en «Detalles» por
-#    SVG, PNG o JPG. Si no existe, se utiliza cabecera institucional en texto.
-# 5. Para otra licitacion, editar DATOS_LICITACION, MODULOS, RELATOR_INICIAL,
-#    ADJUNTOS_DECLARADOS, REQ_COMPRA, REQ_RELATOR y REQ_CERT. Actualizar este
-#    encabezado. Los totales de horas y precios se calculan desde las respuestas.
-# 6. PREGUNTAS controla los campos; INTRODUCCIONES los textos de apertura;
-#    generar_pdf() controla la estructura. Usar lenguaje de propuesta comercial.
-#    Las notas de carga y revision pertenecen al formulario, no al informe.
-# 7. Descargar las preguntas y respuestas o el esqueleto Markdown para trabajar
-#    con IA. Revisar los antecedentes antes de incorporar cambios al codigo.
-# 8. Adjuntar CV y respaldos de Diego Zamorano y Daniel Vargas si se presentan
-#    ambos en la oferta. El ZIP incluye únicamente archivos cargados.
-# 9. No se deben atribuir certificaciones no documentadas. El PDF no incluye
-#    costos internos ni márgenes. El contacto institucional aparece siempre en
-#    su propia sección, independiente del anexo administrativo opcional.
-# 10. Formulario completo, sin bloqueos. No hay guardado persistente de progreso;
-#     conservar la sesion abierta y descargar los documentos antes de cerrarla.
-#
-# PRUEBA LOCAL: python Generador_Propuesta_SML_837-465-COT26_DOS_RELATORES.py --demo-pdf propuesta.pdf
-# El logo institucional es opcional; sin él se usa una portada tipográfica.
+# INSTRUCCIONES DE USO
+# 1. Instalar dependencias: python -m pip install -r requirements.txt
+# 2. Ejecutar: python -m streamlit run Generador_Propuesta_La_Pintana_2273-984-COT26.py
+# 3. Editar recinto, precio e IVA en la pestaña «Detalles y edición».
+# 4. Adjuntar CV, diplomas, constancias y respaldos institucionales en la sección de anexos.
+# 5. Revisar la matriz de requisitos mínimos. No se acreditan 2.501 personas con las OC disponibles.
+# 6. Usar «Generar PDF» y luego descargar el expediente ZIP. Incluye SOLO los archivos cargados.
+# 7. Sin sesión persistente: descargar el expediente antes de cerrar Streamlit.
+# 8. Demo sin Streamlit: python Generador_Propuesta_La_Pintana_2273-984-COT26.py --demo-pdf Borrador.pdf
+# El logo del oferente es opcional; si no se encuentra se usa una portada tipográfica.
 """Formulario reutilizable por preguntas y generador de propuesta PDF A4."""
 from __future__ import annotations
 
@@ -73,7 +60,7 @@ from reportlab.platypus import (
 
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_NAME = "OTEC_Santa_Monica_Opcion_1.svg"
-PDF_RENDER_VERSION = "v8.2-sml-powerbi-contacto-20261111"
+PDF_RENDER_VERSION = "v9.0-la-pintana-mortiz-20261112"
 # Gama inspirada en las presentaciones Beamer clásicas: azul estructural,
 # azul petróleo, fondos casi blancos y reglas finas. Se usa con moderación.
 BEAMER_PALETA = {
@@ -132,44 +119,36 @@ PASOS = ["Proceso y comprador", "Identificación del oferente", "Quiénes somos 
          "Relator y respaldos", "Requisitos de compra", "Certificación",
          "Oferta económica", "Logo y documentación adjunta", "Revisión y PDF"]
 ESTADOS = ["Por verificar", "Comprometido", "Declarado", "Respaldado", "A evaluación del comprador", "Cumple", "No cumple", "No aplica"]
-CATEGORIAS_ADJUNTOS = ["Bases técnicas", "CV y respaldos relator", "CV relator", "Respaldo relator", "Propuesta / otro", "Orden de compra"]
-ADJUNTOS_DECLARADOS = [{'nombre': 'CV - Diego Zamorano y Antecedentes.pdf', 'categoria': 'CV y respaldos relator'},
-                       {'nombre': 'CV - Daniel Vargas H Compilado.pdf', 'categoria': 'CV y respaldos relator'}]
-RELATOR_INICIAL = {'rol': 'Relator principal (prioridad 1)', 'nombre': 'Diego Antonio Zamorano Pérez',
- 'rut': '20.185.347-8',
- 'titulo': 'Ingeniero Civil Industrial, Pontificia Universidad Católica de Valparaíso (título acreditado)',
- 'experiencia': 'Diego Antonio Zamorano Pérez cuenta con experiencia laboral en el desarrollo '
-                'de reportes financieros y operativos automatizados mediante Power BI para Siel '
-                'Consultores, así como en el diseño de módulos de control BI en Hubconsulting SpA. '
-                'Declara manejo avanzado de Power BI, SQL, Excel y Python para análisis de datos. '
-                'Además, posee experiencia documentada como relator de inteligencia artificial para '
-                'instituciones públicas, incluyendo la Subsecretaría de Educación Parvularia y el '
-                'Servicio Local de Educación Pública Llanquihue.',
- 'disponibilidad': 'Relator propuesto para ejecutar el programa virtual durante noviembre/diciembre de '
-                   '2026, según coordinación de calendario con el Servicio Médico Legal.'}
-RELATOR_ALTERNATIVO = {
- 'rol': 'Relator alternativo de contingencia (prioridad 2)',
- 'nombre': 'Daniel Cristóbal Vargas Herrera',
- 'rut': '20.522.550-1',
- 'titulo': 'Ingeniero Civil Industrial, Pontificia Universidad Católica de Valparaíso',
- 'experiencia': (
-     'Daniel Cristóbal Vargas Herrera es Ingeniero Civil Industrial y cuenta con formación '
-     'en Data Science, Machine Learning e Inteligencia Artificial mediante diplomado de 96 horas '
-     'de la Pontificia Universidad Católica de Valparaíso. Su experiencia incluye implementación '
-     'de soluciones de análisis de datos e inteligencia artificial y relatorías para organismos '
-     'públicos, entre ellos la Subsecretaría de Educación Parvularia y SLEP Llanquihue. '
-     'Sus antecedentes respaldan su experiencia en capacitación, analítica e IA aplicada.'),
- 'disponibilidad': (
-     'Profesional alternativo de respaldo. Su eventual sustitución del relator principal '
-     'se realizará exclusivamente ante una contingencia, previa autorización del Servicio '
-     'Médico Legal y sin modificar precio, temario, duración ni entregables.'),
-}
-REQ_RELATOR_ALTERNATIVO = [
-    'Título profesional de Ingeniería Civil Industrial',
-    'Formación académica en ciencia de datos e inteligencia artificial',
-    'Experiencia en capacitación en inteligencia artificial para instituciones públicas',
-    'Participación en proyectos de análisis de datos e inteligencia artificial',
+CATEGORIAS_ADJUNTOS = ["Bases técnicas", "CV y respaldos relator", "CV relator", "Respaldo relator",
+                        "Experiencia OTEC IA", "Certificado participantes", "Encuestas de satisfacción",
+                        "Propuesta / otro", "Orden de compra"]
+ADJUNTOS_DECLARADOS = [
+    {'nombre':'03_CV_Luis_Marcelo_Ortiz_Contreras.pdf','categoria':'CV relator'},
+    {'nombre':'04_Titulo_Grado_y_Master_Marcelo_Ortiz.pdf','categoria':'Respaldo relator'},
+    {'nombre':'05_Certificados_Formacion_IA_Marcelo_Ortiz.pdf','categoria':'Respaldo relator'},
+    {'nombre':'06_Constancias_Relatorias_Marcelo_Ortiz.pdf','categoria':'CV y respaldos relator'},
+    {'nombre':'07_Experiencia_Institucional_IA_Santa_Monica.pdf','categoria':'Experiencia OTEC IA'},
+    {'nombre':'08_Declaracion_Experiencia_y_Participantes_Respaldados.pdf','categoria':'Certificado participantes'},
 ]
+RELATOR_INICIAL = {
+    'rol':'Relator principal', 'nombre':'Luis Marcelo Ortiz Contreras',
+    'rut':'9.052.506-9',
+    'titulo':'Profesor de Matemática y Licenciado en Educación, Universidad de Concepción (1987); Máster en Tecnologías para la Educación y el Conocimiento, UNED/Universidad de Concepción (estudios 2006-2008).',
+    'experiencia': (
+        'Profesor de Matemática con amplia experiencia docente y de formación en tecnologías para la educación. '
+        'Su CV identifica actividades específicas de relatoría y formación en Inteligencia Artificial entre 2023 y 2026, '
+        'incluyendo presentaciones en Tarapacá (octubre de 2023) y Atacama (diciembre de 2023), '
+        'y talleres o capacitaciones durante 2024, 2025 y 2026. '
+        'Constancias disponibles respaldan actividades vinculadas con MINEDUC / Programa Inglés Abre Puertas '
+        '(dos talleres de IA en 2025), Servicio de Registro Civil e Identificación (generación de contenidos con IA) '
+        'y establecimientos educacionales. El CV menciona IA generativa en planificación, evaluación y gestión administrativa. '
+        'Como experiencia tecnológica, declara trabajo en British Council (2024-2025) y PNUD (2023) '
+        'con administración de Moodle, reportes y seguimiento de datos. '
+        'El período mínimo exigido de tres años en desarrollo, implementación o liderazgo de proyectos profesionales de '
+        'IA o análisis de datos se encuentra pendiente de acreditación específica; la actividad docente por sí sola no lo sustituye.'),
+    'disponibilidad':'Relator propuesto para la ejecución presencial del programa en La Pintana durante noviembre de 2026; calendario y disponibilidad sujetos a coordinación y confirmación con la contraparte.'
+}
+
 
 MODALIDADES = ["Compra Ágil", "Licitación pública", "Licitación privada", "Convenio Marco",
                "Trato directo", "Compra por cotización", "Subasta Inversa Electrónica",
@@ -248,76 +227,61 @@ PREGUNTAS = [
  (11,"documentacion_adjunta","¿Cómo se describen los documentos que acompañan la oferta?","area",True),
  (12,"fecha_propuesta","¿Cuál es la fecha de emisión de la propuesta?","texto",True),
 ]
-REQ_COMPRA = ['Capacitación online teórico-práctica para 12 a 16 participantes',
- 'Duración total de 24 horas y período noviembre/diciembre 2026',
- 'Módulos 1 a 8 del programa Power BI con IA',
- 'Metodología práctica con demostraciones y ejercicios guiados',
- 'Evaluación final de aprendizaje',
- 'Certificados individuales de participación',
- 'Coordinación técnica con la contraparte del SML',
- 'Confidencialidad y seguridad de la información']
-REQ_RELATOR = ['Título profesional de Ingeniería Civil Industrial',
- 'Experiencia laboral aplicando Microsoft Power BI',
- 'Experiencia en reportes automatizados e indicadores de gestión',
- 'Competencias en Power Query, modelado y DAX',
- 'Experiencia aplicando herramientas de inteligencia artificial',
- 'Experiencia de relatoría y formación para el sector público',
- 'Capacidad para desarrollar el proyecto integrador y evaluar aprendizajes']
-REQ_CERT = ['Evaluación final de aprendizaje del curso',
- 'Diplomas individuales de participación',
- 'Identificación de curso, participante, duración y fecha en diplomas',
- 'Certificados digitales con mecanismo de verificación',
- 'Entrega de resultados finales a la contraparte técnica']
-MODULOS = [('Bloque I - Fundamentos y preparación',
-  'Módulo 1. Introducción al análisis de datos con Power BI e IA',
-  'Fundamentos de inteligencia de negocios; componentes de Power BI Desktop; oportunidades y límites de '
-  'la IA como apoyo al análisis de datos.',
-  2,
-  'Virtual'),
- ('Bloque I - Fundamentos y preparación',
-  'Módulo 2. Conexión y carga de datos',
-  'Importación desde Excel y archivos estructurados; conexión a fuentes; validación de campos, tipos de '
-  'datos y estructuras.',
-  2,
-  'Virtual'),
- ('Bloque I - Fundamentos y preparación',
-  'Módulo 3. Transformación y limpieza con Power Query',
-  'Limpieza, tipado, tratamiento de nulos, eliminación de duplicados, combinación de consultas y '
-  'transformaciones reproducibles; práctica guiada.',
-  4,
-  'Virtual'),
- ('Bloque I - Fundamentos y preparación',
-  'Módulo 4. Modelado de datos',
-  'Relaciones, cardinalidad, modelo de hechos y dimensiones, organización y calidad del modelo para la '
-  'elaboración de reportes.',
-  3,
-  'Virtual'),
- ('Bloque II - Análisis, visualización e IA',
-  'Módulo 5. Cálculos con DAX',
-  'Medidas, columnas calculadas, funciones básicas de agregación, contexto de filtro e indicadores KPI; '
-  'apoyo de IA para proponer y revisar expresiones.',
-  4,
-  'Virtual'),
- ('Bloque II - Análisis, visualización e IA',
-  'Módulo 6. Visualización y diseño de tableros',
-  'Construcción de dashboards, gráficos, segmentadores, filtros, navegación e indicadores; diseño '
-  'centrado en la lectura y la toma de decisiones.',
-  3,
-  'Virtual'),
- ('Bloque II - Análisis, visualización e IA',
-  'Módulo 7. Publicación y uso del servicio en la nube',
-  'Se incluye una demostración práctica de publicación de reportes en Microsoft Power BI '
-  'Service, administración de espacios de trabajo, permisos, actualización y distribución '
-  'de información. Las actividades individuales se adaptarán a las licencias y accesos '
-  'disponibles, sin afectar el desarrollo completo del módulo.',
-  2,
-  'Virtual'),
- ('Bloque II - Análisis, visualización e IA',
-  'Módulo 8. Proyecto integrador con IA',
-  'Proyecto práctico con datos simulados: cargar, transformar, modelar, calcular, visualizar y preparar '
-  'un tablero; IA como apoyo y revisión de resultados.',
-  4,
-  'Virtual')]
+REQ_COMPRA = [
+    'Programa presencial teórico-práctico de 20 horas cronológicas para 28 Apoyos Familiares Integrales',
+    'Cobertura íntegra de los 10 módulos de las especificaciones técnicas',
+    'Diagnóstico inicial antes de la primera clase para los 28 participantes',
+    'Dos sesiones de mentoría durante el mes siguiente al cierre',
+    'Recinto en La Pintana, computador, proyector, telón y coffee break a cargo del oferente',
+    'Informe final con evaluación individual, carpeta fotográfica y certificados del 100% de profesionales',
+    'Capacitación de IA para al menos 5 instituciones distintas en los últimos 3 años (9.1)',
+    'Más de 2.500 personas realmente capacitadas en IA en los últimos 3 años (9.1)',
+    'Al menos una capacitación en IA a institución pública o municipio en los últimos 3 años (9.1)',
+    'Cotización electrónica y anexo económico exactamente coincidentes',
+    'Plazo de ejecución expresamente informado y cotización por la totalidad del servicio',
+]
+REQ_RELATOR = [
+    'Título universitario de profesor/a o pedagogo/a',
+    'Experiencia docente mínima de 5 años posterior al título',
+    'Formación certificada en ciencia de datos, análisis de datos, ML o IA',
+    'Experiencia mínima de 3 años como relator/a de IA o IA Generativa',
+    'Experiencia profesional mínima de 3 años en desarrollo, implementación o liderazgo de proyectos de IA o datos',
+    'Enseñanza de IA Generativa aplicada a tareas administrativas',
+    'Experiencia de IA con organismos públicos, municipios, programas sociales, educación o salud',
+    'Certificación de competencias laborales en IA y/o participación en comunidad especializada (criterio de puntaje)',
+    'Resultados de satisfacción en capacitaciones anteriores (criterio de puntaje)',
+]
+REQ_CERT = [
+    'Evaluación diagnóstica de los 28 participantes antes de la primera clase',
+    'Evaluación final individual de aplicación de IA en el trabajo de AFI',
+    'Dos mentorías durante el mes posterior al programa',
+    'Informe final con resultados de evaluación por participante',
+    'Carpeta de registro fotográfico de la capacitación',
+    'Certificación individual del 100% de los 28 profesionales, según exigencia contractual',
+    'Protección y anonimización de datos personales y familiares durante todos los ejercicios',
+]
+MODULOS = [
+    ('Bloque I: Fundamentos y uso responsable', 'Módulo 1. Fundamentos de Inteligencia Artificial',
+     'Conceptos de IA, alcance y limitaciones, ejemplos en el acompañamiento familiar; diferencias entre IA generativa y automatización. Actividad: identificar tareas repetitivas del equipo.', 2, 'Presencial'),
+    ('Bloque I: Fundamentos y uso responsable', 'Módulo 2. Uso avanzado de asistentes conversacionales multipropósito',
+     'Ingeniería de prompts, contexto, verificación, iteración y revisión humana. Taller: borradores de correos, minutas y resúmenes con datos ficticios.', 2, 'Presencial'),
+    ('Bloque I: Fundamentos y uso responsable', 'Módulo 3. Riesgos, ética y buenas prácticas',
+     'Privacidad, datos personales y sensibles, sesgos, alucinaciones, consentimiento y validación humana. Prohibición de ingresar datos identificables de familias a herramientas no autorizadas.', 2, 'Presencial'),
+    ('Bloque II: Herramientas aplicadas', 'Módulo 4. Herramientas de IA I',
+     'Producción y revisión de documentos: fichas, comunicaciones, minutas, informes y síntesis de antecedentes con datos simulados.', 2, 'Presencial'),
+    ('Bloque II: Herramientas aplicadas', 'Módulo 5. Herramientas de IA II',
+     'Organización de información y calendarización: planificación de visitas, priorización y seguimiento de tareas con validaciones y herramientas autorizadas.', 2, 'Presencial'),
+    ('Bloque II: Herramientas aplicadas', 'Módulo 6. Herramientas de IA III',
+     'Reportabilidad, análisis básico de datos, clasificación de registros anonimizados y elaboración de apoyos visuales para la coordinación institucional.', 2, 'Presencial'),
+    ('Bloque III: Productividad e implementación', 'Módulo 7. Machine Learning, Deep Learning e IA Generativa',
+     'Explicación accesible de ML, DL e IA generativa aplicada a productividad y atención ciudadana. Ejercicios de detección de patrones y límites de inferencia.', 2, 'Presencial'),
+    ('Bloque III: Productividad e implementación', 'Módulo 8. Identificación e implementación de casos de uso',
+     'Priorización de casos por beneficio, factibilidad y riesgo. Diseño de un caso de uso aplicable a planificación de visitas, reportabilidad o redes de apoyo.', 2, 'Presencial'),
+    ('Bloque III: Productividad e implementación', 'Módulo 9. Taller de institucionalización de asistentes de IA',
+     'Prototipos de instrucciones, plantillas y protocolos de uso de asistentes institucionales, con control de acceso, supervisión humana y continuidad operacional.', 2, 'Presencial'),
+    ('Bloque IV: Transferencia', 'Módulo 10. Actividad integradora final',
+     'Caso práctico grupal con datos ficticios: planificación, documentación y seguimiento de intervención familiar; demostración, evaluación y plan de adopción responsable.', 2, 'Presencial'),
+]
 
 
 def hoy():
@@ -327,27 +291,30 @@ def hoy():
         return datetime.now().strftime("%d-%m-%Y")
 
 
-DATOS_LICITACION = {'proceso': '837-465-COT26',
+DATOS_LICITACION = {'proceso': '2273-984-COT26',
  'modalidad': 'Compra Ágil',
- 'titulo': 'Curso en Power BI con IA: Fundamentos y Aplicaciones para Profesionales',
- 'comprador': 'SERVICIO MÉDICO LEGAL',
- 'rut_comprador': '61.003.000-9',
- 'rubro': 'Capacitación y formación de profesionales en análisis de datos e inteligencia artificial',
+ 'titulo': 'Programa de Capacitación y Adopción Organizacional de Inteligencia Artificial para Apoyos '
+           'Familiares Integrales',
+ 'comprador': 'I. MUNICIPALIDAD DE LA PINTANA',
+ 'rut_comprador': '',
+ 'rubro': 'Capacitación presencial y adopción de IA generativa para equipos de intervención familiar y gestión '
+          'municipal',
  'id_item': '',
  'numero_oc': '',
  'requisitos_oc': '',
  'publicacion': '',
- 'cierre_1': '16-11-2026 10:00:00',
+ 'cierre_1': '12-11-2026 17:20:00',
  'cierre_2': '',
- 'plazo_ficha': 'No indicado en antecedentes adjuntos',
- 'presupuesto': 6900000,
- 'tipo_presupuesto': 'Disponibilidad presupuestaria certificada, CDP N.º 775/2026',
- 'contacto_comprador': 'Contraparte técnica a designar por el Servicio Médico Legal',
+ 'plazo_ficha': 'Ejecución de 20 horas cronológicas en noviembre de 2026, más dos mentorías en el mes '
+                'siguiente',
+ 'presupuesto': 5040000,
+ 'tipo_presupuesto': 'Presupuesto máximo disponible: $5.040.000, IVA incluido',
+ 'contacto_comprador': 'Contraparte técnica Programa Familias de la Municipalidad de La Pintana',
  'oferente': 'CENTRO DE CAPACITACION SANTA MONICA LIMITADA',
  'nombre_comercial': 'CENTRO DE CAPACITACION SANTA MONICA',
  'rut_oferente': '76.176.857-3',
- 'domicilio_empresa': 'Isabel La Católica 4394, oficina 517, piso 5, bloque B, Las Condes, Santiago, '
-                      'Región Metropolitana',
+ 'domicilio_empresa': 'Isabel La Católica 4394, oficina 517, piso 5, Las Condes, Santiago, Región '
+                      'Metropolitana',
  'contacto_oferta': 'ENRIQUE BRUN URRUTIA',
  'cargo_contacto': 'Director de Administración y Finanzas',
  'telefono': '+56 9 6359 6523',
@@ -359,146 +326,157 @@ DATOS_LICITACION = {'proceso': '837-465-COT26',
  'tipo_cuenta': '',
  'cuenta': '',
  'correo_pagos': '',
- 'quienes': 'CENTRO DE CAPACITACION SANTA MONICA LIMITADA desarrolla actividades de capacitación '
-            'orientadas al fortalecimiento de competencias laborales y tecnológicas para organizaciones '
-            'públicas y privadas. El enfoque formativo combina aplicación práctica, acompañamiento '
-            'durante las sesiones y evaluación del aprendizaje.\n'
-            '\n'
-            'Para el Servicio Médico Legal se presenta una capacitación específica en Microsoft Power BI '
-            'e inteligencia artificial, enfocada en generar información analítica confiable para apoyar '
-            'decisiones institucionales.',
- 'vision': 'Fortalecer las capacidades de los equipos mediante formación pertinente, aplicable y '
-           'orientada a resultados; favorecer la comprensión de los datos, su transformación en '
-           'conocimiento útil y el uso responsable de herramientas digitales.',
- 'que_ofrecemos': 'Ejecución integral de un curso virtual teórico-práctico de 24 horas para 12 a 16 '
-                  'profesionales, compuesto por ocho módulos oficiales. Incluye relatoría especializada, '
-                  'materiales y bases de práctica, ejercicios guiados, proyecto integrador con IA, '
-                  'evaluación final y diplomas individuales.',
- 'objetivo_general': 'Implementar soluciones de análisis de datos utilizando Microsoft Power BI y '
-                     'herramientas de Inteligencia Artificial, integrando procesos de conexión, '
-                     'transformación, modelado, cálculo, visualización y publicación de información, con '
-                     'el fin de generar reportes y tableros confiables que apoyen la toma de decisiones '
-                     'en contextos organizacionales.',
- 'objetivos_especificos': 'Identificar los componentes de Power BI y los usos pertinentes de IA en el '
-                          'análisis de datos.\n'
-                          'Conectar e importar información desde diferentes fuentes de datos.\n'
-                          'Transformar y depurar datos con Power Query para disponer de bases '
-                          'confiables.\n'
-                          'Construir modelos de datos y relaciones adecuadas al análisis.\n'
-                          'Elaborar métricas e indicadores empleando cálculos DAX.\n'
-                          'Diseñar tableros y visualizaciones útiles para la toma de decisiones.\n'
-                          'Publicar reportes y comprender su uso en el servicio Power BI en la nube.\n'
-                          'Aplicar lo aprendido en un proyecto analítico integrador con apoyo de IA.',
- 'participantes': 'Profesionales que requieran incorporar herramientas modernas de análisis de datos y '
-                  'mejorar su productividad mediante Microsoft Power BI e inteligencia artificial. El '
-                  'servicio considera entre 12 y 16 asistentes.',
- 'cupos': 16,
- 'prerrequisitos': 'No se establece un requisito previo obligatorio en los términos de referencia. Se '
-                   'recomienda manejo básico de computador y planillas de cálculo para aprovechar los '
-                   'ejercicios.',
- 'modalidad_curso': 'Virtual',
- 'horas_exigidas': 24.0,
- 'metodologia': 'Clases virtuales en vivo de carácter teórico-práctico. Cada módulo combinará explicación '
-                'breve, demostración en Microsoft Power BI, práctica guiada con bases de datos simuladas, '
-                'análisis de casos y retroalimentación. Las actividades avanzarán desde conexión y '
-                'preparación de datos hasta la construcción de reportes y un proyecto integrador.\n'
-                '\n'
-                'La inteligencia artificial se incorporará como apoyo a tareas de análisis, formulación y '
-                'revisión de expresiones, interpretación y comunicación de resultados. Los participantes '
-                'verificarán críticamente los productos generados por las herramientas. La evaluación '
-                'final comprobará el aprendizaje aplicado.',
- 'herramientas': 'Microsoft Power BI Desktop, Power Query, lenguaje DAX y Power BI Service. '
-                 'El relator demostrará la publicación de un informe en Power BI Service durante '
-                 'el módulo 7. Los participantes trabajarán con archivos de práctica en Excel/CSV '
-                 'y herramientas de IA como apoyo al análisis. Los accesos y licencias individuales '
-                 'se coordinarán previamente con la contraparte técnica.',
+ 'quienes': 'Centro de Capacitación Santa Mónica Limitada es un organismo dedicado al fortalecimiento de '
+            'competencias laborales y tecnológicas de organizaciones públicas y privadas. Su oferta combina '
+            'prácticas aplicadas, seguimiento y evaluación. Cuenta con antecedentes de contratación de '
+            'capacitación en IA para municipalidades y organismos públicos, respaldados por órdenes de compra '
+            'y facturas que se detallarán en la matriz institucional. El número total de participantes '
+            'capacitados en IA debe sustentarse con registros de ejecución y no se presume por el valor de las '
+            'órdenes.',
+ 'vision': 'Acompañar a equipos profesionales no técnicos en una adopción útil, responsable y verificable de '
+           'la inteligencia artificial, protegiendo la privacidad de las personas y mejorando la calidad del '
+           'servicio público.',
+ 'que_ofrecemos': 'Programa presencial teórico-práctico de 20 horas cronológicas para 28 Apoyos Familiares '
+                  'Integrales de La Pintana, distribuidas en diez módulos; diagnóstico inicial previo, dos '
+                  'mentorías de seguimiento durante el mes posterior, lugar de ejecución en la comuna, '
+                  'equipamiento audiovisual, coffee break, evaluación final, informe, registro fotográfico y '
+                  'certificados individuales.',
+ 'objetivo_general': 'Fortalecer las capacidades del equipo del Programa Familias para utilizar de forma '
+                     'práctica, segura y sostenida herramientas de Inteligencia Artificial que permitan '
+                     'ordenar, calendarizar y visualizar el avance de visitas familiares, gestionar cargas de '
+                     'trabajo, apoyar reportabilidad y mejorar la coordinación institucional, sin exponer '
+                     'datos personales.',
+ 'objetivos_especificos': 'Explicar fundamentos de IA, ML, DL e IA generativa de forma accesible.\n'
+                          'Emplear asistentes de IA para elaborar y revisar comunicaciones, documentos y '
+                          'reportes.\n'
+                          'Planificar y hacer seguimiento de visitas y actividades con herramientas '
+                          'apropiadas.\n'
+                          'Aplicar criterios de privacidad, ética, trazabilidad y validación humana.\n'
+                          'Diseñar un caso de uso y un protocolo básico de adopción para el Programa '
+                          'Familias.\n'
+                          'Evaluar aprendizajes y acompañar la transferencia al puesto de trabajo mediante '
+                          'mentorías.',
+ 'participantes': '28 Apoyos Familiares Integrales (AFI) del Programa Familias, con funciones de intervención '
+                  'y acompañamiento a familias en situación de vulnerabilidad.',
+ 'cupos': 28,
+ 'prerrequisitos': 'Conocimientos básicos de computador y manejo de documentos; no se requiere formación '
+                   'previa en programación ni inteligencia artificial.',
+ 'modalidad_curso': 'Presencial',
+ 'horas_exigidas': 20.0,
+ 'metodologia': 'Aprendizaje participativo de aplicación inmediata. Diagnóstico de competencias antes de la '
+                'primera clase para los 28 participantes; explicación breve, demostración, trabajo por '
+                'parejas, ejercicios con información ficticia o anonimizada, puesta en común y evaluación por '
+                'caso práctico. Los participantes construirán plantillas, instrucciones (prompts) y rutinas de '
+                'revisión humana para apoyar visitas y reportabilidad; nunca se cargarán datos identificables '
+                'de familias en sistemas no autorizados. Se realizarán dos mentorías durante el mes siguiente '
+                'al cierre de las 20 horas presenciales, incluidas en el valor global y no descontadas del '
+                'total lectivo exigido.',
+ 'herramientas': 'Asistentes de IA generativa y herramientas de productividad autorizados por la contraparte. '
+                 'Demostraciones de generación documental, síntesis, tabulación, planificación y reportes. Los '
+                 'recursos específicos se seleccionarán según licencias y políticas de la Municipalidad; no se '
+                 'exigirán cuentas personales ni se subirán antecedentes sensibles.',
  'region': 'Región Metropolitana',
- 'comuna': 'Santiago',
- 'lugar': 'Capacitación 100% virtual, sin asistencia presencial. Organismo comprador: Servicio Médico '
-          'Legal, sede de referencia Isabel Riquelme, Santiago.',
+ 'comuna': 'La Pintana',
+ 'lugar': 'Recinto apto para capacitación presencial dentro de la comuna de La Pintana, proporcionado por OTEC '
+          'Santa Mónica; dirección exacta por confirmar con la contraparte antes de contratar.',
  'quien_lugar': 'Proveedor',
- 'periodo_ejecucion': 'Noviembre/diciembre de 2026. Las clases se realizarán en modalidad virtual, en las '
-                      'fechas que se coordinen con la contraparte técnica.',
- 'fecha_ejecucion': 'Se propondrá un cronograma de sesiones que totalice 24 horas, sujeto a coordinación '
-                    'y aceptación del Servicio Médico Legal durante noviembre/diciembre de 2026.',
- 'equipamiento': 'El proveedor habilitará el medio de videoconferencia y entregará recursos digitales '
-                 'para los ejercicios. Los requerimientos de computador, conectividad, instalación de '
-                 'Power BI y licencias para publicación se comunicarán y coordinarán antes del inicio del '
-                 'curso.',
- 'cafeteria': '',
- 'materiales': 'Kit de aprendizaje digital con presentaciones, guías por módulo, archivos y bases de '
-               'datos simuladas, ejercicios de Power Query y DAX, ejemplos de visualización, '
-               'instrucciones del proyecto integrador y rúbrica de evaluación. No se utilizarán datos '
-               'institucionales reservados en herramientas de IA de terceros.',
- 'perfil_docente': 'La ejecución de las 24 horas se propone a cargo de Diego Antonio Zamorano Pérez, '
-                   'con experiencia laboral en Microsoft Power BI, inteligencia de negocios, análisis de datos e '
-                   'inteligencia artificial aplicada. Los términos de referencia no establecen título '
-                   'profesional, certificación Microsoft ni años mínimos obligatorios.',
- 'referencia_cv': 'Se presentan los CV de Diego Antonio Zamorano Pérez (principal) y Daniel Cristóbal Vargas Herrera (alternativo), con currículums, '
-                  'certificados y respaldos de experiencias de relatoría. El oferente confirma específicamente '
-                  'el dominio de Diego Zamorano en Power Query, DAX y Power BI Service.',
- 'observaciones': 'El curso se ejecutará bajo las condiciones de confidencialidad y coordinación '
-                  'establecidas por el Servicio Médico Legal. El calendario específico será acordado con '
-                  'la contraparte técnica; el compromiso ofertado comprende íntegramente las 24 horas y '
-                  'los ocho módulos descritos.',
- 'evaluacion': 'Se aplicará una evaluación final de aprendizaje mediante un ejercicio práctico '
-               'integrador: importación y depuración de datos, modelado, cálculo de indicadores, '
-               'visualización y análisis apoyado por IA. Se utilizará una pauta de evaluación consistente '
-               'y se conservará el registro individual de resultados.',
- 'aprobacion': 'La pauta de evaluación y las condiciones de aprobación se informarán a los participantes '
-               'al inicio y se coordinarán con la contraparte técnica, manteniendo como requisito central '
-               'la evaluación final exigida.',
- 'entrega_certificados': 'Se entregarán diplomas digitales individuales de participación, con nombre de '
-                         'participante, nombre del curso, duración y fechas de ejecución; se contempla un '
-                         'identificador verificable. Se entregará además un resumen de asistencia y '
-                         'resultados de evaluación a la contraparte técnica al cierre del servicio.',
- 'destino_informe': 'contraparte técnica o unidad de capacitación que designe el Servicio Médico Legal',
+ 'periodo_ejecucion': 'Las 20 horas cronológicas se desarrollarán durante noviembre de 2026, en calendario '
+                      'coordinado con la Municipalidad. Antes de la primera clase se aplicará diagnóstico; '
+                      'durante diciembre de 2026 se realizarán dos mentorías de acompañamiento.',
+ 'fecha_ejecucion': 'Cronograma sugerido: cinco jornadas presenciales de 4 horas cada una en noviembre 2026. '
+                    'Las fechas y la disponibilidad del recinto se cerrarán con la contraparte, respetando el '
+                    'plazo de ejecución comprometido. Dos mentorías durante el mes siguiente al cierre.',
+ 'equipamiento': 'OTEC Santa Mónica proporcionará recinto, computador de apoyo del relator, proyector y telón '
+                 'para presentaciones, además de conectividad adecuada a la actividad. Se coordinará acceso de '
+                 'participantes a equipos y herramientas autorizadas.',
+ 'cafeteria': 'Coffee break a cargo del oferente: café, té, agua saborizada y productos tales como mini '
+              'sándwiches y galletas, coordinando requerimientos alimentarios con la contraparte.',
+ 'materiales': 'Presentaciones, guías de prompts, fichas de casos de uso, rúbricas, plantillas de '
+               'reportabilidad, ejercicios con datos ficticios, pautas de seguridad y documentos digitales de '
+               'apoyo.',
+ 'perfil_docente': 'Relator principal: Luis Marcelo Ortiz Contreras, Profesor de Matemática y Licenciado en '
+                   'Educación, Universidad de Concepción, con experiencia docente extensa y trayectoria '
+                   'declarada de actividades de capacitación y relatorías en IA desde 2023. La acreditación '
+                   'completa de tres años de proyectos profesionales de IA o datos requiere respaldo '
+                   'documental específico; no se presenta como acreditada automáticamente.',
+ 'referencia_cv': 'Se acompaña CV de Luis Marcelo Ortiz, título de profesor y grado, diploma de máster, '
+                  'constancias de relatorías de IA y certificados de especialización disponibles. La '
+                  'verificación del perfil se realiza con la matriz de cumplimiento incluida en la propuesta.',
+ 'observaciones': 'La experiencia personal del relator y la experiencia contractual de Santa Mónica se '
+                  'presentan por separado. No se declara como acreditado el mínimo de más de 2.500 '
+                  'participantes de IA: el expediente revisado acredita contrataciones y cupos previstos, pero '
+                  'no dispone de nóminas o certificados de ejecución que permitan totalizar 2.501 personas '
+                  'efectivamente capacitadas. La aceptación de la experiencia personal del relator como '
+                  'experiencia del oferente corresponde exclusivamente a la evaluación del comprador. El '
+                  'precio precargado y la exención de IVA deben validarse antes del envío.',
+ 'evaluacion': 'Diagnóstico inicial previo para establecer línea base; actividades prácticas observadas en '
+               'cada módulo; evaluación final individual mediante caso de acompañamiento familiar con datos '
+               'simulados y pauta de logro que considere pertinencia, seguridad, calidad del producto y '
+               'verificación humana.',
+ 'aprobacion': 'Se propone evaluación de adquisición de competencias y acciones de apoyo para facilitar que el '
+               '100% de profesionales reciba certificación al cierre; la certificación se sujetará a criterios '
+               'y evidencias de participación acordados con la contraparte, sin declarar aprobaciones '
+               'anticipadas.',
+ 'entrega_certificados': 'Informe final con resultados individuales, registro de actividades, carpeta '
+                         'fotográfica y certificados nominativos con curso, fecha y duración, conforme al 100% '
+                         'de certificación requerido por la entidad; entrega a la contraparte al término de la '
+                         'capacitación, complementada con acta de mentorías posteriores.',
+ 'destino_informe': 'contraparte técnica del Programa Familias de la Municipalidad de La Pintana',
  'cantidad': 1,
- 'valor_unitario': 2690000,
+ 'valor_unitario': 4490000,
  'despacho': 0,
  'impuesto': 'Exento / sin impuesto',
  'tasa': 19,
- 'incluye_precio': 'Precio global por 24 horas virtuales para hasta 16 participantes. Incluye relatoría, '
-                   'planificación y preparación de sesiones, uso de plataforma de videoconferencia, '
-                   'materiales digitales, ejercicios guiados, proyecto integrador con IA, evaluación '
-                   'final, diplomas individuales y coordinación técnica. No contempla actividades '
-                   'presenciales ni traslados.',
- 'detalle': 'Curso Power BI con IA, 24 horas virtuales, para 12 a 16 participantes. Ocho módulos, '
-            'ejercicios prácticos, proyecto integrador, evaluación final y diplomas individuales. Oferta '
-            'global: $2.690.000 exenta.',
- 'adjuntos_esperados': 2,
- 'adjuntos_solicitados': 'Currículum y antecedentes de ambos profesionales propuestos (respaldo técnico complementario).',
- 'documentacion_adjunta': 'Se acompañan los CV de Diego Antonio Zamorano Pérez y Daniel Cristóbal Vargas Herrera, con certificados de título y '
-                          'antecedentes documentales de relatorías. La propuesta contiene además el '
-                          'programa, metodología, cumplimiento de términos técnicos, evaluación y valor '
-                          'global del servicio.',
- 'fecha_propuesta': '11-11-2026'}
+ 'incluye_precio': 'Oferta global provisional por 20 horas cronológicas presenciales para 28 personas; incluye '
+                   'diagnóstico inicial, diez módulos, relatoría de Marcelo Ortiz, salón en La Pintana, '
+                   'equipamiento audiovisual, coffee break, materiales, dos mentorías el mes siguiente, '
+                   'evaluaciones, informe final, registros fotográficos y 28 certificaciones. Precio editable; '
+                   'validar régimen de IVA y monto antes de presentar.',
+ 'detalle': 'Capacitación presencial IA para 28 AFI, 20 horas cronológicas y 10 módulos. Diagnóstico, recinto '
+            'y coffee break, 2 mentorías, evaluación, informe y certificación. Total provisional: $4.490.000.',
+ 'adjuntos_esperados': 10,
+ 'adjuntos_solicitados': '01 Cotización económica coincidente con portal\n'
+                         '02 Propuesta técnica y cronograma\n'
+                         '03 CV de Marcelo Ortiz\n'
+                         '04 Título, grado y máster\n'
+                         '05 Formación certificada en IA\n'
+                         '06 Constancias de relatorías\n'
+                         '07 Matriz OTEC de cursos IA con respaldos\n'
+                         '08 Declaración jurada de experiencia y participantes con evidencia\n'
+                         '09 Encuestas de satisfacción y recomendaciones\n'
+                         '10 Plan logístico, evaluación, mentorías y entregables',
+ 'documentacion_adjunta': 'El expediente prevé CV, títulos, certificaciones y constancias del relator; órdenes '
+                          'de compra y facturas de cursos IA de Santa Mónica; matriz institucional con '
+                          'institución, fecha, duración, participantes comprobados y respaldo; declaración '
+                          'jurada simple y resultados de satisfacción cuando estén disponibles. No se atribuye '
+                          'acreditación a documentos aún no incorporados.',
+ 'fecha_propuesta': '12-11-2026'}
 
-# Textos de apertura editables. Las llaves se completan desde DATOS_LICITACION.
-INTRODUCCIONES = {'proceso': 'La propuesta responde a la Compra Ágil {proceso}, convocada por {comprador}, para la '
-            'prestación integral de un curso de Power BI con inteligencia artificial.',
- 'objetivos': 'El programa desarrolla capacidades progresivas para transformar datos en información '
-              'confiable, utilizando Power BI y herramientas de IA como apoyo práctico.',
- 'programa': 'El curso contempla 24 horas de capacitación virtual, organizadas en ocho módulos que '
-             'avanzan desde los fundamentos y la preparación de datos hasta la elaboración de un proyecto '
-             'integrador.',
- 'metodologia': 'Las actividades están diseñadas para favorecer la aplicación inmediata: demostración, '
-                'práctica guiada, resolución de casos y retroalimentación mediante datos simulados.',
- 'logistica': 'La capacitación se ejecutará mediante clases virtuales. El calendario se coordinará con el '
-              'Servicio Médico Legal durante noviembre/diciembre de 2026.',
- 'relator': 'La relatoría principal de las 24 horas estará a cargo de Diego Antonio Zamorano Pérez, cuyo perfil reúne '
-            'experiencia aplicada en Power BI, control de gestión, análisis de datos e inteligencia '
-            'artificial. Daniel Cristóbal Vargas Herrera se presenta únicamente como profesional alternativo de contingencia, sujeto a aprobación previa del Servicio Médico Legal y sin cambio de precio, duración ni contenidos. Ambos currículums y antecedentes se acompañan al expediente.',
- 'requisitos': 'La siguiente matriz vincula los requerimientos expresos del Servicio Médico Legal con los '
-               'compromisos concretos asumidos en esta oferta.',
- 'certificacion': 'El aprendizaje se comprobará con una evaluación final práctica y se respaldará '
-                  'mediante diplomas individuales de participación y registro de resultados.',
- 'economica': 'La propuesta económica considera un servicio global de 24 horas virtuales para 12 a 16 '
-              'participantes, con todos los componentes descritos en este documento.',
- 'documentos': 'Los antecedentes del relator se incluyen en el expediente para complementar la evaluación '
-               'técnica.',
- 'identificacion': 'Los siguientes datos corresponden al oferente, conforme a la información facilitada '
-                   'en el código base.'}
+INTRODUCCIONES = {'proceso': 'Esta propuesta responde a la Compra Ágil {proceso}, convocada por {comprador}, para la adopción '
+            'organizacional de IA de los equipos de Apoyo Familiar Integral.',
+ 'objetivos': 'El servicio apunta a ordenar el seguimiento de las visitas, la gestión documental y la '
+              'coordinación de actividades del Programa Familias mediante IA responsable y prácticas '
+              'verificables.',
+ 'programa': 'Se ofrecen 20 horas cronológicas presenciales en diez módulos de dos horas. El diagnóstico '
+             'previo y dos mentorías del mes siguiente complementan la formación.',
+ 'metodologia': 'Talleres aplicados a tareas reales de AFI, usando únicamente datos ficticios o anonimizados, '
+                'verificación humana y herramientas autorizadas.',
+ 'logistica': 'El oferente propone impartir las 20 horas presenciales en un recinto de la comuna de La Pintana '
+              'durante noviembre de 2026, con equipamiento y coffee break a su cargo.',
+ 'relator': 'Se propone como relator principal a Luis Marcelo Ortiz Contreras, Profesor de Matemática de la '
+            'Universidad de Concepción, con actividades de relatoría de IA declaradas desde 2023 y constancias '
+            'que respaldan capacitaciones en organismos públicos. Su experiencia en proyectos de IA o datos y '
+            'los antecedentes de experiencia institucional se someten a evaluación documental.',
+ 'requisitos': 'La matriz siguiente distingue compromisos de la oferta, respaldo documental del relator y '
+               'requisitos mínimos de experiencia del oferente; los campos pendientes no se presentan como '
+               'acreditados.',
+ 'certificacion': 'Se realizará diagnóstico, evaluación final, dos mentorías de transferencia y entrega de '
+                  'informe, carpeta fotográfica y certificaciones a los 28 profesionales conforme a las bases.',
+ 'economica': 'El precio global incluye recinto, equipamiento, colaciones, 20 horas, diagnóstico, mentorías, '
+              'evaluación, informes y certificados para 28 participantes.',
+ 'documentos': 'El listado refleja antecedentes previstos y documentos efectivamente cargados al expediente. '
+               'Se deberán adjuntar los respaldos obligatorios antes de la presentación.',
+ 'identificacion': 'Los datos institucionales corresponden a Santa Mónica según antecedentes aportados.'}
 
 def datos_licitacion():
     d=copy.deepcopy(DATOS_LICITACION)
@@ -515,67 +493,65 @@ def nuevo(ejemplo_activo=True):
     d = datos_licitacion()
     if not ejemplo_activo:
         for _, k, _, tipo, _ in PREGUNTAS:
-            if k in {"oferente", "nombre_comercial", "rut_oferente", "domicilio_empresa",
-                     "contacto_oferta", "cargo_contacto", "telefono", "correo",
-                     "representante", "rut_representante", "cargo_representante"}:
+            if k in {'oferente','nombre_comercial','rut_oferente','domicilio_empresa','contacto_oferta',
+                     'cargo_contacto','telefono','correo','representante','rut_representante','cargo_representante'}:
                 continue
-            if tipo in {"entero", "decimal"}:
-                d[k] = 0.0 if tipo == "decimal" else 0
-            elif k not in {"modalidad", "modalidad_curso", "quien_lugar", "impuesto"}:
-                d[k] = ""
-        d.update(cantidad=1, tasa=19, fecha_propuesta=hoy())
-    rows = [{"id": uuid4().hex[:12], "jornada": a, "nombre": n, "contenido": c,
-             "horas": float(h), "tipo": t} for a,n,c,h,t in MODULOS] if ejemplo_activo else []
-    rel = copy.deepcopy(RELATOR_INICIAL)
-    rel["id"] = uuid4().hex[:12]
-    rel["checklist"] = items_check(REQ_RELATOR)
-    soportes_rel = [
-        ("Respaldado", "Certificado de profesionales del Registro Civil, incluido en el CV adjunto."),
-        ("Declarado", "Siel Consultores: reportes financieros y operativos automatizados en Power BI, según CV."),
-        ("Declarado", "Experiencia en control BI, reportabilidad y KPI, según CV."),
-        ("Declarado", "Competencias técnicas confirmadas por el oferente; ejercicios contemplados en módulos 3, 4 y 5."),
-        ("Declarado", "Capacitaciones en IA y aplicación de herramientas de IA generativa, según CV."),
-        ("Respaldado", "Certificados de relatoría para la Subsecretaría de Educación Parvularia y SLEP Llanquihue."),
-        ("Comprometido", "Relatoría de los ocho módulos, proyecto práctico y evaluación final del programa."),
+            if tipo in {'entero','decimal'}:
+                d[k] = 0.0 if tipo == 'decimal' else 0
+            elif k not in {'modalidad','modalidad_curso','quien_lugar','impuesto'}:
+                d[k] = ''
+        d.update(cantidad=1,tasa=19,fecha_propuesta=hoy())
+    rows=[{'id':uuid4().hex[:12],'jornada':j,'nombre':n,'contenido':c,'horas':float(h),'tipo':t}
+          for j,n,c,h,t in MODULOS] if ejemplo_activo else []
+    rel=copy.deepcopy(RELATOR_INICIAL)
+    rel['id']=uuid4().hex[:12]
+    rel['checklist']=items_check(REQ_RELATOR)
+    soportes_rel=[
+        ('Respaldado','Título profesional Universidad de Concepción; archivo de título y grado.'),
+        ('Respaldado','CV y trayectoria docente universitaria desde 2004; verificar certificados de vínculo si se solicitan.'),
+        ('Declarado','CV indica diplomado de IA 2023 y cursos de ChatGPT 2024; adjuntar certificado específico del programa.'),
+        ('Declarado','CV refiere relatorías de IA desde agosto/octubre de 2023; constancias recibidas respaldan actividades posteriores.'),
+        ('Por verificar','CV describe análisis de datos y reportabilidad en British Council/PNUD; no documenta por sí solo 3 años de proyectos profesionales específicos de IA o datos.'),
+        ('Respaldado','CV y constancias de IA aplicada a gestión docente/administrativa; MINEDUC, Registro Civil y Academia Politécnica Militar.'),
+        ('Respaldado','Constancias de MINEDUC/Programa Inglés Abre Puertas, Registro Civil y actividades públicas.'),
+        ('Por verificar','No se acreditó una certificación de competencias laborales en IA ni membresía gremial o en red especializada con la documentación revisada.'),
+        ('Por verificar','Solicitar informes o resultados cuantificados de encuestas de satisfacción en cursos anteriores.'),
     ]
-    for row, (estado, respaldo) in zip(rel["checklist"], soportes_rel):
-        row.update(estado=estado, respaldo=respaldo)
-    alt = copy.deepcopy(RELATOR_ALTERNATIVO)
-    alt["id"] = uuid4().hex[:12]
-    alt["checklist"] = items_check(REQ_RELATOR_ALTERNATIVO)
-    for row, (estado, respaldo) in zip(alt["checklist"], [
-        ("Respaldado", "Ingeniero Civil Industrial PUCV; documentos en su compilado de antecedentes."),
-        ("Respaldado", "Diplomado Data Science, Machine Learning, IA y Deep Learning de 96 horas, PUCV."),
-        ("Respaldado", "Constancias de relatoría en instituciones públicas, incluidos SLEP Llanquihue y Subsecretaría de Educación Parvularia."),
-        ("Declarado", "Experiencia profesional en análisis de datos e implementación de IA, según currículum."),
-    ]):
-        row.update(estado=estado, respaldo=respaldo)
-    compra = items_check(REQ_COMPRA)
-    soportes_compra = [
-        "Clases virtuales teórico-prácticas; cobertura de hasta 16 profesionales.",
-        "Programa de ocho módulos, 24 horas; ejecución noviembre/diciembre 2026.",
-        "Programa desglosado en los ocho módulos de los términos de referencia.",
-        "Demostraciones, ejercicios guiados, práctica progresiva y proyecto integrador.",
-        "Evaluación final aplicada mediante ejercicio integrador y registro de resultados.",
-        "Diplomas individuales digitales con identificación del participante.",
-        "Coordinador técnico del proveedor y calendario concertado con la contraparte institucional.",
-        "Ejercicios con datos simulados y cumplimiento de las cláusulas de reserva del SML.",
+    for row,(estado,respaldo) in zip(rel['checklist'],soportes_rel):
+        row.update(estado=estado,respaldo=respaldo)
+    compra=items_check(REQ_COMPRA)
+    soportes_compra=[
+        ('Comprometido','Programa propuesto: 20 horas cronológicas presenciales, 28 AFI y ejercicios aplicados.'),
+        ('Comprometido','Diez módulos coincidentes con la secuencia de las especificaciones técnicas.'),
+        ('Comprometido','Instrumento diagnóstico aplicado antes de la primera clase a los 28 participantes.'),
+        ('Comprometido','Dos mentorías de acompañamiento el mes siguiente al cierre; adicionales a 20 horas.'),
+        ('Comprometido','El proveedor se obliga a aportar recinto en la comuna, audiovisual y coffee break.'),
+        ('Comprometido','Informe, evaluaciones, fotografías y certificación individual conforme a bases.'),
+        ('Declarado','Se identificaron contrataciones de IA con varias entidades públicas y municipales. Incorporar matriz con OC/facturas, fechas, duración y asistentes.'),
+        ('Por verificar','No constan registros de 2.501 asistentes a capacitación de IA; las OC contienen cupos y no listas de participantes efectivos.'),
+        ('Respaldado','OC 2446-1884-AG25: Municipalidad de Coquimbo, capacitación de IA para Mujeres Jefas de Hogar (20 cupos previstos); complementar asistencia.'),
+        ('Comprometido','Revisar que monto en formulario de Mercado Público y PDF adjunto sea exactamente el mismo.'),
+        ('Comprometido','20 horas en noviembre 2026 y 2 mentorías en diciembre; servicio completo, precio global.'),
     ]
-    for row,respaldo in zip(compra,soportes_compra):
-        row.update(estado="Comprometido",respaldo=respaldo)
-    cert = items_check(REQ_CERT)
-    for row,respaldo in zip(cert,[
-        "Evaluación práctica final y registro individual de aprendizaje.",
-        "Diploma individual digital de participación al terminar el curso.",
-        "El diploma identificará al participante, curso, duración y fechas de ejecución.",
-        "Identificador único o código de verificación para cada diploma.",
-        "Resumen final de asistencia, evaluación y entregables."]):
-        row.update(estado="Comprometido",respaldo=respaldo)
-    return {"version":6,"datos":d,"modulos":rows,"docentes":[rel,alt],
-            "compra":compra,"certificacion":cert,
-            "logos":{"oferente":{"nombre":"","base64":""},"comprador":{"nombre":"","base64":""}},
-            "archivos":[],"declarados":copy.deepcopy(ADJUNTOS_DECLARADOS),
-            "marcar_borrador":False,"incluir_revision":False,"incluir_admin":False}
+    for row,(estado,respaldo) in zip(compra,soportes_compra):
+        row.update(estado=estado,respaldo=respaldo)
+    cert=items_check(REQ_CERT)
+    soportes_cert=[
+        'Diagnóstico inicial individual antes del comienzo de los módulos.',
+        'Evaluación integradora con caso de AFI, datos ficticios y rúbrica individual.',
+        'Dos mentorías durante diciembre de 2026 para resolver dudas y apoyar adopción.',
+        'Informe individual con resultados, aprendizaje y recomendaciones.',
+        'Carpeta de fotografías de sesiones, resguardando consentimientos.',
+        'Certificados nominativos para los 28 profesionales conforme a exigencias del comprador.',
+        'Casos anonimizados, acceso autorizado y revisión humana permanente.',
+    ]
+    for row,respaldo in zip(cert,soportes_cert):
+        row.update(estado='Comprometido',respaldo=respaldo)
+    return {'version':6,'datos':d,'modulos':rows,'docentes':[rel],
+            'compra':compra,'certificacion':cert,
+            'logos':{'oferente':{'nombre':'','base64':''},'comprador':{'nombre':'','base64':''}},
+            'archivos':[],'declarados':copy.deepcopy(ADJUNTOS_DECLARADOS),
+            'marcar_borrador':True,'incluir_revision':False,'incluir_admin':False}
 
 
 def slug(s, maximo=90):
@@ -1203,7 +1179,7 @@ def generar_pdf(b, token=None, solo_portada=False):
 
         # Ficha simple, alineada como un documento académico/profesional.
         ficha = [
-            ("Modalidad", "Clases virtuales en vivo"),
+            ("Modalidad", d["modalidad_curso"]),
             ("Participantes", f"{d['cupos']} personas"),
             ("Duración", f"{total_curso:g} horas de capacitación"),
             ("Valor ofertado", pesos(total_precio) if total_precio is not None else "Por definir"),
@@ -1305,10 +1281,10 @@ def generar_pdf(b, token=None, solo_portada=False):
     cap("Antecedentes de la contratación", "proceso")
     story.extend(campo("Servicio requerido", d["titulo"]))
     story.append(tabla(["Antecedente", "Información"], [
-        ["Organismo comprador", d["comprador"] + "\nRUT " + d["rut_comprador"]],
+        ["Organismo comprador", d["comprador"] + ("\nRUT " + d["rut_comprador"] if d["rut_comprador"].strip() else "")],
         ["Modalidad y código", d["modalidad"] + "\n" + d["proceso"]],
         ["Categoría del servicio", d["rubro"]],
-        ["Ejecución", "100 % virtual, sin asistencia presencial"],
+        ["Ejecución", d["periodo_ejecucion"]],
         ["Modalidad del curso", d["modalidad_curso"]],
     ], [156, ancho-156]))
     if d["numero_oc"].strip():
@@ -1355,10 +1331,10 @@ def generar_pdf(b, token=None, solo_portada=False):
     story.extend(campo("Herramientas de trabajo", d["herramientas"]))
     story.extend(campo("Materiales para los participantes", d["materiales"]))
 
-    cap("Condiciones de ejecución virtual", "logistica")
+    cap("Lugar y condiciones de ejecución presencial", "logistica")
     story.extend(campo("Recinto y ubicación", d["lugar"]))
     responsable = {
-        "Proveedor": "El proveedor habilitará la plataforma de videoconferencia para las clases virtuales.",
+        "Proveedor": "El proveedor suministrará el recinto presencial dentro de La Pintana y el equipamiento para el curso.",
         "Comprador": "El recinto será dispuesto por el organismo comprador.",
         "Compartido": "La habilitación del recinto se coordinará entre el oferente y el organismo comprador.",
         "Por definir": "El responsable del recinto se confirmará antes de la ejecución.",
@@ -1372,13 +1348,12 @@ def generar_pdf(b, token=None, solo_portada=False):
         story.extend(campo("Servicio de cafetería", d["cafeteria"]))
 
     cap("Equipo de relatoría y antecedentes profesionales", "relator")
-    story.extend(campo("Relatoría principal y alternativa", d["perfil_docente"]))
+    story.extend(campo("Relatoría principal", d["perfil_docente"]))
     story.extend(parrafos(
-        "La oferta contempla un relator principal (Diego Zamorano) y un alternativo de contingencia "
-        "(Daniel Vargas). Diego es el profesional programado para impartir la totalidad del curso. "
-        "Daniel no constituye una segunda oferta ni reemplaza libremente al titular: cualquier "
-        "sustitución deberá contar con autorización previa del Servicio Médico Legal y preservar "
-        "las 24 horas, los ocho módulos y el precio ofertado."))
+        "La propuesta contempla un relator principal: Luis Marcelo Ortiz Contreras. "
+        "Su trayectoria de capacitaciones de IA está declarada desde 2023 y se acompaña evidencia "
+        "disponible de relatorías. Los requisitos de experiencia profesional en proyectos de IA/datos "
+        "y el total de personas capacitadas por el oferente se mantienen expresamente sujetos a verificación."))
     for rel in b["docentes"]:
         story.append(P(rel.get("rol", "Relator propuesto") + ": " + rel["nombre"], "h2"))
         story.extend(parrafos(f"RUT {rel['rut']}. {rel['titulo']}."))
@@ -1516,34 +1491,14 @@ def main():
     import streamlit as st
     st.set_page_config(page_title="Propuesta técnica | OTEC Santa Mónica",page_icon="📄",layout="centered")
     st.title("Propuesta técnica y económica")
-    if "modelo_propuesta_v6" not in st.session_state:
+    if "modelo_propuesta_pintana_v9" not in st.session_state:
         # Una versión anterior puede haber dejado widgets con valores de ejemplo.
         for clave in list(st.session_state):
             if clave.startswith("q_") or clave in {"propuesta_pdf","propuesta_firma"}:
                 del st.session_state[clave]
-        st.session_state.modelo_propuesta_v6=nuevo()
-    b=st.session_state.modelo_propuesta_v6
-    # Migrar una sesión creada con el generador de un solo relator una sola vez.
-    if "sml_dos_relatores_migracion_v1" not in st.session_state:
-        if len(b.get("docentes", [])) == 1 and "Zamorano" in b["docentes"][0].get("nombre", ""):
-            alternativo = copy.deepcopy(RELATOR_ALTERNATIVO)
-            alternativo["id"] = uuid4().hex[:12]
-            alternativo["checklist"] = items_check(REQ_RELATOR_ALTERNATIVO)
-            for row, (estado, respaldo) in zip(alternativo["checklist"], [
-                ("Respaldado", "Ingeniero Civil Industrial PUCV, según antecedentes."),
-                ("Respaldado", "Diplomado de 96 horas en Data Science e IA, PUCV."),
-                ("Respaldado", "Certificados de relatoría en instituciones públicas."),
-                ("Declarado", "Experiencia en análisis de datos e IA, según CV.")
-            ]):
-                row.update(estado=estado, respaldo=respaldo)
-            b["docentes"][0].setdefault("rol", "Relator principal (prioridad 1)")
-            b["docentes"].append(alternativo)
-            b["datos"]["perfil_docente"] = DATOS_LICITACION["perfil_docente"]
-            b["datos"]["referencia_cv"] = DATOS_LICITACION["referencia_cv"]
-            b["datos"]["documentacion_adjunta"] = DATOS_LICITACION["documentacion_adjunta"]
-            b["declarados"] = copy.deepcopy(ADJUNTOS_DECLARADOS)
-            b["datos"]["adjuntos_esperados"] = 2
-        st.session_state.sml_dos_relatores_migracion_v1 = True
+        st.session_state.modelo_propuesta_pintana_v9=nuevo()
+    b=st.session_state.modelo_propuesta_pintana_v9
+    # Aplicación dedicada a la compra de La Pintana, precargada con un único relator.
     # Corregir únicamente el recorte histórico exacto de 500 caracteres
     # causado por el text_input en el campo de experiencia. Respeta cualquier
     # contenido distinto que haya editado el usuario.
@@ -1629,6 +1584,11 @@ def main():
             st.session_state["aviso_logo_"+rol]=""
         except Exception as exc: st.session_state["aviso_logo_"+rol]=str(exc)
 
+    st.warning("Requisito 9.1 pendiente: no se acreditan más de 2.500 personas capacitadas en IA. "
+               "El PDF se genera marcado BORRADOR hasta que revises y cierres los requisitos mínimos, "
+               "la tributación y el monto de la cotización.")
+    st.caption("Precio precargado editable: $4.490.000; no es un monto confirmado. "
+               "La dirección del recinto presencial y la aplicación de exención de IVA deben verificarse.")
     tab_generar, tab_detalles = st.tabs(["Generar PDF", "Detalles y edición"])
 
     with tab_generar:
@@ -1656,7 +1616,7 @@ def main():
             try:
                 st.session_state.propuesta_pdf = generar_pdf(b)
                 st.session_state.propuesta_firma = firma_actual
-                st.success("PDF generado correctamente.")
+                st.success("PDF generado. Verifica requisitos mínimos antes de presentar la oferta.")
             except Exception as exc:
                 st.session_state.pop("propuesta_pdf",None)
                 st.session_state.pop("propuesta_firma",None)
@@ -1704,10 +1664,10 @@ def main():
                     if st.button("Agregar módulo"):
                         b["modulos"].append(dict(id=uuid4().hex[:12],jornada="Nueva jornada",nombre="Nuevo módulo",contenido="",horas=0.0,tipo="Presencial"))
                         st.rerun()
-                    tot=horas(b); st.metric("Horas pedagógicas del programa",f"{sum(tot.values()):g}")
+                    tot=horas(b); st.metric("Horas cronológicas del programa",f"{sum(tot.values()):g}")
                     for jornada in dict.fromkeys(m["jornada"] for m in b["modulos"]):
                         h=sum(m["horas"] for m in b["modulos"] if m["jornada"]==jornada)
-                        st.caption(f"Total {jornada.lower()}: {h:g} horas pedagógicas")
+                        st.caption(f"Total {jornada.lower()}: {h:g} horas cronológicas")
                     st.caption(" / ".join(f"{k}: {v:g} horas" for k,v in tot.items()))
                     if abs(sum(tot.values())-b["datos"]["horas_exigidas"])>.01:
                         st.warning("La suma del programa no coincide con las horas exigidas. Puedes generar el borrador y corregirla después.")
