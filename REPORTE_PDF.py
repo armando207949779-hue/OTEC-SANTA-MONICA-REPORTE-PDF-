@@ -3,10 +3,10 @@
 
 Uso:
     python -m pip install -r requirements.txt
-    python -m streamlit run Generador_La_Pintana_2273-984-COT26_FINAL_DEPURADO.py
+    python -m streamlit run Generador_La_Pintana_2273-984-COT26_FINAL_CORREGIDO_v13.py
 
 Prueba sin interfaz:
-    python Generador_La_Pintana_2273-984-COT26_FINAL_DEPURADO.py --demo-pdf Propuesta_La_Pintana.pdf
+    python Generador_La_Pintana_2273-984-COT26_FINAL_CORREGIDO_v13.py --demo-pdf Propuesta_La_Pintana.pdf
 """
 from __future__ import annotations
 
@@ -38,12 +38,12 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, PageBreak, Table, TableStyle,
-    CondPageBreak, HRFlowable, Flowable,
+    CondPageBreak, HRFlowable, Flowable, KeepTogether,
 )
 
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_NAME = "OTEC_Santa_Monica_Opcion_1.svg"
-PDF_RENDER_VERSION = "v12.0-la-pintana-documento-publico-depurado"
+PDF_RENDER_VERSION = "v13.0-la-pintana-saltos-anexos-corregidos"
 # Gama inspirada en las presentaciones Beamer clásicas: azul estructural,
 # azul petróleo, fondos casi blancos y reglas finas. Se usa con moderación.
 BEAMER_PALETA = {
@@ -390,7 +390,10 @@ DATOS_LICITACION = {'proceso': '2273-984-COT26',
             'y coffee break, 2 mentorías, evaluación, informe y certificación. Precio total $4.390.000 exento de IVA.',
  'adjuntos_esperados': 15,
  'adjuntos_solicitados': 'ANEXO 1 - ANTECEDENTES DEL RELATOR LUIS MARCELO ORTIZ\nANEXO 2 - EXPERIENCIA INSTITUCIONAL EN CAPACITACIONES DE INTELIGENCIA ARTIFICIAL\nDocumento principal - propuesta técnica y económica con cronograma, logística y oferta global.',
- 'documentacion_adjunta': ('ANEXO 1 - ANTECEDENTES DEL RELATOR LUIS MARCELO ORTIZ: currículum vitae, título profesional, grado académico, formación de posgrado y certificados de experiencia. ANEXO 2 - EXPERIENCIA INSTITUCIONAL EN CAPACITACIONES DE INTELIGENCIA ARTIFICIAL: facturas, órdenes de compra y relación de servicios de capacitación prestados o contratados por Santa Mónica.'),
+ 'documentacion_adjunta': ('ANEXO 1 - ANTECEDENTES DEL RELATOR LUIS MARCELO ORTIZ:\n'
+                           'Currículum vitae, título profesional, grado académico, formación de posgrado y certificados de experiencia.\n\n'
+                           'ANEXO 2 - EXPERIENCIA INSTITUCIONAL EN CAPACITACIONES DE INTELIGENCIA ARTIFICIAL:\n'
+                           'Facturas, órdenes de compra y relación de servicios de capacitación prestados o contratados por Santa Mónica.'),
  'fecha_propuesta': '12-11-2026'}
 
 INTRODUCCIONES = {'proceso': 'Esta propuesta responde a la Compra Ágil {proceso}, convocada por {comprador}, para la adopción '
@@ -1053,6 +1056,43 @@ def generar_pdf(b, token=None, solo_portada=False):
     def campo(nombre, texto):
         return [P(nombre, "h2"), *parrafos(texto)]
 
+    def bloques_anexos(texto):
+        """Conserva los dos anexos como bloques independientes y sin cortes.
+
+        Admite tanto el formato antiguo (ambos anexos en un párrafo) como
+        el nuevo (con saltos de línea). Nunca deja el título de un anexo
+        separado de su descripción al final de una página.
+        """
+        texto = (texto or "").strip()
+        patron = re.compile(r"(?i)\bANEXO\s+([12])\s*[-–—:]\s*")
+        hallazgos = list(patron.finditer(texto))
+        if not hallazgos:
+            return parrafos(texto) if texto else []
+        resultado = []
+        inicio = texto[:hallazgos[0].start()].strip()
+        if inicio:
+            resultado.extend(parrafos(inicio))
+        for pos, hallazgo in enumerate(hallazgos):
+            fin = hallazgos[pos+1].start() if pos+1 < len(hallazgos) else len(texto)
+            contenido = texto[hallazgo.end():fin].strip()
+            encabezado, separador, detalle = contenido.partition(":")
+            if not separador:
+                encabezado, detalle = contenido.split("\n", 1) if "\n" in contenido else (contenido, "")
+            encabezado = " ".join(encabezado.strip().split())
+            detalle = detalle.strip()
+            if not encabezado:
+                encabezado = "Antecedentes documentales"
+            titulos_publicos = {
+                "1": "Anexo 1. Antecedentes del relator Luis Marcelo Ortiz",
+                "2": "Anexo 2. Experiencia institucional en capacitaciones de Inteligencia Artificial",
+            }
+            rotulo = titulos_publicos.get(hallazgo.group(1), f"Anexo {hallazgo.group(1)}. {encabezado}")
+            elementos = [P(rotulo, "h2")]
+            if detalle:
+                elementos.extend(parrafos(detalle))
+            resultado.append(KeepTogether(elementos))
+        return resultado
+
     def tabla(encabezados, filas, anchos=None):
         contenido = [[P(e, "th") for e in encabezados]]
         contenido += [[celda if isinstance(celda, Flowable) else P(celda, "small")
@@ -1061,7 +1101,7 @@ def generar_pdf(b, token=None, solo_portada=False):
         if anchos is None:
             anchos = [ancho/n]*n
         t = Table(contenido, colWidths=anchos, repeatRows=1,
-                  splitByRow=1, splitInRow=1, hAlign="LEFT")
+                  splitByRow=1, splitInRow=0, hAlign="LEFT")
         t.setStyle(TableStyle([
             ("BACKGROUND", (0, 0), (-1, 0), PALE),
             ("LINEABOVE", (0, 0), (-1, 0), 1, NAVY),
@@ -1268,8 +1308,7 @@ def generar_pdf(b, token=None, solo_portada=False):
     story.append(P("Objetivos específicos", "h2"))
     for i, linea in enumerate(filter(str.strip, d["objetivos_especificos"].splitlines()), 1):
         story.append(P(f"{i}. {linea.strip()}", "enumeracion"))
-    story.extend(campo("Participantes", f"La actividad contempla {d['cupos']} participantes. "
-                       + d["participantes"]))
+    story.extend(campo("Participantes", d["participantes"]))
     story.extend(campo("Conocimientos previos", d["prerrequisitos"]))
 
     cap("Programa de capacitación", "programa")
@@ -1326,6 +1365,9 @@ def generar_pdf(b, token=None, solo_portada=False):
         "en Inteligencia Artificial con municipalidades y organismos del sector público. "
         "Las facturas corresponden a servicios facturados; las órdenes de compra se identifican "
         "como documentos de contratación según su estado."))
+    # No dejar un encabezado de tabla y una única factura aislados al pie
+    # de la página: trasladar la matriz al folio siguiente si no hay espacio.
+    story.append(CondPageBreak(260))
     story.append(tabla(["Institución", "Capacitación o servicio de IA", "Documento"],
         [[a, servicio, respaldo] for a, servicio, respaldo in EXPERIENCIAS_IA_REGISTROS],
         [132, ancho-259, 127]))
@@ -1378,7 +1420,7 @@ def generar_pdf(b, token=None, solo_portada=False):
     story.extend(campo("Alcance del valor ofertado", d["incluye_precio"]))
 
     cap("Documentación de respaldo", "documentos")
-    story.extend(parrafos(d["documentacion_adjunta"]))
+    story.extend(bloques_anexos(d["documentacion_adjunta"]))
     nombres = [descripcion_documento(x) for x in b["archivos"]
                if x["categoria"] != "Bases técnicas"]
     if nombres:
